@@ -33,7 +33,14 @@ public class NotesView : NotesModel
     // ノーツの処理を止めるフラグ
     private bool stopFlag = false;
 
-    private SpriteRenderer notesSprite;
+    private SpriteRenderer moveNotesSprite = null;
+    private SpriteRenderer goalNotesSprite = null;
+    private GameObject moveNotesObj = null;
+    private GameObject goalNotesObj = null;
+
+    // スプライトの透明度を変更できるようにしておく
+    private float spriteAlpha = 0.5f;
+    public float SpriteAlpha { set { spriteAlpha = value; } }
 
     // Start is called before the first frame update
     void Start()
@@ -53,15 +60,21 @@ public class NotesView : NotesModel
     private void OnEnable()
     {
         // ノーツのスプライトレンダラーを取得
-        if(notesSprite == null)
+        if(moveNotesObj == null)
         {
-            notesSprite = GetComponent<SpriteRenderer>();
+            moveNotesObj = gameObject.transform.GetChild(1).gameObject;
+            moveNotesSprite = moveNotesObj.GetComponent<SpriteRenderer>();
+        }
+
+        if(goalNotesObj == null)
+        {
+            goalNotesObj = gameObject.transform.GetChild(0).gameObject;
+            goalNotesSprite = goalNotesObj.GetComponent<SpriteRenderer>();
         }
 
         // durationが0秒以下ならノーツを非表示
         if(duration <= 0)
         {
-            transform.localPosition = goalPos;
             gameObject.SetActive(false);
             return;
         }
@@ -69,10 +82,13 @@ public class NotesView : NotesModel
         startTime = Time.timeSinceLevelLoad;
 
         // ノーツの座標を初期化
-        transform.localPosition = startPos;
+        moveNotesObj.transform.position = startPos;
+        goalNotesObj.transform.position = goalPos;
 
         // ノーツの画像を差し替え
-        
+        moveNotesSprite.sprite = NotesSprites[(int)NotesTypes];
+        goalNotesSprite.sprite = NotesSprites[(int)NotesTypes];
+        goalNotesSprite.color = new Color(1, 1, 1, spriteAlpha);    // 透明度を設定
 
         stopFlag = true;
     }
@@ -88,7 +104,7 @@ public class NotesView : NotesModel
         // 経過時間が所要時間を超えた場合、ノーツを非表示にする
         if(diff > duration)
         {
-            transform.localPosition = goalPos;
+            moveNotesObj.transform.position = goalPos;
             StartCoroutine(DelayMethod(5, () => gameObject.SetActive(false)));
             stopFlag = false;
         }
@@ -98,7 +114,7 @@ public class NotesView : NotesModel
         var pos = curve.Evaluate(rate);
 
         // ノーツを移動する処理
-        transform.localPosition = Vector3.Lerp(startPos, goalPos, pos);
+        moveNotesObj.transform.position = Vector3.Lerp(startPos, goalPos, pos);
     }
 
     /// <summary>
