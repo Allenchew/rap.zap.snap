@@ -45,15 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ec950f1977595342a76271e3ae13464, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  notesID: 0
+  notesTypes: 0
   notesSprites:
   - {fileID: 21300000, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
   - {fileID: 21300002, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
   - {fileID: 21300004, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
   - {fileID: 21300006, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
-  duration: 0.5
-  goalPos: {x: 5, y: 0, z: 0}
-  startPos: {x: 0, y: 0, z: 0}
   curve:
     serializedVersion: 2
     m_Curve:

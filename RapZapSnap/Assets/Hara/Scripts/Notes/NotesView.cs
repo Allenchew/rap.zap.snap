@@ -6,19 +6,16 @@ using UnityEngine;
 public class NotesView : NotesModel
 {
     // ノーツが判定位置へ移動する所要時間
-    [SerializeField]
-    private float duration = 1.0f;
-    public float NotesDuration { set { duration = value; } }
+    public float NotesDuration { set; private get; } = 0.5f;
 
     // ノーツの判定位置の座標
-    [SerializeField]
-    private Vector3 goalPos;
-    public Vector3 GoalPos { set { goalPos = value; } }
+    public Vector3 GoalPos { set; private get; }
 
     // ノーツが移動を開始する座標
-    [SerializeField]
-    private Vector3 startPos;
-    public Vector3 StartPos { set { startPos = value; } }
+    public Vector3 StartPos { set; private get; }
+
+    // ノーツの最終目的地の座標
+    private Vector3 moveEndPos;
 
     // ノーツの初速移動用のアニメーションカーブ
     [SerializeField]
@@ -27,11 +24,13 @@ public class NotesView : NotesModel
     private float startTime;
 
     // ノーツの判定位置までの進行率
-    private float rate;
-    public float NotesRate { get { return rate; } }
+    private float notesRate = 0;
 
-    // ノーツの処理を止めるフラグ
+    // ノーツの判定位置までの距離
+    private float distance = 0;
+
     private bool stopFlag = false;
+    private bool judgeFlag = false;
 
     private SpriteRenderer moveNotesSprite = null;
     private SpriteRenderer goalNotesSprite = null;
@@ -42,10 +41,13 @@ public class NotesView : NotesModel
     private float spriteAlpha = 0.5f;
     public float SpriteAlpha { set { spriteAlpha = value; } }
 
+    // 画面外を検知する用のRect
+    private Rect rect = new Rect(0, 0, 1, 1);
+
     // Start is called before the first frame update
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame
@@ -73,7 +75,7 @@ public class NotesView : NotesModel
         }
 
         // durationが0秒以下ならノーツを非表示
-        if(duration <= 0)
+        if(NotesDuration <= 0)
         {
             gameObject.SetActive(false);
             return;
@@ -82,8 +84,10 @@ public class NotesView : NotesModel
         startTime = Time.timeSinceLevelLoad;
 
         // ノーツの座標を初期化
-        moveNotesObj.transform.position = startPos;
-        goalNotesObj.transform.position = goalPos;
+        moveNotesObj.transform.position = StartPos;
+        goalNotesObj.transform.position = GoalPos;
+        Vector3 vec = (GoalPos - StartPos).normalized;
+        moveEndPos = vec * Vector3.Distance(StartPos, GoalPos) + GoalPos; 
 
         // ノーツの画像を差し替え
         moveNotesSprite.sprite = NotesSprites[(int)NotesTypes];
@@ -91,6 +95,7 @@ public class NotesView : NotesModel
         goalNotesSprite.color = new Color(1, 1, 1, spriteAlpha);    // 透明度を設定
 
         stopFlag = true;
+        judgeFlag = true;
     }
 
     /// <summary>
@@ -101,20 +106,86 @@ public class NotesView : NotesModel
         // ノーツの移動開始からの経過時間
         var diff = Time.timeSinceLevelLoad - startTime;
 
-        // 経過時間が所要時間を超えた場合、ノーツを非表示にする
-        if(diff > duration)
-        {
-            moveNotesObj.transform.position = goalPos;
-            StartCoroutine(DelayMethod(5, () => gameObject.SetActive(false)));
-            stopFlag = false;
-        }
-
         // 進行率を算出
-        rate = diff / duration;
-        var pos = curve.Evaluate(rate);
+        notesRate = diff / (NotesDuration * 2);
+        var pos = curve.Evaluate(notesRate);
 
         // ノーツを移動する処理
-        moveNotesObj.transform.position = Vector3.Lerp(startPos, goalPos, pos);
+        moveNotesObj.transform.position = Vector3.Lerp(StartPos, moveEndPos, pos);
+
+        // ノーツが判定位置を一定値超えた場合入力を無効にする
+        if(notesRate >= 0.52f && judgeFlag)
+        {
+            NotesControl.Instance.CheckCount++;
+            judgeFlag = false;
+        }
+
+        // ノーツが画面外に行ったかをチェック
+        var viewport = Camera.main.WorldToViewportPoint(moveNotesObj.transform.position);    // MainCameraのviewportを取得
+        if (!rect.Contains(viewport))
+        {
+            // 画面外に行ったらノーツを非表示にする
+            NotesControl.Instance.NotesResult(NotesControl.ResultType.Bad);
+            ResetNotes(false);
+        }
+    }
+
+    /// <summary>
+    /// ノーツに入力を検知した時の処理
+    /// </summary>
+    /// <param name="notesType">何キーを押したか</param>
+    public void NotesCheck(NotesType notesType)
+    {
+        var result = notesRate;
+
+        if(result < 0.45f)
+        {
+            return;
+        }
+
+        NotesControl.Instance.CheckCount++;
+
+        // 入力したキーが合っているかチェック
+        if(notesType == NotesTypes)
+        {
+            if(result > 0.4925f && result < 0.5075f)
+            {
+                // prefect判定
+                NotesControl.Instance.NotesResult(NotesControl.ResultType.Perfect);
+            }
+            else if((result > 0.48f && result <= 0.4925f) || (result >= 0.5075f && result < 0.52f))
+            {
+                // good判定
+                NotesControl.Instance.NotesResult(NotesControl.ResultType.Good);
+            }
+            else
+            {
+                // bad判定
+                NotesControl.Instance.NotesResult(NotesControl.ResultType.Bad);
+            }
+
+            ResetNotes(true);
+        }
+        else
+        {
+            NotesControl.Instance.NotesResult(NotesControl.ResultType.Bad);
+            ResetNotes(true);
+        }
+    }
+
+    /// <summary>
+    /// ノーツを初期化する
+    /// </summary>
+    private void ResetNotes(bool b)
+    {
+        stopFlag = false;
+        notesRate = 0;
+        if (b)
+        {
+            StartCoroutine(DelayMethod(0.15f, () => gameObject.SetActive(false)));
+            return;
+        }
+        gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -143,4 +214,6 @@ public class NotesView : NotesModel
         }
         action();
     }
+
+    
 }
