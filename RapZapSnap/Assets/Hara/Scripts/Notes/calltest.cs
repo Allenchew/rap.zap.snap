@@ -22,12 +22,5 @@ public class calltest : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E)) NotesControl.Instance.CallNotes(notesType, new Vector3(-5, 0, 0), new Vector3(5, 0, 0), duration);
 
-        if (Input.GetKeyDown(KeyCode.I)) NotesControl.Instance.InputKey(NotesModel.NotesType.CircleKey);
-
-        if (Input.GetKeyDown(KeyCode.A)) notesType = NotesModel.NotesType.CircleKey;
-        if (Input.GetKeyDown(KeyCode.S)) notesType = NotesModel.NotesType.CrossKey;
-        if (Input.GetKeyDown(KeyCode.D)) notesType = NotesModel.NotesType.TriangleKey;
-        if (Input.GetKeyDown(KeyCode.W)) notesType = NotesModel.NotesType.SquareKey;
-
     }
 }

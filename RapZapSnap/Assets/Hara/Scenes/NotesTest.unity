@@ -259,8 +259,12 @@ MonoBehaviour:
   maxNotes: 5
   notesPrefab: {fileID: 5018433614330757847, guid: 1a09af81682bbc34c88a6541512ebfd4,
     type: 3}
-  notesSize: 1.5
+  notesCount: 0
+  notesSize: 0.35
   notesSpriteAlpha: 0.25
+  perfectLength: 0.0075
+  goodLength: 0.015
+  badLength: 0.025
 --- !u!4 &388383592
 Transform:
   m_ObjectHideFlags: 0

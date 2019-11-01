@@ -29,9 +29,13 @@ public class NotesView : NotesModel
     // ノーツの判定位置までの距離
     private float distance = 0;
 
-    private bool stopFlag = false;
-    private bool judgeFlag = false;
+    // ノーツの判定範囲
+    public float Perfect { set; private get; } = 0;
+    public float Good { set; private get; } = 0;
+    public float Bad { set; private get; } = 0;
 
+    private bool stopFlag = false;
+    
     private SpriteRenderer moveNotesSprite = null;
     private SpriteRenderer goalNotesSprite = null;
     private GameObject moveNotesObj = null;
@@ -95,7 +99,6 @@ public class NotesView : NotesModel
         goalNotesSprite.color = new Color(1, 1, 1, spriteAlpha);    // 透明度を設定
 
         stopFlag = true;
-        judgeFlag = true;
     }
 
     /// <summary>
@@ -113,16 +116,9 @@ public class NotesView : NotesModel
         // ノーツを移動する処理
         moveNotesObj.transform.position = Vector3.Lerp(StartPos, moveEndPos, pos);
 
-        // ノーツが判定位置を一定値超えた場合入力を無効にする
-        if(notesRate >= 0.52f && judgeFlag)
-        {
-            NotesControl.Instance.CheckCount++;
-            judgeFlag = false;
-        }
-
         // ノーツが画面外に行ったかをチェック
         var viewport = Camera.main.WorldToViewportPoint(moveNotesObj.transform.position);    // MainCameraのviewportを取得
-        if (!rect.Contains(viewport))
+        if (!rect.Contains(viewport) || notesRate >= 1.0f)
         {
             // 画面外に行ったらノーツを非表示にする
             NotesControl.Instance.NotesResult(NotesControl.ResultType.Bad);
@@ -131,29 +127,21 @@ public class NotesView : NotesModel
     }
 
     /// <summary>
-    /// ノーツに入力を検知した時の処理
+    /// ノーツの判定処理
     /// </summary>
-    /// <param name="notesType">何キーを押したか</param>
-    public void NotesCheck(NotesType notesType)
+    /// <param name="notesType">入力したキー</param>
+    /// <param name="rate">ノーツの判定値</param>
+    private void NotesCheck(NotesType notesType, float rate)
     {
-        var result = notesRate;
-
-        if(result < 0.45f)
-        {
-            return;
-        }
-
-        NotesControl.Instance.CheckCount++;
-
         // 入力したキーが合っているかチェック
         if(notesType == NotesTypes)
         {
-            if(result > 0.4925f && result < 0.5075f)
+            if(rate > (0.5f - Perfect) && rate < (0.5f + Perfect))
             {
                 // prefect判定
                 NotesControl.Instance.NotesResult(NotesControl.ResultType.Perfect);
             }
-            else if((result > 0.48f && result <= 0.4925f) || (result >= 0.5075f && result < 0.52f))
+            else if((rate > (0.5f - Good) && rate <= (0.5f - Perfect)) || (rate >= (0.5f + Perfect) && rate < (0.5f + Good)))
             {
                 // good判定
                 NotesControl.Instance.NotesResult(NotesControl.ResultType.Good);
@@ -170,6 +158,31 @@ public class NotesView : NotesModel
         {
             NotesControl.Instance.NotesResult(NotesControl.ResultType.Bad);
             ResetNotes(true);
+        }
+    }
+
+    /// <summary>
+    /// ノーツの判定処理を実行するかをチェックする処理
+    /// </summary>
+    /// <param name="notesType">入力したキー</param>
+    /// <returns></returns>
+    public bool ActionStartCheck(NotesType notesType)
+    {
+        var rate = notesRate;
+        
+        // 入力判定内かチェック
+        if(rate <= (0.5f - Bad))
+        {
+            return false;
+        }
+        else if (rate >= (0.5f + Bad))
+        {
+            return true;
+        }
+        else
+        {
+            NotesCheck(notesType, rate);
+            return true;
         }
     }
 

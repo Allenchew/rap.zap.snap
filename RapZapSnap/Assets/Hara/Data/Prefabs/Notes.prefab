@@ -47,9 +47,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   notesTypes: 0
   notesSprites:
-  - {fileID: 21300000, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
-  - {fileID: 21300002, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
-  - {fileID: 21300004, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
+  - {fileID: 21300000, guid: 155c5842e4b4eb144b161797a6246cf9, type: 3}
+  - {fileID: 21300000, guid: b917a0ea770c9174d8abe9bb2d6d84af, type: 3}
+  - {fileID: 21300000, guid: 6ede808a7903d0945bd4534be09de9a0, type: 3}
+  - {fileID: 21300006, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
+  - {fileID: 21300000, guid: 9e5f48d6f75579045837de152ac1f415, type: 3}
+  - {fileID: 21300000, guid: e11a912375d6ae24c88d460c4dde32e8, type: 3}
+  - {fileID: 21300000, guid: f0805b8bfa2b14143a2bf61c17aaf65b, type: 3}
   - {fileID: 21300006, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
   curve:
     serializedVersion: 2
@@ -143,7 +147,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 155c5842e4b4eb144b161797a6246cf9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -222,7 +226,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 59fcd69bd34e3c24ea97ce443b268ce5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 155c5842e4b4eb144b161797a6246cf9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

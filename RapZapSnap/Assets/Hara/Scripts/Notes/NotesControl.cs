@@ -20,15 +20,24 @@ public class NotesControl : MonoBehaviour
     // ノーツプール用のカウンター
     private int callCount = 0;
 
-    // ノーツチェック用のカウンター
-    private int checkCount = 0;
-    public int CheckCount { set { checkCount = value; if (checkCount >= notesViews.Length) checkCount = 0; } get { return checkCount; } }
+    // ノーツのキー入力用のカウンター
+    [SerializeField]
+    private int notesCount = 0;
 
     [SerializeField, Tooltip("生成されるノーツのサイズ")]
     private float notesSize = 1.0f;
 
     [SerializeField, Tooltip("判定ノーツの透明度"), Range(0, 1.0f)]
     private float notesSpriteAlpha = 0.5f;
+
+    [SerializeField, Tooltip("ノーツ判定距離:Perfect"), Range(0, 0.1f)]
+    private float perfectLength = 0.05f;
+
+    [SerializeField, Tooltip("ノーツの判定距離:Good"), Range(0, 0.1f)]
+    private float goodLength = 0.05f;
+
+    [SerializeField, Tooltip("ノーツの判定距離:Bad"), Range(0, 0.1f)]
+    private float badLength = 0.05f;
 
     private void Awake()
     {
@@ -52,7 +61,7 @@ public class NotesControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        InputPadKey();    // キーの入力を検知
     }
 
     /// <summary>
@@ -94,6 +103,15 @@ public class NotesControl : MonoBehaviour
         notesViews[callCount].NotesDuration = duration;
         notesViews[callCount].StartPos = startPos;
         notesViews[callCount].GoalPos = goalPos;
+
+        // 判定距離の情報
+        perfectLength = perfectLength < 0.0f ? 0.0f : (perfectLength > 0.5f ? 0.5f : perfectLength);
+        goodLength = goodLength <= perfectLength ? perfectLength + 0.01f : goodLength;
+        badLength = badLength <= goodLength ? goodLength + 0.01f : badLength;
+        notesViews[callCount].Perfect = perfectLength;
+        notesViews[callCount].Good = goodLength;
+        notesViews[callCount].Bad = badLength;
+
         // ノーツの調整用処理
         notesViews[callCount].transform.localScale = new Vector3(notesSize, notesSize, notesSize);
         notesViews[callCount].SpriteAlpha = notesSpriteAlpha;
@@ -108,42 +126,51 @@ public class NotesControl : MonoBehaviour
             callCount = 0;
         }
     }
-
-    public void CallNotes(NotesModel.NotesType notesType, Vector3 goalPos, float duration = 0.75f)
+    
+    private void InputPadKey()
     {
-        if (notesViews[callCount].gameObject.activeSelf)
+        var notesType = NotesModel.NotesType.CircleKey;
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            notesType = NotesModel.NotesType.CircleKey;
+        }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            notesType = NotesModel.NotesType.CrossKey;
+        }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            notesType = NotesModel.NotesType.TriangleKey;
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            notesType = NotesModel.NotesType.SquareKey;
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            notesType = NotesModel.NotesType.UpArrow;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            notesType = NotesModel.NotesType.DownArrow;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            notesType = NotesModel.NotesType.LeftArrow;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            notesType = NotesModel.NotesType.RightArrow;
+        }
+        else
         {
             return;
         }
 
-        // 呼び出されるノーツに情報を与える
-        notesViews[callCount].NotesTypes = notesType;
-        notesViews[callCount].NotesDuration = duration;
-        notesViews[callCount].GoalPos = goalPos;
-        // ノーツの調整用処理
-        notesViews[callCount].transform.localScale = new Vector3(notesSize, notesSize, notesSize);
-        notesViews[callCount].SpriteAlpha = notesSpriteAlpha;
-
-        // ノーツを表示
-        notesViews[callCount].gameObject.SetActive(true);
-
-        // ノーツプール用のカウンターを加算
-        callCount++;
-        if (callCount >= notesViews.Length)
+        if (notesViews[notesCount].ActionStartCheck(notesType))
         {
-            callCount = 0;
-        }
-    }
-
-    /// <summary>
-    /// ノーツ用キー入力時の処理
-    /// </summary>
-    /// <param name="notesType"></param>
-    public void InputKey(NotesModel.NotesType notesType)
-    {
-        if (notesViews[checkCount].gameObject.activeSelf)
-        {
-            notesViews[checkCount].NotesCheck(notesType);
+            notesCount = notesCount++ > notesViews.Length ? 0 : notesCount++;
         }
     }
 
