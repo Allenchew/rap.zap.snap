@@ -30,9 +30,18 @@ public class NotesView : NotesModel
     private float distance = 0;
 
     // ノーツの判定範囲
-    public float Perfect { set; private get; } = 0;
-    public float Good { set; private get; } = 0;
-    public float Bad { set; private get; } = 0;
+    private float minPerfect = 0;
+    private float maxPerfect = 0;
+    public float Perfect { set { minPerfect = 0.5f - value; maxPerfect = 0.5f + value; } }
+
+    private float minGood = 0;
+    private float maxGood = 0;
+    public float Good { set { minGood = minPerfect - value; maxGood = maxPerfect + value; } }
+
+    private float minBad = 0;
+    private float maxBad = 0;
+    public float Bad { set { minBad = minGood - value; maxBad = maxGood + value; } }
+
 
     private bool stopFlag = false;
     
@@ -136,12 +145,12 @@ public class NotesView : NotesModel
         // 入力したキーが合っているかチェック
         if(notesType == NotesTypes)
         {
-            if(rate > (0.5f - Perfect) && rate < (0.5f + Perfect))
+            if(rate > minPerfect && rate < maxPerfect)
             {
                 // prefect判定
                 NotesControl.Instance.NotesResult(NotesControl.ResultType.Perfect);
             }
-            else if((rate > (0.5f - Good) && rate <= (0.5f - Perfect)) || (rate >= (0.5f + Perfect) && rate < (0.5f + Good)))
+            else if((rate > minGood && rate <= minPerfect) || (rate >= maxGood && rate < maxPerfect))
             {
                 // good判定
                 NotesControl.Instance.NotesResult(NotesControl.ResultType.Good);
@@ -159,6 +168,9 @@ public class NotesView : NotesModel
             NotesControl.Instance.NotesResult(NotesControl.ResultType.Bad);
             ResetNotes(true);
         }
+
+        Debug.Log(minPerfect + " " + maxPerfect + " " + minGood + " " + maxGood + " " + minBad + " " + maxBad);
+        Debug.Log(rate);
     }
 
     /// <summary>
@@ -171,11 +183,11 @@ public class NotesView : NotesModel
         var rate = notesRate;
         
         // 入力判定内かチェック
-        if(rate <= (0.5f - Bad))
+        if(rate <= minBad)
         {
             return false;
         }
-        else if (rate >= (0.5f + Bad))
+        else if (rate >= maxBad)
         {
             return true;
         }

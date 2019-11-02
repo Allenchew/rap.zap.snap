@@ -105,9 +105,6 @@ public class NotesControl : MonoBehaviour
         notesViews[callCount].GoalPos = goalPos;
 
         // 判定距離の情報
-        perfectLength = perfectLength < 0.0f ? 0.0f : (perfectLength > 0.5f ? 0.5f : perfectLength);
-        goodLength = goodLength <= perfectLength ? perfectLength + 0.01f : goodLength;
-        badLength = badLength <= goodLength ? goodLength + 0.01f : badLength;
         notesViews[callCount].Perfect = perfectLength;
         notesViews[callCount].Good = goodLength;
         notesViews[callCount].Bad = badLength;
@@ -120,11 +117,7 @@ public class NotesControl : MonoBehaviour
         notesViews[callCount].gameObject.SetActive(true);
 
         // ノーツプール用のカウンターを加算
-        callCount++;
-        if(callCount >= notesViews.Length)
-        {
-            callCount = 0;
-        }
+        callCount = callCount >= notesViews.Length - 1 ? 0 : callCount += 1;
     }
     
     private void InputPadKey()
@@ -170,7 +163,7 @@ public class NotesControl : MonoBehaviour
 
         if (notesViews[notesCount].ActionStartCheck(notesType))
         {
-            notesCount = notesCount++ > notesViews.Length ? 0 : notesCount++;
+            notesCount = notesCount >= notesViews.Length - 1 ? 0 : notesCount += 1;
         }
     }
 
