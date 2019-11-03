@@ -21,7 +21,6 @@ public class NotesControl : MonoBehaviour
     private int callCount = 0;
 
     // ノーツのキー入力用のカウンター
-    [SerializeField]
     private int notesCount = 0;
 
     [SerializeField, Tooltip("生成されるノーツのサイズ")]
@@ -122,9 +121,14 @@ public class NotesControl : MonoBehaviour
     
     private void InputPadKey()
     {
-        var notesType = NotesModel.NotesType.CircleKey;
+        if (!notesViews[notesCount].gameObject.activeSelf)
+        {
+            return;
+        }
 
-        if (Input.GetKeyDown(KeyCode.W))
+        NotesModel.NotesType notesType;
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetButtonDown("Fire1"))
         {
             notesType = NotesModel.NotesType.CircleKey;
         }
@@ -155,6 +159,12 @@ public class NotesControl : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             notesType = NotesModel.NotesType.RightArrow;
+        }
+        else if (!notesViews[notesCount].NotesClickEnabled)
+        {
+            // ノーツが入力有効範囲を超えた場合、次のノーツの判定へ移行する
+            notesCount = notesCount >= notesViews.Length - 1 ? 0 : notesCount += 1;
+            return;
         }
         else
         {
