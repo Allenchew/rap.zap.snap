@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DS4;
 
 public class NotesControl : MonoBehaviour
 {
     public static NotesControl Instance { get; private set; } = null;
-
+    
     // ノーツの最大生成数
     [SerializeField, Tooltip("ノーツの最大生成数"), Range(1, 10)]
     private int maxNotes = 5;
