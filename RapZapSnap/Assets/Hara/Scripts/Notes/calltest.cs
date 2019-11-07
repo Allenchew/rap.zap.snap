@@ -6,12 +6,14 @@ public class calltest : MonoBehaviour
 {
     [SerializeField]
     private float duration;
-    [SerializeField, Tooltip("ノーツの移動開始位置のリスト")]
+    [SerializeField]
     private List<Vector3> startPos = new List<Vector3>();
 
     [SerializeField]
     private float span = 0.0f;
     private float timer = 0.0f;
+    [SerializeField]
+    private MoveMode moveMode = MoveMode.Arrival;
 
     // Start is called before the first frame update
     void Start()
@@ -22,11 +24,18 @@ public class calltest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         timer += Time.deltaTime;
         if(timer >= span)
         {
-            NotesControl.Instance.CallNotes(NotesModel.NotesType.CircleKey, new Vector3(-5, 0, 0), new Vector3(5, 0, 0), duration);
-            timer = 0.0f;
+            NotesControl.Instance.CallNotes(NotesType.CircleKey, new Vector3(-5, 0, 0), new Vector3(5, 0, 0), duration);
+
+        }
+        */
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            NotesControl.Instance.CallNotes(NotesType.CircleKey, new Vector3(-5, 0, 0), new Vector3(5, 0, 0), moveMode, duration);
         }
 
     }

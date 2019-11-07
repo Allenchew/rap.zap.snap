@@ -21,7 +21,9 @@ public class NotesControl : MonoBehaviour
     private int callCount = 0;
 
     // ノーツのキー入力用のカウンター
+    [SerializeField]
     private int notesCount = 0;
+    public int NotesCount { set { notesCount = value; if (notesCount >= notesViews.Length) notesCount = 0; } get { return notesCount; } }
 
     [SerializeField, Tooltip("生成されるノーツのサイズ")]
     private float notesSize = 1.0f;
@@ -90,7 +92,7 @@ public class NotesControl : MonoBehaviour
         }
     }
 
-    public void CallNotes(NotesModel.NotesType notesType, Vector3 startPos, Vector3 goalPos, float duration = 0.75f)
+    public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, MoveMode moveMode = MoveMode.Arrival, float duration = 0.75f)
     {
         if (notesViews[callCount].gameObject.activeSelf)
         {
@@ -102,6 +104,7 @@ public class NotesControl : MonoBehaviour
         notesViews[callCount].NotesDuration = duration;
         notesViews[callCount].StartPos = startPos;
         notesViews[callCount].GoalPos = goalPos;
+        notesViews[callCount].NotesMoveMode = moveMode;
 
         // 判定距離の情報
         notesViews[callCount].Perfect = perfectLength;
@@ -113,7 +116,7 @@ public class NotesControl : MonoBehaviour
         notesViews[callCount].SpriteAlpha = notesSpriteAlpha;
 
         // ノーツを表示
-        notesViews[callCount].gameObject.SetActive(true);
+        notesViews[callCount].StartNotes();
 
         // ノーツプール用のカウンターを加算
         callCount = callCount >= notesViews.Length - 1 ? 0 : callCount += 1;
@@ -126,45 +129,39 @@ public class NotesControl : MonoBehaviour
             return;
         }
 
-        NotesModel.NotesType notesType;
+        NotesType notesType;
 
         if (Input.GetKeyDown(KeyCode.W) || Input.GetButtonDown("Fire1"))
         {
-            notesType = NotesModel.NotesType.CircleKey;
+            notesType = NotesType.CircleKey;
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
-            notesType = NotesModel.NotesType.CrossKey;
+            notesType = NotesType.CrossKey;
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
-            notesType = NotesModel.NotesType.TriangleKey;
+            notesType = NotesType.TriangleKey;
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            notesType = NotesModel.NotesType.SquareKey;
+            notesType = NotesType.SquareKey;
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            notesType = NotesModel.NotesType.UpArrow;
+            notesType = NotesType.UpArrow;
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            notesType = NotesModel.NotesType.DownArrow;
+            notesType = NotesType.DownArrow;
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            notesType = NotesModel.NotesType.LeftArrow;
+            notesType = NotesType.LeftArrow;
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            notesType = NotesModel.NotesType.RightArrow;
-        }
-        else if (!notesViews[notesCount].NotesClickEnabled)
-        {
-            // ノーツが入力有効範囲を超えた場合、次のノーツの判定へ移行する
-            notesCount = notesCount >= notesViews.Length - 1 ? 0 : notesCount += 1;
-            return;
+            notesType = NotesType.RightArrow;
         }
         else
         {
@@ -173,7 +170,7 @@ public class NotesControl : MonoBehaviour
 
         if (notesViews[notesCount].ActionStartCheck(notesType))
         {
-            notesCount = notesCount >= notesViews.Length - 1 ? 0 : notesCount += 1;
+            NotesCount++;
         }
     }
 

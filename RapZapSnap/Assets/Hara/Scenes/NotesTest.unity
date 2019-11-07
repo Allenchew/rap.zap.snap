@@ -144,6 +144,7 @@ MonoBehaviour:
   duration: 0.75
   startPos: []
   span: 1
+  moveMode: 0
 --- !u!4 &149990229
 Transform:
   m_ObjectHideFlags: 0
@@ -259,6 +260,7 @@ MonoBehaviour:
   maxNotes: 5
   notesPrefab: {fileID: 5018433614330757847, guid: 1a09af81682bbc34c88a6541512ebfd4,
     type: 3}
+  notesCount: 0
   notesSize: 0.35
   notesSpriteAlpha: 0.25
   perfectLength: 0.015
