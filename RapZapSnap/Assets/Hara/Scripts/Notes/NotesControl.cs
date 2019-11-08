@@ -93,7 +93,7 @@ public class NotesControl : MonoBehaviour
         }
     }
 
-    public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, MoveMode moveMode = MoveMode.Arrival, float duration = 0.75f)
+    public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, MoveMode moveMode = MoveMode.Pass, float duration = 0.75f)
     {
         if (notesViews[callCount].gameObject.activeSelf)
         {
@@ -114,10 +114,10 @@ public class NotesControl : MonoBehaviour
 
         // ノーツの調整用処理
         notesViews[callCount].transform.localScale = new Vector3(notesSize, notesSize, notesSize);
-        notesViews[callCount].SpriteAlpha = notesSpriteAlpha;
+        notesViews[callCount].GoalSpriteAlpha = notesSpriteAlpha;
 
         // ノーツを表示
-        notesViews[callCount].StartNotes();
+        notesViews[callCount].gameObject.SetActive(true);
 
         // ノーツプール用のカウンターを加算
         callCount = callCount >= notesViews.Length - 1 ? 0 : callCount += 1;
@@ -144,10 +144,6 @@ public class NotesControl : MonoBehaviour
         {
             notesType = NotesType.TriangleKey;
         }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            notesType = NotesType.SquareKey;
-        }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             notesType = NotesType.UpArrow;
@@ -159,10 +155,6 @@ public class NotesControl : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             notesType = NotesType.LeftArrow;
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            notesType = NotesType.RightArrow;
         }
         else
         {

@@ -10,11 +10,9 @@ public enum NotesType
     CircleKey,      // PS4コントローラー[○ボタン]
     CrossKey,       // PS4コントローラー[×ボタン]
     TriangleKey,    // PS4コントローラー[△ボタン]
-    SquareKey,      // PS4コントローラー[□ボタン]
     UpArrow,        // PS4コントローラー[↑ボタン]
     DownArrow,      // PS4コントローラー[↓ボタン]
     LeftArrow,      // PS4コントローラー[←ボタン]
-    RightArrow,     // PS4コントローラー[→ボタン]
 }
 
 public class NotesModel : MonoBehaviour

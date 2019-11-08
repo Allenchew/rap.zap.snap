@@ -20,12 +20,9 @@ public class NotesView : NotesModel
     // ノーツが移動を開始する座標
     public Vector3 StartPos { set; private get; }
 
-    // ノーツの最終目的地の座標
-    private Vector3 moveEndPos;
 
-    // ノーツの初速移動用のアニメーションカーブ
-    [SerializeField]
-    private AnimationCurve curve;
+    private Vector3 moveStartPos;
+    private Vector3 moveEndPos;
 
     private float startTime;
 
@@ -64,6 +61,9 @@ public class NotesView : NotesModel
     public float Bad { set { minBad = minGood - value; maxBad = maxGood + value; } }
 
     private bool stopFlag = false;
+    public bool NotesClickFlag { set; private get; } = false;
+    private float firstMoveEndTime = 0;
+    private float time = 0;
     
     private SpriteRenderer moveNotesSprite = null;
     private SpriteRenderer goalNotesSprite = null;
@@ -71,8 +71,9 @@ public class NotesView : NotesModel
     private GameObject goalNotesObj = null;
 
     // スプライトの透明度を変更できるようにしておく
-    private float spriteAlpha = 0.5f;
-    public float SpriteAlpha { set { spriteAlpha = value; } }
+    private float mainSpriteAlpha = 1.0f;
+    private float goalSpriteAlpha = 0.5f;
+    public float GoalSpriteAlpha { set { goalSpriteAlpha = value; } }
 
     // 画面外を検知する用のRect
     private Rect rect = new Rect(0, 0, 1, 1);
@@ -92,7 +93,7 @@ public class NotesView : NotesModel
         NotesAction();
     }
 
-    public void StartNotes()
+    private void OnEnable()
     {
         // ノーツのスプライトレンダラーを取得
         if(moveNotesObj == null)
@@ -120,16 +121,22 @@ public class NotesView : NotesModel
         moveNotesObj.transform.position = StartPos;
         goalNotesObj.transform.position = GoalPos;
         moveEndPos = NotesMoveMode == MoveMode.Arrival ? GoalPos : ((GoalPos - StartPos).normalized * Vector3.Distance(StartPos, GoalPos) + GoalPos);
+        moveStartPos = StartPos;
 
         // ノーツの画像を差し替え
         moveNotesSprite.sprite = NotesSprites[(int)NotesTypes];
+        if(NotesMoveMode == MoveMode.Pass)
+        {
+            moveNotesSprite.color = new Color(1, 1, 1, 1);
+            mainSpriteAlpha = 1.0f;
+        }
         goalNotesSprite.sprite = NotesSprites[(int)NotesTypes];
-        goalNotesSprite.color = new Color(1, 1, 1, spriteAlpha);    // 透明度を設定
+        goalNotesSprite.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
 
         notesRate = 0;
+        NotesClickFlag = true;
 
-        gameObject.SetActive(true);    // ノーツ表示
-        stopFlag = true;               // 処理開始
+        stopFlag = true;    // 処理開始
     }
 
     /// <summary>
@@ -140,43 +147,97 @@ public class NotesView : NotesModel
         if (stopFlag)
         {
             // ノーツの移動開始からの経過時間
-            var diff = Time.timeSinceLevelLoad - startTime;
-
+            var diff = NotesClickFlag ? (Time.timeSinceLevelLoad - startTime) : ((Time.timeSinceLevelLoad - firstMoveEndTime) - startTime);
+            
             // 進行率を算出
             notesRate = NotesMoveMode == MoveMode.Arrival ? (diff / NotesDuration) : (diff / (NotesDuration * 2));
-            var pos = curve.Evaluate(notesRate);
+            //notesRate = diff / NotesDuration;
 
             // ノーツを移動する処理
-            moveNotesObj.transform.position = Vector3.Lerp(StartPos, moveEndPos, pos);
+            moveNotesObj.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, notesRate);
 
+            if(diff > NotesDuration)
+            {
+                // 移動ノーツの座標を判定位置に合わせる
+                moveNotesObj.transform.position = moveEndPos;
+
+                if(NotesClickFlag)
+                {
+                    switch(NotesMoveMode)
+                    {
+                        case MoveMode.Arrival:
+                            time += Time.deltaTime;
+                            if(time >= 0.2f)
+                            {
+                                NotesControl.Instance.NotesCount++;
+                                ReturnResult(NotesControl.ResultType.Bad);
+                            }
+                            break;
+                        case MoveMode.Pass:
+                            moveStartPos = moveNotesObj.transform.position;
+                            moveEndPos = StartPos;
+                            firstMoveEndTime = Time.timeSinceLevelLoad;
+                            break;
+                    }
+                    
+                }
+                else
+                {
+
+                }
+            }
+            /*
             switch (NotesMoveMode)
             {
                 case MoveMode.Arrival:
                     // ノーツが判定位置に到達したかチェック
-                    if(diff > NotesDuration)
+                    if(diff > NotesDuration && NotesClickFlag)
                     {
                         moveNotesObj.transform.position = GoalPos;
-                        stopFlag = false;
-                        StartCoroutine(DelayMethod(0.1f, () =>
+                        time += Time.deltaTime;
+                        if(time >= 0.2f)
                         {
                             NotesControl.Instance.NotesCount++;
+                            time = 0;
+                            NotesClickFlag = false;
                             ReturnResult(NotesControl.ResultType.Bad);
-                        }));
+                        }
                     }
                     break;
                 case MoveMode.Pass:
                     // ノーツの入力判定が有効範囲内かチェック
-                    if(notesRate >= maxGood) NotesControl.Instance.NotesCount++;
+                    if(NotesClickFlag)
+                    {
+                        if(notesRate >= maxGood)
+                        {
+                            NotesControl.Instance.NotesCount++;
+                            NotesClickFlag = false;
+                        }
+                    }
+                    else
+                    {
+                        if(mainSpriteAlpha > 0)
+                        {
+                            // 透明度を下げる
+                            mainSpriteAlpha -= 0.05f;
+                            moveNotesSprite.color = new Color(1, 1, 1, mainSpriteAlpha);
+                        }
+                        else
+                        {
+                            mainSpriteAlpha = 1.0f;
+                        }
+                    }
+
                     // ノーツが画面外に行ったかをチェック
                     var viewport = Camera.main.WorldToViewportPoint(moveNotesObj.transform.position);    // MainCameraのviewportを取得
                     if (!rect.Contains(viewport) || notesRate >= 1.0f)
                     {
                         // 画面外に行ったらノーツを非表示にする
-                        stopFlag = false;
                         ReturnResult(NotesControl.ResultType.Bad);
                     }
                     break;
             }
+            */
         }
     }
 
@@ -187,7 +248,13 @@ public class NotesView : NotesModel
     /// <param name="rate">ノーツの判定値</param>
     private void NotesCheck(NotesType notesType, float rate)
     {
+        if(!NotesClickFlag)
+        {
+            return;    // ノーツの入力が無効ならreturnする
+        }
+
         var result = NotesControl.ResultType.Bad;
+
         // 入力したキーが合っているかチェック
         if(notesType == NotesTypes)
         {
@@ -222,6 +289,7 @@ public class NotesView : NotesModel
     private void ReturnResult(NotesControl.ResultType resultType)
     {
         NotesControl.Instance.NotesResult(resultType);
+        stopFlag = false;
         gameObject.SetActive(false);
     }
 
@@ -272,6 +340,4 @@ public class NotesView : NotesModel
         }
         action();
     }
-
-    
 }
