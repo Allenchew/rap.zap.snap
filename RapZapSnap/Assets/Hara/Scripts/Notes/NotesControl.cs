@@ -22,7 +22,6 @@ public class NotesControl : MonoBehaviour
     private int callCount = 0;
 
     // ノーツのキー入力用のカウンター
-    [SerializeField]
     private int notesCount = 0;
     public int NotesCount { set { notesCount = value; if (notesCount >= notesViews.Length) notesCount = 0; } get { return notesCount; } }
 

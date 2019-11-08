@@ -35,7 +35,7 @@ public class calltest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            NotesControl.Instance.CallNotes(NotesType.CircleKey, new Vector3(-5, 0, 0), new Vector3(5, 0, 0), moveMode, duration);
+            NotesControl.Instance.CallNotes(NotesType.CircleKey, new Vector3(0, -5, 0), new Vector3(0, 5, 0), moveMode, duration);
         }
 
     }

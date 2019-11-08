@@ -108,11 +108,16 @@ public class NotesView : NotesModel
             goalNotesSprite = goalNotesObj.GetComponent<SpriteRenderer>();
         }
 
-        // durationが0秒以下ならノーツを非表示
-        if(NotesDuration <= 0)
+        // durationが0秒以下または移動開始座標と判定座標が同じならreturnする
+        if(NotesDuration <= 0 || StartPos == GoalPos)
         {
             gameObject.SetActive(false);
             return;
+        }
+
+        if (!goalNotesObj.activeSelf)
+        {
+            goalNotesObj.SetActive(true);
         }
 
         startTime = Time.timeSinceLevelLoad;
@@ -147,7 +152,7 @@ public class NotesView : NotesModel
         if (stopFlag)
         {
             // ノーツの移動開始からの経過時間
-            var diff = NotesClickFlag ? (Time.timeSinceLevelLoad - startTime) : ((Time.timeSinceLevelLoad - firstMoveEndTime) - startTime);
+            var diff = NotesClickFlag ? (Time.timeSinceLevelLoad - startTime) : (Time.timeSinceLevelLoad - firstMoveEndTime);
             
             // 進行率を算出
             notesRate = NotesMoveMode == MoveMode.Arrival ? (diff / NotesDuration) : (diff / (NotesDuration * 2));
@@ -156,88 +161,133 @@ public class NotesView : NotesModel
             // ノーツを移動する処理
             moveNotesObj.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, notesRate);
 
-            if(diff > NotesDuration)
+            if (NotesClickFlag)
             {
-                // 移動ノーツの座標を判定位置に合わせる
-                moveNotesObj.transform.position = moveEndPos;
-
-                if(NotesClickFlag)
+                switch (NotesMoveMode)
                 {
-                    switch(NotesMoveMode)
-                    {
-                        case MoveMode.Arrival:
+                    case MoveMode.Arrival:
+                        if(diff > NotesDuration)
+                        {
+                            moveNotesObj.transform.position = GoalPos;
                             time += Time.deltaTime;
-                            if(time >= 0.2f)
+                            if (time >= 0.2f)
                             {
                                 NotesControl.Instance.NotesCount++;
                                 ReturnResult(NotesControl.ResultType.Bad);
                             }
-                            break;
-                        case MoveMode.Pass:
-                            moveStartPos = moveNotesObj.transform.position;
-                            moveEndPos = StartPos;
-                            firstMoveEndTime = Time.timeSinceLevelLoad;
-                            break;
-                    }
-                    
-                }
-                else
-                {
-
-                }
-            }
-            /*
-            switch (NotesMoveMode)
-            {
-                case MoveMode.Arrival:
-                    // ノーツが判定位置に到達したかチェック
-                    if(diff > NotesDuration && NotesClickFlag)
-                    {
-                        moveNotesObj.transform.position = GoalPos;
-                        time += Time.deltaTime;
-                        if(time >= 0.2f)
-                        {
-                            NotesControl.Instance.NotesCount++;
-                            time = 0;
-                            NotesClickFlag = false;
-                            ReturnResult(NotesControl.ResultType.Bad);
                         }
-                    }
-                    break;
-                case MoveMode.Pass:
-                    // ノーツの入力判定が有効範囲内かチェック
-                    if(NotesClickFlag)
-                    {
+                        break;
+                    case MoveMode.Pass:
                         if(notesRate >= maxGood)
                         {
                             NotesControl.Instance.NotesCount++;
                             NotesClickFlag = false;
-                        }
-                    }
-                    else
-                    {
-                        if(mainSpriteAlpha > 0)
-                        {
-                            // 透明度を下げる
-                            mainSpriteAlpha -= 0.05f;
-                            moveNotesSprite.color = new Color(1, 1, 1, mainSpriteAlpha);
-                        }
-                        else
-                        {
-                            mainSpriteAlpha = 1.0f;
-                        }
-                    }
+                            goalNotesObj.SetActive(false);
 
-                    // ノーツが画面外に行ったかをチェック
-                    var viewport = Camera.main.WorldToViewportPoint(moveNotesObj.transform.position);    // MainCameraのviewportを取得
-                    if (!rect.Contains(viewport) || notesRate >= 1.0f)
-                    {
-                        // 画面外に行ったらノーツを非表示にする
-                        ReturnResult(NotesControl.ResultType.Bad);
-                    }
-                    break;
+                            // 第2移動の目的地を設定する
+                            var radius = Vector3.Distance(StartPos, GoalPos);
+                            int direction = 8;    // 方向数
+                            float angleDiff = 360.0f / direction;    // 方向転換する角度の間隔
+                            var xPosDistance = Mathf.Abs(StartPos.x - GoalPos.x);
+                            var yPosDistance = Mathf.Abs(StartPos.y - GoalPos.y);
+                            int directionNum = 0;
+                            int rnd = UnityEngine.Random.Range(0, 3);
+
+                            if((StartPos.x - GoalPos.x) > 0 && xPosDistance >= yPosDistance)
+                            {
+                                // ノーツの移動方向が右→左のとき
+                                switch(rnd)
+                                {
+                                    case 0:
+                                        directionNum = 1;
+                                        break;
+                                    case 1:
+                                        directionNum = 2;
+                                        break;
+                                    case 2:
+                                        directionNum = 3;
+                                        break;
+                                }
+                            }
+                            else if((StartPos.x - GoalPos.x) < 0 && xPosDistance >= yPosDistance)
+                            {
+                                // ノーツの移動方向が左→右のとき
+                                switch (rnd)
+                                {
+                                    case 0:
+                                        directionNum = 5;
+                                        break;
+                                    case 1:
+                                        directionNum = 6;
+                                        break;
+                                    case 2:
+                                        directionNum = 7;
+                                        break;
+                                }
+                            }
+                            else if((StartPos.y - GoalPos.y) > 0 && xPosDistance <= yPosDistance)
+                            {
+                                // ノーツの移動方向が上→下のとき
+                                switch (rnd)
+                                {
+                                    case 0:
+                                        directionNum = 3;
+                                        break;
+                                    case 1:
+                                        directionNum = 4;
+                                        break;
+                                    case 2:
+                                        directionNum = 5;
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                // ノーツの移動方向が下→上のとき
+                                switch (rnd)
+                                {
+                                    case 0:
+                                        directionNum = 7;
+                                        break;
+                                    case 1:
+                                        directionNum = 8;
+                                        break;
+                                    case 2:
+                                        directionNum = 1;
+                                        break;
+                                }
+                            }
+
+                            float angle = (90 - angleDiff * directionNum) * Mathf.Deg2Rad;
+                            Vector3 newMoveStartPos = moveNotesObj.transform.position;
+                            newMoveStartPos.x += radius * Mathf.Cos(angle);
+                            newMoveStartPos.y += radius * Mathf.Sin(angle);
+
+                            // 座標データを更新
+                            moveStartPos = moveNotesObj.transform.position;
+                            moveEndPos = newMoveStartPos;
+                            firstMoveEndTime = Time.timeSinceLevelLoad;
+                        }
+                        break;
+                }
             }
-            */
+            else
+            {
+                if (mainSpriteAlpha > 0)
+                {
+                    // 透明度を下げる
+                    mainSpriteAlpha -= 0.035f;
+                    moveNotesSprite.color = new Color(1, 1, 1, mainSpriteAlpha);
+                }
+
+                // ノーツが画面外に行ったかをチェック
+                var viewport = Camera.main.WorldToViewportPoint(moveNotesObj.transform.position);    // MainCameraのviewportを取得
+                if (!rect.Contains(viewport) || notesRate >= 1.0f || mainSpriteAlpha <= 0)
+                {
+                    // 画面外に行ったらノーツを非表示にする
+                    ReturnResult(NotesControl.ResultType.Bad);
+                }
+            }
         }
     }
 
