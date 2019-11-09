@@ -131,7 +131,7 @@ public class NotesControl : MonoBehaviour
 
         NotesType notesType;
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetButtonDown("Fire1"))
+        if (GamePadControl.Instance.Controller.Circle)
         {
             notesType = NotesType.CircleKey;
         }
