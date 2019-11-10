@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DS4;
 
+
 public class NotesControl : MonoBehaviour
 {
     public static NotesControl Instance { get; private set; } = null;
@@ -16,14 +17,19 @@ public class NotesControl : MonoBehaviour
     private GameObject notesPrefab = null;
 
     // ノーツのプールを用意して使いまわす
-    private NotesView[] notesViews;
+    private NotesView[] firstPlayerNotes;
+    private NotesView[] secondPlayerNotes;
 
     // ノーツプール用のカウンター
-    private int callCount = 0;
+    private int firstPlayerCallCount = 0;
+    private int secondPlayerCallCount = 0;
 
     // ノーツのキー入力用のカウンター
-    private int notesCount = 0;
-    public int NotesCount { set { notesCount = value; if (notesCount >= notesViews.Length) notesCount = 0; } get { return notesCount; } }
+    private int firstPlayerNotesCount = 0;
+    public int FirstPlayerNotesCount { set { firstPlayerNotesCount = value; if (firstPlayerNotesCount >= firstPlayerNotes.Length) firstPlayerNotesCount = 0; } get { return firstPlayerNotesCount; } }
+    private int secondPlayerNotesCount = 0;
+    public int SecondPlayerNotesCount { set { secondPlayerNotesCount = value; if (secondPlayerNotesCount >= secondPlayerNotes.Length) secondPlayerNotesCount = 0; } get { return secondPlayerNotesCount; } }
+
 
     [SerializeField, Tooltip("生成されるノーツのサイズ")]
     private float notesSize = 1.0f;
@@ -77,81 +83,84 @@ public class NotesControl : MonoBehaviour
         }
 
         // ノーツのプールを初期化
-        notesViews = new NotesView[maxNotes];
+        firstPlayerNotes = new NotesView[maxNotes];
+        secondPlayerNotes = new NotesView[maxNotes];
 
         // ノーツのプールを作成し、格納する
         for(int i = 0; i < maxNotes; i++)
         {
-            if(notesViews[i] == null)
+            if(firstPlayerNotes[i] == null)
             {
                 var obj = Instantiate(notesPrefab);
                 obj.SetActive(false);
-                notesViews[i] = obj.GetComponent<NotesView>();
+                firstPlayerNotes[i] = obj.GetComponent<NotesView>();
+                obj.transform.SetParent(gameObject.transform);
+            }
+            if(secondPlayerNotes[i] == null)
+            {
+                var obj = Instantiate(notesPrefab);
+                obj.SetActive(false);
+                secondPlayerNotes[i] = obj.GetComponent<NotesView>();
                 obj.transform.SetParent(gameObject.transform);
             }
         }
     }
 
-    public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, MoveMode moveMode = MoveMode.Pass, float duration = 0.75f)
+    public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, TargetPlayer targetPlayer = TargetPlayer.PlayerOne, float duration = 1.0f)
     {
-        if (notesViews[callCount].gameObject.activeSelf)
+        bool notesActive = targetPlayer == TargetPlayer.PlayerOne ? firstPlayerNotes[firstPlayerCallCount].gameObject.activeSelf : secondPlayerNotes[secondPlayerCallCount].gameObject.activeSelf;
+
+        if (notesActive)
         {
             return;
         }
 
-        // 呼び出されるノーツに情報を与える
-        notesViews[callCount].NotesTypes = notesType;
-        notesViews[callCount].NotesDuration = duration;
-        notesViews[callCount].StartPos = startPos;
-        notesViews[callCount].GoalPos = goalPos;
-        notesViews[callCount].NotesMoveMode = moveMode;
+        if(targetPlayer == TargetPlayer.PlayerOne)
+        {
+            firstPlayerNotes[firstPlayerCallCount].SetNotesData(notesType, startPos, goalPos, targetPlayer, duration, MoveMode.Pass, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
 
-        // 判定距離の情報
-        notesViews[callCount].Perfect = perfectLength;
-        notesViews[callCount].Good = goodLength;
-        notesViews[callCount].Bad = badLength;
+            // ノーツプール用のカウンターを加算
+            firstPlayerCallCount = firstPlayerCallCount >= firstPlayerNotes.Length - 1 ? 0 : firstPlayerCallCount += 1;
+        }
+        else
+        {
+            secondPlayerNotes[secondPlayerCallCount].SetNotesData(notesType, startPos, goalPos, targetPlayer, duration, MoveMode.Pass, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
 
-        // ノーツの調整用処理
-        notesViews[callCount].transform.localScale = new Vector3(notesSize, notesSize, notesSize);
-        notesViews[callCount].GoalSpriteAlpha = notesSpriteAlpha;
-
-        // ノーツを表示
-        notesViews[callCount].gameObject.SetActive(true);
-
-        // ノーツプール用のカウンターを加算
-        callCount = callCount >= notesViews.Length - 1 ? 0 : callCount += 1;
+            // ノーツプール用のカウンターを加算
+            secondPlayerCallCount = secondPlayerCallCount >= secondPlayerNotes.Length - 1 ? 0 : secondPlayerCallCount += 1;
+        }
     }
     
     private void InputPadKey()
     {
-        if (!notesViews[notesCount].gameObject.activeSelf)
+        if (!firstPlayerNotes[firstPlayerNotesCount].gameObject.activeSelf)
         {
             return;
         }
 
         NotesType notesType;
 
-        if (GamePadControl.Instance.Controller.Circle)
+        if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.Circle : GamePadControl.Instance.Controller2.Circle)
         {
             notesType = NotesType.CircleKey;
         }
-        else if (Input.GetKeyDown(KeyCode.S))
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.Cross : GamePadControl.Instance.Controller2.Cross)
         {
             notesType = NotesType.CrossKey;
         }
-        else if (Input.GetKeyDown(KeyCode.A))
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.Triangle : GamePadControl.Instance.Controller2.Triangle)
         {
             notesType = NotesType.TriangleKey;
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.UpKey : GamePadControl.Instance.Controller2.UpKey)
         {
             notesType = NotesType.UpArrow;
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.DownKey : GamePadControl.Instance.Controller2.DownKey)
         {
             notesType = NotesType.DownArrow;
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.LeftKey : GamePadControl.Instance.Controller2.LeftKey)
         {
             notesType = NotesType.LeftArrow;
         }
@@ -160,9 +169,9 @@ public class NotesControl : MonoBehaviour
             return;
         }
 
-        if (notesViews[notesCount].ActionStartCheck(notesType))
+        if (firstPlayerNotes[firstPlayerNotesCount].ActionStartCheck(notesType))
         {
-            NotesCount++;
+            FirstPlayerNotesCount++;
         }
     }
 

@@ -17,12 +17,9 @@ public enum NotesType
 
 public class NotesModel : MonoBehaviour
 {
-    // ノーツの判定ID
-    [SerializeField, Tooltip("ノーツの入力要求キー")]
-    private NotesType notesTypes;
-    public NotesType NotesTypes { set { notesTypes = value; } get { return notesTypes; } }
+    public NotesType NotesTypes { set; get; }
 
-    
+    public TargetPlayer InputPlayer { set; get; }
 
     // ノーツのスプライト画像リスト
     [SerializeField, Tooltip("ノーツの画像リスト")]

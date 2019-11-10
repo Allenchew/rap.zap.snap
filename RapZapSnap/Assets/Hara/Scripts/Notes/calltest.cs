@@ -24,18 +24,19 @@ public class calltest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
+        
         timer += Time.deltaTime;
         if(timer >= span)
         {
-            NotesControl.Instance.CallNotes(NotesType.CircleKey, new Vector3(-5, 0, 0), new Vector3(5, 0, 0), duration);
-
+            //NotesControl.Instance.CallNotes(NotesType.CircleKey, new Vector3(-5, 0, 0), new Vector3(5, 0, 0), TargetPlayer.PlayerTwo);
+            timer = 0;
         }
-        */
+        
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            NotesControl.Instance.CallNotes(NotesType.CircleKey, new Vector3(0, -5, 0), new Vector3(0, 5, 0), moveMode, duration);
+            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(-5, -10, 0), new Vector3(-5, 4, 0));
+            //NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(5, -10, 0), new Vector3(5, 4, 0), TargetPlayer.PlayerTwo);
         }
 
     }
