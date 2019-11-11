@@ -17,13 +17,28 @@ namespace DS4
         private bool isChangeController = false;    // 1Pのコントローラーと2Pのコントローラーの入力を入れ替えるか
         private bool oneShotCall = true;
 
-        // PS4コントローラーのGetAxis用のAxis名
+        [SerializeField, Tooltip("PS4コントローラーを使う")]
+        private bool usePs4Controller = true;
+
+        [SerializeField, Tooltip("LスティックでUI操作を行う")]
+        private bool useLstickForUI = false;
+
+        private UnityEngine.EventSystems.StandaloneInputModule inputModule;
+
+        // 現在、操作しているプレイヤー
+        public InputController NowControlPlayer { set; private get; } = InputController.PlayerOne;
+
+        // PS4コントローラーの主要なキー名
+        private readonly string submit_1 = "DS4circle_1";
+        private readonly string cancel_1 = "DS4cross_1";
         private readonly string padVertical_1 = "DS4verticalPad_1";
         private readonly string padHorizontal_1 = "DS4horizontalPad_1";
         private readonly string leftVertical_1 = "DS4verticalLstick_1";
         private readonly string leftHorizontal_1 = "DS4horizontalLstick_1";
         private readonly string rightVertical_1 = "DS4verticalRstick_1";
         private readonly string rightHorizontal_1 = "DS4horizontalRstick_1";
+        private readonly string submit_2 = "DS4circle_2";
+        private readonly string cancel_2 = "DS4cross_2";
         private readonly string padVertical_2 = "DS4verticalPad_2";
         private readonly string padHorizontal_2 = "DS4horizontalPad_2";
         private readonly string leftVertical_2 = "DS4verticalLstick_2";
@@ -214,13 +229,16 @@ namespace DS4
                 Controller2.ResetKey();
                 firstAxisFlag.ResetFlag();
                 secondAxisFlag.ResetFlag();
-                DontDestroyOnLoad(this);
+                //UnityEngine.SceneManagement.SceneManager.sceneLoaded += InputModuleCheck;
+                UnityEngine.SceneManagement.SceneManager.activeSceneChanged += InputModuleCheck;
+                DontDestroyOnLoad(gameObject);
             }
             else
             {
-                Destroy(this);
+                Destroy(gameObject);
             }
         }
+
         // Start is called before the first frame update
         void Start()
         {
@@ -230,8 +248,11 @@ namespace DS4
         // Update is called once per frame
         void Update()
         {
-            ChangeControllerInput();
-            DS4_SingleInput();
+            if (usePs4Controller)
+            {
+                ChangeControllerInput();
+                DS4_SingleInput();
+            }
         }
 
         /// <summary>
@@ -246,6 +267,7 @@ namespace DS4
                 isChangeController = false;
                 oneShotCall = false;
                 Debug.Log("1P → 1P");
+                SetInputModule(InputController.PlayerOne);
                 return;
             }
 
@@ -253,6 +275,7 @@ namespace DS4
             {
                 isChangeController = true;
                 oneShotCall = false;
+                SetInputModule(InputController.PlayerOne);
                 Debug.Log("2P → 1P");
                 return;
             }
@@ -263,889 +286,521 @@ namespace DS4
         /// </summary>
         private void DS4_SingleInput()
         {
-            GetAxisDown(Axis.PadVertical_1);
-            /*
-            Controller1.Circle = isChangeController ? Input.GetButtonDown("DS4circle_2") : Input.GetButtonDown("DS4circle_1");
+            // コントローラ１の入力
+            GetAxisDown(Axis.PadVertical);
+            GetAxisDown(Axis.PadHorizontal);
+            GetAxisDown(Axis.LstickVertical);
+            GetAxisDown(Axis.LstickHorizontal);
+            Controller1.Circle = isChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button2) : Input.GetKeyDown(KeyCode.Joystick1Button2);
+            Controller1.Cross = isChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button1) : Input.GetKeyDown(KeyCode.Joystick1Button1);
+            Controller1.Triangle = isChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button3) : Input.GetKeyDown(KeyCode.Joystick1Button3);
+            Controller1.Square = isChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button0) : Input.GetKeyDown(KeyCode.Joystick1Button0);
+            Controller1.L1 = isChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button4) : Input.GetKeyDown(KeyCode.Joystick1Button4);
+            Controller1.R1 = isChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button5) : Input.GetKeyDown(KeyCode.Joystick1Button5);
+            Controller1.L2 = isChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button6) : Input.GetKeyDown(KeyCode.Joystick1Button6);
+            Controller1.R2 = isChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button7) : Input.GetKeyDown(KeyCode.Joystick1Button7);
 
-            Controller2.Circle = isChangeController ? Input.GetButtonDown("DS4circle_1") : Input.GetButtonDown("DS4circle_2");
-
-            Controller1.Cross = isChangeController ? Input.GetButtonDown("DS4cross_2") : Input.GetButtonDown("DS4cross_1");
-
-            Controller2.Cross = isChangeController ? Input.GetButtonDown("DS4cross_1") : Input.GetButtonDown("DS4cross_2");
-
-            Controller1.Triangle = isChangeController ? Input.GetButtonDown("DS4triangle_2") : Input.GetButtonDown("DS4triangle_1");
-
-            Controller2.Triangle = isChangeController ? Input.GetButtonDown("DS4triangle_1") : Input.GetButtonDown("DS4triangle_2");
-
-            Controller1.Square = isChangeController ? Input.GetButtonDown("DS4square_2") : Input.GetButtonDown("DS4square_1");
-
-            Controller2.Square = isChangeController ? Input.GetButtonDown("DS4square_1") : Input.GetButtonDown("DS4square_2");
-
-            Controller1.UpKey = isChangeController ? GetAxisDown("DS4verticalPad_2", Axies.PadUp_2) : GetAxisDown("DS4verticalPad_1", Axies.PadUp_1);
-
-            Controller2.UpKey = isChangeController ? GetAxisDown("DS4verticalPad_1", Axies.PadUp_1) : GetAxisDown("DS4verticalPad_2", Axies.PadUp_2);
-
-            Controller1.DownKey = isChangeController ? GetAxisDown("DS4verticalPad_2", Axies.PadDown_2) : GetAxisDown("DS4verticalPad_1", Axies.PadDown_1);
-
-            Controller2.DownKey = isChangeController ? GetAxisDown("DS4verticalPad_1", Axies.PadDown_1) : GetAxisDown("DS4verticalPad_2", Axies.PadDown_2);
-
-            Controller1.LeftKey = isChangeController ? GetAxisDown("DS4horizontalPad_2", Axies.PadLeft_2) : GetAxisDown("DS4horizontalPad_1", Axies.PadLeft_1);
-
-            Controller2.LeftKey = isChangeController ? GetAxisDown("DS4horizontalPad_1", Axies.PadLeft_1) : GetAxisDown("DS4horizontalPad_2", Axies.PadLeft_2);
-
-            Controller1.RightKey = isChangeController ? GetAxisDown("DS4horizontalPad_2", Axies.PadRight_2) : GetAxisDown("DS4horizontalPad_1", Axies.PadRight_1);
-
-            Controller2.RightKey = isChangeController ? GetAxisDown("DS4horizontalPad_1", Axies.PadRight_1) : GetAxisDown("DS4horizontalPad_2", Axies.PadRight_2);
-
-            Controller1.L1 = isChangeController ? Input.GetButtonDown("DS4L1_2") : Input.GetButtonDown("DS4L1_1");
-
-            Controller2.L1 = isChangeController ? Input.GetButtonDown("DS4L1_1") : Input.GetButtonDown("DS4L1_2");
-
-            Controller1.L2 = isChangeController ? Input.GetButtonDown("DS4L2_2") : Input.GetButtonDown("DS4L2_1");
-
-            Controller2.L2 = isChangeController ? Input.GetButtonDown("DS4L2_1") : Input.GetButtonDown("DS4L2_2");
-
-            Controller1.L3 = isChangeController ? Input.GetButtonDown("DS4L3_2") : Input.GetButtonDown("DS4L3_1");
-
-            Controller2.L3 = isChangeController ? Input.GetButtonDown("DS4L3_1") : Input.GetButtonDown("DS4L3_2");
-
-            Controller1.LstickU = isChangeController ? GetAxisDown("DS4verticalLstick_2", Axies.LstickVerticalU_2) : GetAxisDown("DS4verticalLstick_1", Axies.LstickVerticalU_1);
-
-            Controller2.LstickU = isChangeController ? GetAxisDown("DS4verticalLstick_1", Axies.LstickVerticalU_1) : GetAxisDown("DS4verticalLstick_2", Axies.LstickVerticalU_2);
-
-            Controller1.LstickD = GetAxisDown("DS4verticalLstick_1", Axies.LstickVerticalD_1);
-
-            Controller2.LstickD = GetAxisDown("DS4verticalLstick_2", Axies.LstickVerticalD_2);
-
-            Controller1.LstickL = GetAxisDown("DS4horizontalLstick_1", Axies.LstickHorizontalL_1);
-
-            Controller2.LstickL = GetAxisDown("DS4horizontalLstick_2", Axies.LstickHorizontalL_2);
-
-            Controller1.LstickR = GetAxisDown("DS4horizontalLstick_1", Axies.LstickHorizontalR_1);
-
-            Controller2.LstickR = GetAxisDown("DS4horizontalLstick_2", Axies.LstickHorizontalR_2);
-
-            Controller1.R1 = Input.GetButtonDown("DS4R1_1");
-
-            Controller2.R1 = Input.GetButtonDown("DS4R1_2");
-
-            Controller1.R2 = Input.GetButtonDown("DS4R2_1");
-
-            Controller2.R2 = Input.GetButtonDown("DS4R2_2");
-
-            Controller1.R3 = Input.GetButtonDown("DS4R3_1");
-
-            Controller2.R3 = Input.GetButtonDown("DS4R3_2");
-
-            Controller1.RstickU = GetAxisDown("DS4verticalRstick_1", Axies.RstickVerticalU_1);
-
-            Controller2.RstickU = GetAxisDown("DS4verticalRstick_2", Axies.RstickVerticalU_2);
-
-            Controller1.RstickD = GetAxisDown("DS4verticalRstick_1", Axies.RstickVerticalD_1);
-
-            Controller2.RstickD = GetAxisDown("DS4verticalRstick_2", Axies.RstickVerticalD_2);
-
-            Controller1.RstickL = GetAxisDown("DS4horizontalRstick_1", Axies.RstickHorizontalL_1);
-
-            Controller2.RstickL = GetAxisDown("DS4horizontalRstick_2", Axies.RstickHorizontalL_2);
-
-            Controller1.RstickR = GetAxisDown("DS4horizontalRstick_1", Axies.RstickHorizontalR_1);
-
-            Controller2.RstickR = GetAxisDown("DS4horizontalRstick_2", Axies.RstickHorizontalR_2);
-            */
+            // コントローラ２の入力
+            GetAxisDown(Axis.PadVertical, InputController.PlayerTwo);
+            GetAxisDown(Axis.PadHorizontal, InputController.PlayerTwo);
+            GetAxisDown(Axis.LstickVertical, InputController.PlayerTwo);
+            GetAxisDown(Axis.LstickHorizontal, InputController.PlayerTwo);
+            Controller2.Circle = isChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button2) : Input.GetKeyDown(KeyCode.Joystick2Button2);
+            Controller2.Cross = isChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button1) : Input.GetKeyDown(KeyCode.Joystick2Button1);
+            Controller2.Triangle = isChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button3) : Input.GetKeyDown(KeyCode.Joystick2Button3);
+            Controller2.Square = isChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button0) : Input.GetKeyDown(KeyCode.Joystick2Button0);
+            Controller2.L1 = isChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button4) : Input.GetKeyDown(KeyCode.Joystick2Button4);
+            Controller2.R1 = isChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button5) : Input.GetKeyDown(KeyCode.Joystick2Button5);
+            Controller2.L2 = isChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button6) : Input.GetKeyDown(KeyCode.Joystick2Button6);
+            Controller2.R2 = isChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button7) : Input.GetKeyDown(KeyCode.Joystick2Button7);
         }
-
-        /*
-        /// <summary>
-        /// GetAxisを入力を検知したタイミングだけ取得
-        /// </summary>
-        /// <param name="axisName">取得したいAxis(InputManagerに登録した名前)</param>
-        /// <param name="axis">取得したい入力方向</param>
-        /// <returns></returns>
-        private bool GetAxisDown(string axisName, Axies axis)
-        {
-            var input = Input.GetAxis(axisName);
-            switch (axis)
-            {
-                case Axies.PadUp_1:
-                    if(input > 0)
-                    {
-                        if (!firstAxisFlag.Pu)
-                        {
-                            firstAxisFlag.Pu = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Pu = false;
-                        return false;
-                    }
-                case Axies.PadDown_1:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.Pd)
-                        {
-                            firstAxisFlag.Pd = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Pd = false;
-                        return false;
-                    }
-                case Axies.PadLeft_1:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.Pl)
-                        {
-                            firstAxisFlag.Pl = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Pl = false;
-                        return false;
-                    }
-                case Axies.PadRight_1:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Pr)
-                        {
-                            firstAxisFlag.Pr = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Pr = false;
-                        return false;
-                    }
-                case Axies.LstickVerticalU_1:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Lu)
-                        {
-                            firstAxisFlag.Lu = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Lu = false;
-                        return false;
-                    }
-                case Axies.LstickVerticalD_1:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.Ld)
-                        {
-                            firstAxisFlag.Ld = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Ld = false;
-                        return false;
-                    }
-                case Axies.LstickHorizontalL_1:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.Ll)
-                        {
-                            firstAxisFlag.Ll = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Ll = false;
-                        return false;
-                    }
-                case Axies.LstickHorizontalR_1:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Lr)
-                        {
-                            firstAxisFlag.Lr = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Lr = false;
-                        return false;
-                    }
-                case Axies.RstickVerticalU_1:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Ru)
-                        {
-                            firstAxisFlag.Ru = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Ru = false;
-                        return false;
-                    }
-                case Axies.RstickVerticalD_1:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.Rd)
-                        {
-                            firstAxisFlag.Rd = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Rd = false;
-                        return false;
-                    }
-                case Axies.RstickHorizontalL_1:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.Rs)
-                        {
-                            firstAxisFlag.Rs = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Rs = false;
-                        return false;
-                    }
-                case Axies.RstickHorizontalR_1:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Rr)
-                        {
-                            firstAxisFlag.Rr = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.Rr = false;
-                        return false;
-                    }
-                case Axies.PadUp_2:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.PadUp_2)
-                        {
-                            firstAxisFlag.PadUp_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.PadUp_2 = false;
-                        return false;
-                    }
-                case Axies.PadDown_2:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.PadDown_2)
-                        {
-                            firstAxisFlag.PadDown_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.PadDown_2 = false;
-                        return false;
-                    }
-                case Axies.PadLeft_2:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.PadLeft_2)
-                        {
-                            firstAxisFlag.PadLeft_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.PadLeft_2 = false;
-                        return false;
-                    }
-                case Axies.PadRight_2:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.PadRight_2)
-                        {
-                            firstAxisFlag.PadRight_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.PadRight_2 = false;
-                        return false;
-                    }
-                case Axies.LstickVerticalU_2:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.LstickVerticalU_2)
-                        {
-                            firstAxisFlag.LstickVerticalU_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.LstickVerticalU_2 = false;
-                        return false;
-                    }
-                case Axies.LstickVerticalD_2:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.LstickVerticalD_2)
-                        {
-                            firstAxisFlag.LstickVerticalD_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.LstickVerticalD_2 = false;
-                        return false;
-                    }
-                case Axies.LstickHorizontalL_2:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.LstickHorizontalL_2)
-                        {
-                            firstAxisFlag.LstickHorizontalL_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.LstickHorizontalL_2 = false;
-                        return false;
-                    }
-                case Axies.LstickHorizontalR_2:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.LstickHorizontalR_2)
-                        {
-                            firstAxisFlag.LstickHorizontalR_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.LstickHorizontalR_2 = false;
-                        return false;
-                    }
-                case Axies.RstickVerticalU_2:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.RstickVerticalU_2)
-                        {
-                            firstAxisFlag.RstickVerticalU_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.RstickVerticalU_2 = false;
-                        return false;
-                    }
-                case Axies.RstickVerticalD_2:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.RstickVerticalD_2)
-                        {
-                            firstAxisFlag.RstickVerticalD_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.RstickVerticalD_2 = false;
-                        return false;
-                    }
-                case Axies.RstickHorizontalL_2:
-                    if (input < 0)
-                    {
-                        if (!firstAxisFlag.RstickHorizontalL_2)
-                        {
-                            firstAxisFlag.RstickHorizontalL_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.RstickHorizontalL_2 = false;
-                        return false;
-                    }
-                case Axies.RstickHorizontalR_2:
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.RstickHorizontalR_2)
-                        {
-                            firstAxisFlag.RstickHorizontalR_2 = true;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        firstAxisFlag.RstickHorizontalR_2 = false;
-                        return false;
-                    }
-                default:
-                    return false;
-            }
-        }
-        */
 
         /// <summary>
         /// GetAxisをGetButtonDownのように入力したときだけ取得する
         /// </summary>
         /// <param name="axis">取得したいAxis</param>
+        /// /// <param name="controller">対象コントローラー</param>
         /// <returns></returns>
-        private void GetAxisDown(Axis axis)
+        private void GetAxisDown(Axis axis, InputController controller = InputController.PlayerOne)
         {
             float input;
             switch (axis)
             {
-                case Axis.PadVertical_1:
-                    input = Input.GetAxis(padVertical_1);
-                    if (input > 0)
+                case Axis.PadVertical:
+                    if(controller == InputController.PlayerOne)
                     {
-                        if (!firstAxisFlag.Pu)
+                        input = Input.GetAxis(padVertical_1);
+                        if (input > 0)
                         {
-                            firstAxisFlag.Pu = true;
-                            _ = isChangeController ? Controller2.UpKey = true : Controller1.UpKey = true;
-                            Debug.Log((_=Controller1.UpKey?"Pad1: ":"Pad2: ") + "Up");
+                            if (!firstAxisFlag.Pu)
+                            {
+                                firstAxisFlag.Pu = true;
+                                _ = isChangeController ? Controller2.UpKey = true : Controller1.UpKey = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.UpKey = false : Controller1.UpKey = false;
                             return;
                         }
-                        _ = isChangeController ? Controller2.UpKey = false : Controller1.UpKey = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!firstAxisFlag.Pd)
+                        else if (input < 0)
                         {
-                            firstAxisFlag.Pd = true;
-                            _ = isChangeController ? Controller2.DownKey = true : Controller1.DownKey = true;
-                            Debug.Log((_ = Controller1.DownKey ? "Pad1: " : "Pad2: ") + "Down");
+                            if (!firstAxisFlag.Pd)
+                            {
+                                firstAxisFlag.Pd = true;
+                                _ = isChangeController ? Controller2.DownKey = true : Controller1.DownKey = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.DownKey = false : Controller1.DownKey = false;
                             return;
                         }
-                        _ = isChangeController ? Controller2.DownKey = false : Controller1.DownKey = false;
-                        return;
+                        else
+                        {
+                            if (firstAxisFlag.Pu) firstAxisFlag.Pu = false;
+                            if (firstAxisFlag.Pd) firstAxisFlag.Pd = false;
+                            return;
+                        }
                     }
                     else
                     {
-                        if (firstAxisFlag.Pu) firstAxisFlag.Pu = false;
-                        if (firstAxisFlag.Pd) firstAxisFlag.Pd = false;
-                        return;
-                    }
-                case Axis.PadVertical_2:
-                    input = Input.GetAxis(padVertical_2);
-                    if(input > 0)
-                    {
-                        if (!secondAxisFlag.Pu)
+                        input = Input.GetAxis(padVertical_2);
+                        if (input > 0)
                         {
-                            secondAxisFlag.Pu = true;
-                            _ = isChangeController ? Controller1.UpKey = true : Controller2.UpKey = true;
-                            Debug.Log((_ = Controller1.UpKey ? "Pad1: " : "Pad2: ") + "Up");
+                            if (!secondAxisFlag.Pu)
+                            {
+                                secondAxisFlag.Pu = true;
+                                _ = isChangeController ? Controller1.UpKey = true : Controller2.UpKey = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.UpKey = false : Controller2.UpKey = false;
                             return;
                         }
-                        _ = isChangeController ? Controller1.UpKey = false : Controller2.UpKey = false;
-                        return;
-                    }
-                    else if(input < 0)
-                    {
-                        if (!secondAxisFlag.Pd)
+                        else if (input < 0)
                         {
-                            secondAxisFlag.Pd = true;
-                            _ = isChangeController ? Controller1.DownKey = true : Controller2.DownKey = true;
-                            Debug.Log((_ = Controller1.DownKey ? "Pad1: " : "Pad2: ") + "Down");
+                            if (!secondAxisFlag.Pd)
+                            {
+                                secondAxisFlag.Pd = true;
+                                _ = isChangeController ? Controller1.DownKey = true : Controller2.DownKey = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.DownKey = false : Controller2.DownKey = false;
                             return;
                         }
-                        _ = isChangeController ? Controller1.DownKey = false : Controller2.DownKey = false;
-                        return;
+                        else
+                        {
+                            if (secondAxisFlag.Pu) secondAxisFlag.Pu = false;
+                            if (secondAxisFlag.Pd) secondAxisFlag.Pd = false;
+                            return;
+                        }
+                    }
+                case Axis.PadHorizontal:
+                    if (controller == InputController.PlayerOne)
+                    {
+                        input = Input.GetAxis(padHorizontal_1);
+                        if (input > 0)
+                        {
+                            if (!firstAxisFlag.Pr)
+                            {
+                                firstAxisFlag.Pr = true;
+                                _ = isChangeController ? Controller2.RightKey = true : Controller1.RightKey = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.RightKey = false : Controller1.RightKey = false;
+                            return;
+                        }
+                        else if (input < 0)
+                        {
+                            if (!firstAxisFlag.Pl)
+                            {
+                                firstAxisFlag.Pl = true;
+                                _ = isChangeController ? Controller2.LeftKey = true : Controller1.LeftKey = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.LeftKey = false : Controller1.LeftKey = false;
+                            return;
+                        }
+                        else
+                        {
+                            if (firstAxisFlag.Pr) firstAxisFlag.Pr = false;
+                            if (firstAxisFlag.Pl) firstAxisFlag.Pl = false;
+                            return;
+                        }
                     }
                     else
                     {
-                        if (secondAxisFlag.Pu) secondAxisFlag.Pu = false;
-                        if (secondAxisFlag.Pd) secondAxisFlag.Pd = false;
-                        return;
-                    }
-                case Axis.PadHorizontal_1:
-                    input = Input.GetAxis(padHorizontal_1);
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Pr)
+                        input = Input.GetAxis(padHorizontal_2);
+                        if (input > 0)
                         {
-                            firstAxisFlag.Pr = true;
-                            _ = isChangeController ? Controller2.RightKey = true : Controller1.RightKey = true;
-                            Debug.Log((_ = Controller1.RightKey ? "Pad1: " : "Pad2: ") + "Right");
+                            if (!secondAxisFlag.Pr)
+                            {
+                                secondAxisFlag.Pr = true;
+                                _ = isChangeController ? Controller1.RightKey = true : Controller2.RightKey = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.RightKey = false : Controller2.RightKey = false;
                             return;
                         }
-                        _ = isChangeController ? Controller2.RightKey = false : Controller1.RightKey = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!firstAxisFlag.Pl)
+                        else if (input < 0)
                         {
-                            firstAxisFlag.Pl = true;
-                            _ = isChangeController ? Controller2.LeftKey = true : Controller1.LeftKey = true;
-                            Debug.Log((_ = Controller1.LeftKey ? "Pad1: " : "Pad2: ") + "Left");
+                            if (!secondAxisFlag.Pl)
+                            {
+                                secondAxisFlag.Pl = true;
+                                _ = isChangeController ? Controller1.LeftKey = true : Controller2.LeftKey = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.LeftKey = false : Controller2.LeftKey = false;
                             return;
                         }
-                        _ = isChangeController ? Controller2.LeftKey = false : Controller1.LeftKey = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (firstAxisFlag.Pr) firstAxisFlag.Pr = false;
-                        if (firstAxisFlag.Pl) firstAxisFlag.Pl = false;
-                        return;
-                    }
-                case Axis.PadHorizontal_2:
-                    input = Input.GetAxis(padHorizontal_2);
-                    if (input > 0)
-                    {
-                        if (!secondAxisFlag.Pr)
+                        else
                         {
-                            secondAxisFlag.Pr = true;
-                            _ = isChangeController ? Controller1.RightKey = true : Controller2.RightKey = true;
-                            Debug.Log((_ = Controller1.RightKey ? "Pad1: " : "Pad2: ") + "Right");
+                            if (secondAxisFlag.Pr) secondAxisFlag.Pr = false;
+                            if (secondAxisFlag.Pl) secondAxisFlag.Pl = false;
                             return;
                         }
-                        _ = isChangeController ? Controller1.RightKey = false : Controller2.RightKey = false;
-                        return;
                     }
-                    else if (input < 0)
+                case Axis.LstickVertical:
+                    if (controller == InputController.PlayerOne)
                     {
-                        if (!secondAxisFlag.Pl)
+                        input = Input.GetAxis(leftVertical_1);
+                        if (input > 0)
                         {
-                            secondAxisFlag.Pl = true;
-                            _ = isChangeController ? Controller1.LeftKey = true : Controller2.LeftKey = true;
-                            Debug.Log((_ = Controller1.LeftKey ? "Pad1: " : "Pad2: ") + "Left");
+                            if (!firstAxisFlag.Lu)
+                            {
+                                firstAxisFlag.Lu = true;
+                                _ = isChangeController ? Controller2.LstickU = true : Controller1.LstickU = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.LstickU = false : Controller1.LstickU = false;
                             return;
                         }
-                        _ = isChangeController ? Controller1.LeftKey = false : Controller2.LeftKey = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (secondAxisFlag.Pr) secondAxisFlag.Pr = false;
-                        if (secondAxisFlag.Pl) secondAxisFlag.Pl = false;
-                        return;
-                    }
-                case Axis.LstickVertical_1:
-                    input = Input.GetAxis(leftVertical_1);
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Lu)
+                        else if (input < 0)
                         {
-                            firstAxisFlag.Lu = true;
-                            _ = isChangeController ? Controller2.LstickU = true : Controller1.LstickU = true;
-                            Debug.Log((_ = Controller1.LstickU ? "Lstick1: " : "Lstick2: ") + "Up");
+                            if (!firstAxisFlag.Ld)
+                            {
+                                firstAxisFlag.Ld = true;
+                                _ = isChangeController ? Controller2.LstickD = true : Controller1.LstickD = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.LstickD = false : Controller1.LstickD = false;
                             return;
                         }
-                        _ = isChangeController ? Controller2.LstickU = false : Controller1.LstickU = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!firstAxisFlag.Ld)
+                        else
                         {
-                            firstAxisFlag.Ld = true;
-                            _ = isChangeController ? Controller2.LstickD = true : Controller1.LstickD = true;
-                            Debug.Log((_ = Controller1.LstickD ? "Lstick1: " : "Lstick2: ") + "Down");
+                            if (firstAxisFlag.Lu) firstAxisFlag.Lu = false;
+                            if (firstAxisFlag.Ld) firstAxisFlag.Ld = false;
                             return;
                         }
-                        _ = isChangeController ? Controller2.LstickD = false : Controller1.LstickD = false;
-                        return;
                     }
                     else
                     {
-                        if (firstAxisFlag.Lu) firstAxisFlag.Lu = false;
-                        if (firstAxisFlag.Ld) firstAxisFlag.Ld = false;
-                        return;
-                    }
-                case Axis.LstickVertical_2:
-                    input = Input.GetAxis(leftVertical_2);
-                    if (input > 0)
-                    {
-                        if (!secondAxisFlag.Lu)
+                        input = Input.GetAxis(leftVertical_2);
+                        if (input > 0)
                         {
-                            secondAxisFlag.Lu = true;
-                            _ = isChangeController ? Controller1.LstickU = true : Controller2.LstickU = true;
-                            Debug.Log((_ = Controller1.LstickU ? "Lstick1: " : "Lstick2: ") + "Up");
+                            if (!secondAxisFlag.Lu)
+                            {
+                                secondAxisFlag.Lu = true;
+                                _ = isChangeController ? Controller1.LstickU = true : Controller2.LstickU = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.LstickU = false : Controller2.LstickU = false;
                             return;
                         }
-                        _ = isChangeController ? Controller1.LstickU = false : Controller2.LstickU = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!secondAxisFlag.Ld)
+                        else if (input < 0)
                         {
-                            secondAxisFlag.Ld = true;
-                            _ = isChangeController ? Controller1.LstickD = true : Controller2.LstickD = true;
-                            Debug.Log((_ = Controller1.LstickD ? "Lstick1: " : "Lstick2: ") + "Down");
+                            if (!secondAxisFlag.Ld)
+                            {
+                                secondAxisFlag.Ld = true;
+                                _ = isChangeController ? Controller1.LstickD = true : Controller2.LstickD = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.LstickD = false : Controller2.LstickD = false;
                             return;
                         }
-                        _ = isChangeController ? Controller1.LstickD = false : Controller2.LstickD = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (secondAxisFlag.Lu) secondAxisFlag.Lu = false;
-                        if (secondAxisFlag.Ld) secondAxisFlag.Ld = false;
-                        return;
-                    }
-                case Axis.LstickHorizontal_1:
-                    input = Input.GetAxis(leftHorizontal_1);
-                    if (input > 0)
-                    {
-                        if (firstAxisFlag.Lr)
+                        else
                         {
-                            firstAxisFlag.Lr = true;
-                            _ = isChangeController ? Controller2.LstickR = true : Controller1.LstickR = true;
-                            Debug.Log("");
+                            if (secondAxisFlag.Lu) secondAxisFlag.Lu = false;
+                            if (secondAxisFlag.Ld) secondAxisFlag.Ld = false;
                             return;
                         }
-                        _ = isChangeController ? Controller2.LstickR = false : Controller1.LstickR = false;
-                        return;
                     }
-                    else if (input < 0)
+                case Axis.LstickHorizontal:
+                    if (controller == InputController.PlayerOne)
                     {
-                        return;
-                    }
-                    else
-                    {
-                        return;
-                    }
-                case Axis.LstickHorizontal_2:
-                    input = Input.GetAxis(leftHorizontal_2);
-                    if (input > 0)
-                    {
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        return;
-                    }
-                case Axis.RstickVertical_1:
-                    input = Input.GetAxis(rightVertical_1);
-                    if (input > 0)
-                    {
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        return;
-                    }
-                case Axis.RstickVertical_2:
-                    input = Input.GetAxis(rightVertical_2);
-                    if (input > 0)
-                    {
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        return;
+                        input = Input.GetAxis(leftHorizontal_1);
+                        if (input > 0)
+                        {
+                            if (!firstAxisFlag.Lr)
+                            {
+                                firstAxisFlag.Lr = true;
+                                _ = isChangeController ? Controller2.LstickR = true : Controller1.LstickR = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.LstickR = false : Controller1.LstickR = false;
+                            return;
+                        }
+                        else if (input < 0)
+                        {
+                            if (!firstAxisFlag.Ll)
+                            {
+                                firstAxisFlag.Ll = true;
+                                _ = isChangeController ? Controller2.LstickL = true : Controller1.LstickL = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.LstickL = false : Controller1.LstickL = false;
+                            return;
+                        }
+                        else
+                        {
+                            if (firstAxisFlag.Lr) firstAxisFlag.Lr = false;
+                            if (firstAxisFlag.Ll) firstAxisFlag.Ll = false;
+                            return;
+                        }
                     }
                     else
                     {
-                        return;
+                        input = Input.GetAxis(leftHorizontal_2);
+                        if (input > 0)
+                        {
+                            if (!secondAxisFlag.Lr)
+                            {
+                                secondAxisFlag.Lr = true;
+                                _ = isChangeController ? Controller1.LstickR = true : Controller2.LstickR = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.LstickR = false : Controller2.LstickR = false;
+                            return;
+                        }
+                        else if (input < 0)
+                        {
+                            if (!secondAxisFlag.Ll)
+                            {
+                                secondAxisFlag.Ll = true;
+                                _ = isChangeController ? Controller1.LstickL = true : Controller2.LstickL = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.LstickL = false : Controller2.LstickL = false;
+                            return;
+                        }
+                        else
+                        {
+                            if (secondAxisFlag.Lr) secondAxisFlag.Lr = false;
+                            if (secondAxisFlag.Ll) secondAxisFlag.Ll = false;
+                            return;
+                        }
                     }
-                case Axis.RstickHorizontal_1:
-                    input = Input.GetAxis(rightHorizontal_1);
-                    if (input > 0)
+                case Axis.RstickVertical:
+                    if (controller == InputController.PlayerOne)
                     {
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        return;
+                        input = Input.GetAxis(rightVertical_1);
+                        if (input > 0)
+                        {
+                            if (!firstAxisFlag.Ru)
+                            {
+                                firstAxisFlag.Ru = true;
+                                _ = isChangeController ? Controller2.RstickU = true : Controller1.RstickU = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.RstickU = false : Controller1.RstickU = false;
+                            return;
+                        }
+                        else if (input < 0)
+                        {
+                            if (!firstAxisFlag.Rd)
+                            {
+                                firstAxisFlag.Rd = true;
+                                _ = isChangeController ? Controller2.RstickD = true : Controller1.RstickD = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.RstickD = false : Controller1.RstickD = false;
+                            return;
+                        }
+                        else
+                        {
+                            if (firstAxisFlag.Ru) firstAxisFlag.Ru = false;
+                            if (firstAxisFlag.Rd) firstAxisFlag.Rd = false;
+                            return;
+                        }
                     }
                     else
                     {
-                        return;
+                        input = Input.GetAxis(rightVertical_2);
+                        if (input > 0)
+                        {
+                            if (!secondAxisFlag.Ru)
+                            {
+                                secondAxisFlag.Ru = true;
+                                _ = isChangeController ? Controller1.RstickU = true : Controller2.RstickU = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.RstickU = false : Controller2.RstickU = false;
+                            return;
+                        }
+                        else if (input < 0)
+                        {
+                            if (!secondAxisFlag.Rd)
+                            {
+                                secondAxisFlag.Rd = true;
+                                _ = isChangeController ? Controller1.RstickD = true : Controller2.RstickD = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.RstickD = false : Controller2.RstickD = false;
+                            return;
+                        }
+                        else
+                        {
+                            if (secondAxisFlag.Ru) secondAxisFlag.Ru = false;
+                            if (secondAxisFlag.Rd) secondAxisFlag.Rd = false;
+                            return;
+                        }
                     }
-                case Axis.RstickHorizontal_2:
-                    input = Input.GetAxis(rightHorizontal_2);
-                    if (input > 0)
+                case Axis.RstickHorizontal:
+                    if (controller == InputController.PlayerOne)
                     {
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        return;
+                        input = Input.GetAxis(rightHorizontal_1);
+                        if (input > 0)
+                        {
+                            if (!firstAxisFlag.Rr)
+                            {
+                                firstAxisFlag.Rr = true;
+                                _ = isChangeController ? Controller2.RstickR = true : Controller1.RstickR = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.RstickR = true : Controller1.RstickR = true;
+                            return;
+                        }
+                        else if (input < 0)
+                        {
+                            if (!firstAxisFlag.Rl)
+                            {
+                                firstAxisFlag.Rl = true;
+                                _ = isChangeController ? Controller2.RstickL = true : Controller1.RstickL = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller2.RstickL = true : Controller1.RstickL = true;
+                            return;
+                        }
+                        else
+                        {
+                            if (firstAxisFlag.Rr) firstAxisFlag.Rr = false;
+                            if (firstAxisFlag.Rl) firstAxisFlag.Rl = false;
+                            return;
+                        }
                     }
                     else
                     {
-                        return;
+                        input = Input.GetAxis(rightHorizontal_2);
+                        if (input > 0)
+                        {
+                            if (!secondAxisFlag.Rr)
+                            {
+                                secondAxisFlag.Rr = true;
+                                _ = isChangeController ? Controller1.RstickR = true : Controller2.RstickR = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.RstickR = false : Controller2.RstickR = false;
+                            return;
+                        }
+                        else if (input < 0)
+                        {
+                            if (!secondAxisFlag.Rl)
+                            {
+                                secondAxisFlag.Rl = true;
+                                _ = isChangeController ? Controller1.RstickL = true : Controller2.RstickL = true;
+                                return;
+                            }
+                            _ = isChangeController ? Controller1.RstickL = false : Controller2.RstickL = false;
+                            return;
+                        }
+                        else
+                        {
+                            if (secondAxisFlag.Rr) secondAxisFlag.Rr = false;
+                            if (secondAxisFlag.Rl) secondAxisFlag.Rl = false;
+                            return;
+                        }
                     }
                 default:
                     return;
             }
         }
 
-        private enum Axies
-        {
-            PadUp_1,
-            PadDown_1,
-            PadLeft_1,
-            PadRight_1,
-            LstickVerticalU_1,
-            LstickVerticalD_1,
-            LstickHorizontalL_1,
-            LstickHorizontalR_1,
-            RstickVerticalU_1,
-            RstickVerticalD_1,
-            RstickHorizontalL_1,
-            RstickHorizontalR_1,
-            PadUp_2,
-            PadDown_2,
-            PadLeft_2,
-            PadRight_2,
-            LstickVerticalU_2,
-            LstickVerticalD_2,
-            LstickHorizontalL_2,
-            LstickHorizontalR_2,
-            RstickVerticalU_2,
-            RstickVerticalD_2,
-            RstickHorizontalL_2,
-            RstickHorizontalR_2
-        }
-
         private enum Axis
         {
-            PadVertical_1,
-            PadHorizontal_1,
-            LstickVertical_1,
-            LstickHorizontal_1,
-            RstickVertical_1,
-            RstickHorizontal_1,
-            PadVertical_2,
-            PadHorizontal_2,
-            LstickVertical_2,
-            LstickHorizontal_2,
-            RstickVertical_2,
-            RstickHorizontal_2
+            PadVertical,
+            PadHorizontal,
+            LstickVertical,
+            LstickHorizontal,
+            RstickVertical,
+            RstickHorizontal
+        }
+
+        /// <summary>
+        /// シーンが遷移したらそのシーンのStandaloneInputModuleを探す
+        /// </summary>
+        /// <param name="scene"></param>
+        /// <param name="mode"></param>
+        private void InputModuleCheck(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+        {
+            if(inputModule == null)
+            {
+                // InputModuleを探す
+                inputModule = FindObjectOfType<UnityEngine.EventSystems.StandaloneInputModule>();
+            }
+            SetInputModule(NowControlPlayer);
+        }
+
+        /// <summary>
+        /// アクティブシーンが切り替わったらそのシーンのStandaloneInputModuleを探す
+        /// </summary>
+        /// <param name="scene"></param>
+        /// <param name="mode"></param>
+        private void InputModuleCheck(UnityEngine.SceneManagement.Scene thisScene, UnityEngine.SceneManagement.Scene nextScene)
+        {
+            if (inputModule == null)
+            {
+                // InputModuleを探す
+                inputModule = FindObjectOfType<UnityEngine.EventSystems.StandaloneInputModule>();
+            }
+            SetInputModule(NowControlPlayer);
+        }
+
+        /// <summary>
+        /// StandaloneInputModuleをPS4入力に対応させる
+        /// </summary>
+        /// <param name="input"></param>
+        public void SetInputModule(InputController input)
+        {
+            // シーン内にStandaloneInputModuleが無ければ処理を終了
+            if (inputModule == null) return;
+
+            // PS4入力に対応させる
+            if(input == InputController.PlayerOne)
+            {
+                inputModule.submitButton = isChangeController ? submit_2 : submit_1;
+                inputModule.cancelButton = isChangeController ? cancel_2 : cancel_1;
+                if (useLstickForUI)
+                {
+                    inputModule.verticalAxis = isChangeController ? leftVertical_2 : leftVertical_1;
+                    inputModule.horizontalAxis = isChangeController ? leftHorizontal_2 : leftHorizontal_1;
+                }
+                else
+                {
+                    inputModule.verticalAxis = isChangeController ? padVertical_2 : padVertical_1;
+                    inputModule.horizontalAxis = isChangeController ? padHorizontal_2 : padHorizontal_1;
+                }
+            }
+            else
+            {
+                inputModule.submitButton = isChangeController ? submit_1 : submit_2;
+                inputModule.cancelButton = isChangeController ? cancel_1 : cancel_2;
+                if (useLstickForUI)
+                {
+                    inputModule.verticalAxis = isChangeController ? leftVertical_1 : leftVertical_2;
+                    inputModule.horizontalAxis = isChangeController ? leftHorizontal_1 : leftHorizontal_2;
+                }
+                else
+                {
+                    inputModule.verticalAxis = isChangeController ? padVertical_1 : padVertical_2;
+                    inputModule.horizontalAxis = isChangeController ? padHorizontal_1 : padHorizontal_2;
+                }
+            }
         }
     }
 }

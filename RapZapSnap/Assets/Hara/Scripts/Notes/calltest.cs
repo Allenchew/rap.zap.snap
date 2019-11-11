@@ -15,10 +15,21 @@ public class calltest : MonoBehaviour
     [SerializeField]
     private MoveMode moveMode = MoveMode.Arrival;
 
+    public static calltest Instance { private set; get; } = null;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        
     }
 
     // Update is called once per frame
@@ -38,6 +49,5 @@ public class calltest : MonoBehaviour
             NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(-5, -10, 0), new Vector3(-5, 4, 0));
             //NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(5, -10, 0), new Vector3(5, 4, 0), TargetPlayer.PlayerTwo);
         }
-
     }
 }
