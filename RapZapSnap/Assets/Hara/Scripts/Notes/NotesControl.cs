@@ -106,16 +106,16 @@ public class NotesControl : MonoBehaviour
         }
     }
 
-    public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, TargetPlayer targetPlayer = TargetPlayer.PlayerOne, float duration = 1.0f)
+    public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, InputController targetPlayer = InputController.PlayerOne, float duration = 1.0f)
     {
-        bool notesActive = targetPlayer == TargetPlayer.PlayerOne ? firstPlayerNotes[firstPlayerCallCount].gameObject.activeSelf : secondPlayerNotes[secondPlayerCallCount].gameObject.activeSelf;
+        bool notesActive = targetPlayer == InputController.PlayerOne ? firstPlayerNotes[firstPlayerCallCount].gameObject.activeSelf : secondPlayerNotes[secondPlayerCallCount].gameObject.activeSelf;
 
         if (notesActive)
         {
             return;
         }
 
-        if(targetPlayer == TargetPlayer.PlayerOne)
+        if(targetPlayer == InputController.PlayerOne)
         {
             firstPlayerNotes[firstPlayerCallCount].SetNotesData(notesType, startPos, goalPos, targetPlayer, duration, MoveMode.Pass, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
 
@@ -140,27 +140,27 @@ public class NotesControl : MonoBehaviour
 
         NotesType notesType;
 
-        if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.Circle : GamePadControl.Instance.Controller2.Circle)
+        if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == InputController.PlayerOne ? GamePadControl.Instance.Controller1.Circle : GamePadControl.Instance.Controller2.Circle)
         {
             notesType = NotesType.CircleKey;
         }
-        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.Cross : GamePadControl.Instance.Controller2.Cross)
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == InputController.PlayerOne ? GamePadControl.Instance.Controller1.Cross : GamePadControl.Instance.Controller2.Cross)
         {
             notesType = NotesType.CrossKey;
         }
-        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.Triangle : GamePadControl.Instance.Controller2.Triangle)
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == InputController.PlayerOne ? GamePadControl.Instance.Controller1.Triangle : GamePadControl.Instance.Controller2.Triangle)
         {
             notesType = NotesType.TriangleKey;
         }
-        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.UpKey : GamePadControl.Instance.Controller2.UpKey)
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == InputController.PlayerOne ? GamePadControl.Instance.Controller1.UpKey : GamePadControl.Instance.Controller2.UpKey)
         {
             notesType = NotesType.UpArrow;
         }
-        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.DownKey : GamePadControl.Instance.Controller2.DownKey)
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == InputController.PlayerOne ? GamePadControl.Instance.Controller1.DownKey : GamePadControl.Instance.Controller2.DownKey)
         {
             notesType = NotesType.DownArrow;
         }
-        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == TargetPlayer.PlayerOne ? GamePadControl.Instance.Controller1.LeftKey : GamePadControl.Instance.Controller2.LeftKey)
+        else if (firstPlayerNotes[firstPlayerNotesCount].InputPlayer == InputController.PlayerOne ? GamePadControl.Instance.Controller1.LeftKey : GamePadControl.Instance.Controller2.LeftKey)
         {
             notesType = NotesType.LeftArrow;
         }

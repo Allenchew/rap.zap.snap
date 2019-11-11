@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TargetPlayer
+public enum InputController
 {
     PlayerOne,
     PlayerTwo
@@ -16,6 +16,20 @@ namespace DS4
 
         private bool isChangeController = false;    // 1Pのコントローラーと2Pのコントローラーの入力を入れ替えるか
         private bool oneShotCall = true;
+
+        // PS4コントローラーのGetAxis用のAxis名
+        private readonly string padVertical_1 = "DS4verticalPad_1";
+        private readonly string padHorizontal_1 = "DS4horizontalPad_1";
+        private readonly string leftVertical_1 = "DS4verticalLstick_1";
+        private readonly string leftHorizontal_1 = "DS4horizontalLstick_1";
+        private readonly string rightVertical_1 = "DS4verticalRstick_1";
+        private readonly string rightHorizontal_1 = "DS4horizontalRstick_1";
+        private readonly string padVertical_2 = "DS4verticalPad_2";
+        private readonly string padHorizontal_2 = "DS4horizontalPad_2";
+        private readonly string leftVertical_2 = "DS4verticalLstick_2";
+        private readonly string leftHorizontal_2 = "DS4horizontalLstick_2";
+        private readonly string rightVertical_2 = "DS4verticalRstick_2";
+        private readonly string rightHorizontal_2 = "DS4horizontalRstick_2";
 
         public struct DS4Input1
         {
@@ -140,63 +154,56 @@ namespace DS4
         public DS4Input1 Controller1;
         public DS4Input2 Controller2;
 
-        private struct AxisFlag
+        /// <summary>
+        /// Controller1のGetAxisDown用のフラグ
+        /// </summary>
+        private struct AxisFlag_1
         {
-            public bool PadUp_1,
-            PadDown_1,
-            PadLeft_1,
-            PadRight_1,
-            LstickVerticalU_1,
-            LstickVerticalD_1,
-            LstickHorizontalL_1,
-            LstickHorizontalR_1,
-            RstickVerticalU_1,
-            RstickVerticalD_1,
-            RstickHorizontalL_1,
-            RstickHorizontalR_1,
-            PadUp_2,
-            PadDown_2,
-            PadLeft_2,
-            PadRight_2,
-            LstickVerticalU_2,
-            LstickVerticalD_2,
-            LstickHorizontalL_2,
-            LstickHorizontalR_2,
-            RstickVerticalU_2,
-            RstickVerticalD_2,
-            RstickHorizontalL_2,
-            RstickHorizontalR_2;
+            public bool Pu, Pd, Pl, Pr, Lu, Ld, Ll, Lr, Ru, Rd, Rl, Rr;
 
             public void ResetFlag()
             {
-                PadUp_1 = false;
-                PadDown_1 = false;
-                PadLeft_1 = false;
-                PadRight_1 = false;
-                LstickVerticalU_1 = false;
-                LstickVerticalD_1 = false;
-                LstickHorizontalL_1 = false;
-                LstickHorizontalR_1 = false;
-                RstickVerticalU_1 = false;
-                RstickVerticalD_1 = false;
-                RstickHorizontalL_1 = false;
-                RstickHorizontalR_1 = false;
-                PadUp_2 = false;
-                PadDown_2 = false;
-                PadLeft_2 = false;
-                PadRight_2 = false;
-                LstickVerticalU_2 = false;
-                LstickVerticalD_2 = false;
-                LstickHorizontalL_2 = false;
-                LstickHorizontalR_2 = false;
-                RstickVerticalU_2 = false;
-                RstickVerticalD_2 = false;
-                RstickHorizontalL_2 = false;
-                RstickHorizontalR_2 = false;
+                Pu = false;
+                Pd = false;
+                Pl = false;
+                Pr = false;
+                Lu = false;
+                Ld = false;
+                Ll = false;
+                Lr = false;
+                Ru = false;
+                Rd = false;
+                Rl = false;
+                Rr = false;
             }
         }
 
-        private AxisFlag axisFlag;
+        /// <summary>
+        /// Controller2のGetAxisDown用のフラグ
+        /// </summary>
+        private struct AxisFlag_2
+        {
+            public bool Pu, Pd, Pl, Pr, Lu, Ld, Ll, Lr, Ru, Rd, Rl, Rr;
+
+            public void ResetFlag()
+            {
+                Pu = false;
+                Pd = false;
+                Pl = false;
+                Pr = false;
+                Lu = false;
+                Ld = false;
+                Ll = false;
+                Lr = false;
+                Ru = false;
+                Rd = false;
+                Rl = false;
+                Rr = false;
+            }
+        }
+
+        private AxisFlag_1 firstAxisFlag;
+        private AxisFlag_2 secondAxisFlag;
 
         private void Awake()
         {
@@ -205,7 +212,8 @@ namespace DS4
                 Instance = this;
                 Controller1.ResetKey();
                 Controller2.ResetKey();
-                axisFlag.ResetFlag();
+                firstAxisFlag.ResetFlag();
+                secondAxisFlag.ResetFlag();
                 DontDestroyOnLoad(this);
             }
             else
@@ -233,7 +241,7 @@ namespace DS4
         {
             if (!oneShotCall) return;
 
-            if (Input.GetButtonDown("DS4circle_1"))
+            if (Input.GetKeyDown(KeyCode.Joystick1Button2))
             {
                 isChangeController = false;
                 oneShotCall = false;
@@ -241,7 +249,7 @@ namespace DS4
                 return;
             }
 
-            if (Input.GetButtonDown("DS4circle_2"))
+            if (Input.GetKeyDown(KeyCode.Joystick2Button2))
             {
                 isChangeController = true;
                 oneShotCall = false;
@@ -255,6 +263,8 @@ namespace DS4
         /// </summary>
         private void DS4_SingleInput()
         {
+            GetAxisDown(Axis.PadVertical_1);
+            /*
             Controller1.Circle = isChangeController ? Input.GetButtonDown("DS4circle_2") : Input.GetButtonDown("DS4circle_1");
 
             Controller2.Circle = isChangeController ? Input.GetButtonDown("DS4circle_1") : Input.GetButtonDown("DS4circle_2");
@@ -342,24 +352,10 @@ namespace DS4
             Controller1.RstickR = GetAxisDown("DS4horizontalRstick_1", Axies.RstickHorizontalR_1);
 
             Controller2.RstickR = GetAxisDown("DS4horizontalRstick_2", Axies.RstickHorizontalR_2);
-
-            Controller1.Option = Input.GetButtonDown("DS4option_1");
-
-            Controller2.Option = Input.GetButtonDown("DS4option_2");
-
-            Controller1.Share = Input.GetButtonDown("DS4share_1");
-
-            Controller2.Share = Input.GetButtonDown("DS4share_2");
-
-            Controller1.Home = Input.GetButtonDown("DS4home_1");
-
-            Controller2.Home = Input.GetButtonDown("DS4home_2");
-
-            Controller1.TrackPad = Input.GetButtonDown("DS4trackpad_1");
-
-            Controller2.TrackPad = Input.GetButtonDown("DS4trackpad_2");
+            */
         }
 
+        /*
         /// <summary>
         /// GetAxisを入力を検知したタイミングだけ取得
         /// </summary>
@@ -374,9 +370,9 @@ namespace DS4
                 case Axies.PadUp_1:
                     if(input > 0)
                     {
-                        if (!axisFlag.PadUp_1)
+                        if (!firstAxisFlag.Pu)
                         {
-                            axisFlag.PadUp_1 = true;
+                            firstAxisFlag.Pu = true;
                             return true;
                         }
                         else
@@ -386,15 +382,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.PadUp_1 = false;
+                        firstAxisFlag.Pu = false;
                         return false;
                     }
                 case Axies.PadDown_1:
                     if (input < 0)
                     {
-                        if (!axisFlag.PadDown_1)
+                        if (!firstAxisFlag.Pd)
                         {
-                            axisFlag.PadDown_1 = true;
+                            firstAxisFlag.Pd = true;
                             return true;
                         }
                         else
@@ -404,15 +400,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.PadDown_1 = false;
+                        firstAxisFlag.Pd = false;
                         return false;
                     }
                 case Axies.PadLeft_1:
                     if (input < 0)
                     {
-                        if (!axisFlag.PadLeft_1)
+                        if (!firstAxisFlag.Pl)
                         {
-                            axisFlag.PadLeft_1 = true;
+                            firstAxisFlag.Pl = true;
                             return true;
                         }
                         else
@@ -422,15 +418,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.PadLeft_1 = false;
+                        firstAxisFlag.Pl = false;
                         return false;
                     }
                 case Axies.PadRight_1:
                     if (input > 0)
                     {
-                        if (!axisFlag.PadRight_1)
+                        if (!firstAxisFlag.Pr)
                         {
-                            axisFlag.PadRight_1 = true;
+                            firstAxisFlag.Pr = true;
                             return true;
                         }
                         else
@@ -440,15 +436,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.PadRight_1 = false;
+                        firstAxisFlag.Pr = false;
                         return false;
                     }
                 case Axies.LstickVerticalU_1:
                     if (input > 0)
                     {
-                        if (!axisFlag.LstickVerticalU_1)
+                        if (!firstAxisFlag.Lu)
                         {
-                            axisFlag.LstickVerticalU_1 = true;
+                            firstAxisFlag.Lu = true;
                             return true;
                         }
                         else
@@ -458,15 +454,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.LstickVerticalU_1 = false;
+                        firstAxisFlag.Lu = false;
                         return false;
                     }
                 case Axies.LstickVerticalD_1:
                     if (input < 0)
                     {
-                        if (!axisFlag.LstickVerticalD_1)
+                        if (!firstAxisFlag.Ld)
                         {
-                            axisFlag.LstickVerticalD_1 = true;
+                            firstAxisFlag.Ld = true;
                             return true;
                         }
                         else
@@ -476,15 +472,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.LstickVerticalD_1 = false;
+                        firstAxisFlag.Ld = false;
                         return false;
                     }
                 case Axies.LstickHorizontalL_1:
                     if (input < 0)
                     {
-                        if (!axisFlag.LstickHorizontalL_1)
+                        if (!firstAxisFlag.Ll)
                         {
-                            axisFlag.LstickHorizontalL_1 = true;
+                            firstAxisFlag.Ll = true;
                             return true;
                         }
                         else
@@ -494,15 +490,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.LstickHorizontalL_1 = false;
+                        firstAxisFlag.Ll = false;
                         return false;
                     }
                 case Axies.LstickHorizontalR_1:
                     if (input > 0)
                     {
-                        if (!axisFlag.LstickHorizontalR_1)
+                        if (!firstAxisFlag.Lr)
                         {
-                            axisFlag.LstickHorizontalR_1 = true;
+                            firstAxisFlag.Lr = true;
                             return true;
                         }
                         else
@@ -512,15 +508,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.LstickHorizontalR_1 = false;
+                        firstAxisFlag.Lr = false;
                         return false;
                     }
                 case Axies.RstickVerticalU_1:
                     if (input > 0)
                     {
-                        if (!axisFlag.RstickVerticalU_1)
+                        if (!firstAxisFlag.Ru)
                         {
-                            axisFlag.RstickVerticalU_1 = true;
+                            firstAxisFlag.Ru = true;
                             return true;
                         }
                         else
@@ -530,15 +526,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.RstickVerticalU_1 = false;
+                        firstAxisFlag.Ru = false;
                         return false;
                     }
                 case Axies.RstickVerticalD_1:
                     if (input < 0)
                     {
-                        if (!axisFlag.RstickVerticalD_1)
+                        if (!firstAxisFlag.Rd)
                         {
-                            axisFlag.RstickVerticalD_1 = true;
+                            firstAxisFlag.Rd = true;
                             return true;
                         }
                         else
@@ -548,15 +544,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.RstickVerticalD_1 = false;
+                        firstAxisFlag.Rd = false;
                         return false;
                     }
                 case Axies.RstickHorizontalL_1:
                     if (input < 0)
                     {
-                        if (!axisFlag.RstickHorizontalL_1)
+                        if (!firstAxisFlag.Rs)
                         {
-                            axisFlag.RstickHorizontalL_1 = true;
+                            firstAxisFlag.Rs = true;
                             return true;
                         }
                         else
@@ -566,15 +562,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.RstickHorizontalL_1 = false;
+                        firstAxisFlag.Rs = false;
                         return false;
                     }
                 case Axies.RstickHorizontalR_1:
                     if (input > 0)
                     {
-                        if (!axisFlag.RstickHorizontalR_1)
+                        if (!firstAxisFlag.Rr)
                         {
-                            axisFlag.RstickHorizontalR_1 = true;
+                            firstAxisFlag.Rr = true;
                             return true;
                         }
                         else
@@ -584,15 +580,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.RstickHorizontalR_1 = false;
+                        firstAxisFlag.Rr = false;
                         return false;
                     }
                 case Axies.PadUp_2:
                     if (input > 0)
                     {
-                        if (!axisFlag.PadUp_2)
+                        if (!firstAxisFlag.PadUp_2)
                         {
-                            axisFlag.PadUp_2 = true;
+                            firstAxisFlag.PadUp_2 = true;
                             return true;
                         }
                         else
@@ -602,15 +598,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.PadUp_2 = false;
+                        firstAxisFlag.PadUp_2 = false;
                         return false;
                     }
                 case Axies.PadDown_2:
                     if (input < 0)
                     {
-                        if (!axisFlag.PadDown_2)
+                        if (!firstAxisFlag.PadDown_2)
                         {
-                            axisFlag.PadDown_2 = true;
+                            firstAxisFlag.PadDown_2 = true;
                             return true;
                         }
                         else
@@ -620,15 +616,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.PadDown_2 = false;
+                        firstAxisFlag.PadDown_2 = false;
                         return false;
                     }
                 case Axies.PadLeft_2:
                     if (input < 0)
                     {
-                        if (!axisFlag.PadLeft_2)
+                        if (!firstAxisFlag.PadLeft_2)
                         {
-                            axisFlag.PadLeft_2 = true;
+                            firstAxisFlag.PadLeft_2 = true;
                             return true;
                         }
                         else
@@ -638,15 +634,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.PadLeft_2 = false;
+                        firstAxisFlag.PadLeft_2 = false;
                         return false;
                     }
                 case Axies.PadRight_2:
                     if (input > 0)
                     {
-                        if (!axisFlag.PadRight_2)
+                        if (!firstAxisFlag.PadRight_2)
                         {
-                            axisFlag.PadRight_2 = true;
+                            firstAxisFlag.PadRight_2 = true;
                             return true;
                         }
                         else
@@ -656,15 +652,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.PadRight_2 = false;
+                        firstAxisFlag.PadRight_2 = false;
                         return false;
                     }
                 case Axies.LstickVerticalU_2:
                     if (input > 0)
                     {
-                        if (!axisFlag.LstickVerticalU_2)
+                        if (!firstAxisFlag.LstickVerticalU_2)
                         {
-                            axisFlag.LstickVerticalU_2 = true;
+                            firstAxisFlag.LstickVerticalU_2 = true;
                             return true;
                         }
                         else
@@ -674,15 +670,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.LstickVerticalU_2 = false;
+                        firstAxisFlag.LstickVerticalU_2 = false;
                         return false;
                     }
                 case Axies.LstickVerticalD_2:
                     if (input < 0)
                     {
-                        if (!axisFlag.LstickVerticalD_2)
+                        if (!firstAxisFlag.LstickVerticalD_2)
                         {
-                            axisFlag.LstickVerticalD_2 = true;
+                            firstAxisFlag.LstickVerticalD_2 = true;
                             return true;
                         }
                         else
@@ -692,15 +688,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.LstickVerticalD_2 = false;
+                        firstAxisFlag.LstickVerticalD_2 = false;
                         return false;
                     }
                 case Axies.LstickHorizontalL_2:
                     if (input < 0)
                     {
-                        if (!axisFlag.LstickHorizontalL_2)
+                        if (!firstAxisFlag.LstickHorizontalL_2)
                         {
-                            axisFlag.LstickHorizontalL_2 = true;
+                            firstAxisFlag.LstickHorizontalL_2 = true;
                             return true;
                         }
                         else
@@ -710,15 +706,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.LstickHorizontalL_2 = false;
+                        firstAxisFlag.LstickHorizontalL_2 = false;
                         return false;
                     }
                 case Axies.LstickHorizontalR_2:
                     if (input > 0)
                     {
-                        if (!axisFlag.LstickHorizontalR_2)
+                        if (!firstAxisFlag.LstickHorizontalR_2)
                         {
-                            axisFlag.LstickHorizontalR_2 = true;
+                            firstAxisFlag.LstickHorizontalR_2 = true;
                             return true;
                         }
                         else
@@ -728,15 +724,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.LstickHorizontalR_2 = false;
+                        firstAxisFlag.LstickHorizontalR_2 = false;
                         return false;
                     }
                 case Axies.RstickVerticalU_2:
                     if (input > 0)
                     {
-                        if (!axisFlag.RstickVerticalU_2)
+                        if (!firstAxisFlag.RstickVerticalU_2)
                         {
-                            axisFlag.RstickVerticalU_2 = true;
+                            firstAxisFlag.RstickVerticalU_2 = true;
                             return true;
                         }
                         else
@@ -746,15 +742,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.RstickVerticalU_2 = false;
+                        firstAxisFlag.RstickVerticalU_2 = false;
                         return false;
                     }
                 case Axies.RstickVerticalD_2:
                     if (input < 0)
                     {
-                        if (!axisFlag.RstickVerticalD_2)
+                        if (!firstAxisFlag.RstickVerticalD_2)
                         {
-                            axisFlag.RstickVerticalD_2 = true;
+                            firstAxisFlag.RstickVerticalD_2 = true;
                             return true;
                         }
                         else
@@ -764,15 +760,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.RstickVerticalD_2 = false;
+                        firstAxisFlag.RstickVerticalD_2 = false;
                         return false;
                     }
                 case Axies.RstickHorizontalL_2:
                     if (input < 0)
                     {
-                        if (!axisFlag.RstickHorizontalL_2)
+                        if (!firstAxisFlag.RstickHorizontalL_2)
                         {
-                            axisFlag.RstickHorizontalL_2 = true;
+                            firstAxisFlag.RstickHorizontalL_2 = true;
                             return true;
                         }
                         else
@@ -782,15 +778,15 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.RstickHorizontalL_2 = false;
+                        firstAxisFlag.RstickHorizontalL_2 = false;
                         return false;
                     }
                 case Axies.RstickHorizontalR_2:
                     if (input > 0)
                     {
-                        if (!axisFlag.RstickHorizontalR_2)
+                        if (!firstAxisFlag.RstickHorizontalR_2)
                         {
-                            axisFlag.RstickHorizontalR_2 = true;
+                            firstAxisFlag.RstickHorizontalR_2 = true;
                             return true;
                         }
                         else
@@ -800,11 +796,311 @@ namespace DS4
                     }
                     else
                     {
-                        axisFlag.RstickHorizontalR_2 = false;
+                        firstAxisFlag.RstickHorizontalR_2 = false;
                         return false;
                     }
                 default:
                     return false;
+            }
+        }
+        */
+
+        /// <summary>
+        /// GetAxisをGetButtonDownのように入力したときだけ取得する
+        /// </summary>
+        /// <param name="axis">取得したいAxis</param>
+        /// <returns></returns>
+        private void GetAxisDown(Axis axis)
+        {
+            float input;
+            switch (axis)
+            {
+                case Axis.PadVertical_1:
+                    input = Input.GetAxis(padVertical_1);
+                    if (input > 0)
+                    {
+                        if (!firstAxisFlag.Pu)
+                        {
+                            firstAxisFlag.Pu = true;
+                            _ = isChangeController ? Controller2.UpKey = true : Controller1.UpKey = true;
+                            Debug.Log((_=Controller1.UpKey?"Pad1: ":"Pad2: ") + "Up");
+                            return;
+                        }
+                        _ = isChangeController ? Controller2.UpKey = false : Controller1.UpKey = false;
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        if (!firstAxisFlag.Pd)
+                        {
+                            firstAxisFlag.Pd = true;
+                            _ = isChangeController ? Controller2.DownKey = true : Controller1.DownKey = true;
+                            Debug.Log((_ = Controller1.DownKey ? "Pad1: " : "Pad2: ") + "Down");
+                            return;
+                        }
+                        _ = isChangeController ? Controller2.DownKey = false : Controller1.DownKey = false;
+                        return;
+                    }
+                    else
+                    {
+                        if (firstAxisFlag.Pu) firstAxisFlag.Pu = false;
+                        if (firstAxisFlag.Pd) firstAxisFlag.Pd = false;
+                        return;
+                    }
+                case Axis.PadVertical_2:
+                    input = Input.GetAxis(padVertical_2);
+                    if(input > 0)
+                    {
+                        if (!secondAxisFlag.Pu)
+                        {
+                            secondAxisFlag.Pu = true;
+                            _ = isChangeController ? Controller1.UpKey = true : Controller2.UpKey = true;
+                            Debug.Log((_ = Controller1.UpKey ? "Pad1: " : "Pad2: ") + "Up");
+                            return;
+                        }
+                        _ = isChangeController ? Controller1.UpKey = false : Controller2.UpKey = false;
+                        return;
+                    }
+                    else if(input < 0)
+                    {
+                        if (!secondAxisFlag.Pd)
+                        {
+                            secondAxisFlag.Pd = true;
+                            _ = isChangeController ? Controller1.DownKey = true : Controller2.DownKey = true;
+                            Debug.Log((_ = Controller1.DownKey ? "Pad1: " : "Pad2: ") + "Down");
+                            return;
+                        }
+                        _ = isChangeController ? Controller1.DownKey = false : Controller2.DownKey = false;
+                        return;
+                    }
+                    else
+                    {
+                        if (secondAxisFlag.Pu) secondAxisFlag.Pu = false;
+                        if (secondAxisFlag.Pd) secondAxisFlag.Pd = false;
+                        return;
+                    }
+                case Axis.PadHorizontal_1:
+                    input = Input.GetAxis(padHorizontal_1);
+                    if (input > 0)
+                    {
+                        if (!firstAxisFlag.Pr)
+                        {
+                            firstAxisFlag.Pr = true;
+                            _ = isChangeController ? Controller2.RightKey = true : Controller1.RightKey = true;
+                            Debug.Log((_ = Controller1.RightKey ? "Pad1: " : "Pad2: ") + "Right");
+                            return;
+                        }
+                        _ = isChangeController ? Controller2.RightKey = false : Controller1.RightKey = false;
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        if (!firstAxisFlag.Pl)
+                        {
+                            firstAxisFlag.Pl = true;
+                            _ = isChangeController ? Controller2.LeftKey = true : Controller1.LeftKey = true;
+                            Debug.Log((_ = Controller1.LeftKey ? "Pad1: " : "Pad2: ") + "Left");
+                            return;
+                        }
+                        _ = isChangeController ? Controller2.LeftKey = false : Controller1.LeftKey = false;
+                        return;
+                    }
+                    else
+                    {
+                        if (firstAxisFlag.Pr) firstAxisFlag.Pr = false;
+                        if (firstAxisFlag.Pl) firstAxisFlag.Pl = false;
+                        return;
+                    }
+                case Axis.PadHorizontal_2:
+                    input = Input.GetAxis(padHorizontal_2);
+                    if (input > 0)
+                    {
+                        if (!secondAxisFlag.Pr)
+                        {
+                            secondAxisFlag.Pr = true;
+                            _ = isChangeController ? Controller1.RightKey = true : Controller2.RightKey = true;
+                            Debug.Log((_ = Controller1.RightKey ? "Pad1: " : "Pad2: ") + "Right");
+                            return;
+                        }
+                        _ = isChangeController ? Controller1.RightKey = false : Controller2.RightKey = false;
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        if (!secondAxisFlag.Pl)
+                        {
+                            secondAxisFlag.Pl = true;
+                            _ = isChangeController ? Controller1.LeftKey = true : Controller2.LeftKey = true;
+                            Debug.Log((_ = Controller1.LeftKey ? "Pad1: " : "Pad2: ") + "Left");
+                            return;
+                        }
+                        _ = isChangeController ? Controller1.LeftKey = false : Controller2.LeftKey = false;
+                        return;
+                    }
+                    else
+                    {
+                        if (secondAxisFlag.Pr) secondAxisFlag.Pr = false;
+                        if (secondAxisFlag.Pl) secondAxisFlag.Pl = false;
+                        return;
+                    }
+                case Axis.LstickVertical_1:
+                    input = Input.GetAxis(leftVertical_1);
+                    if (input > 0)
+                    {
+                        if (!firstAxisFlag.Lu)
+                        {
+                            firstAxisFlag.Lu = true;
+                            _ = isChangeController ? Controller2.LstickU = true : Controller1.LstickU = true;
+                            Debug.Log((_ = Controller1.LstickU ? "Lstick1: " : "Lstick2: ") + "Up");
+                            return;
+                        }
+                        _ = isChangeController ? Controller2.LstickU = false : Controller1.LstickU = false;
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        if (!firstAxisFlag.Ld)
+                        {
+                            firstAxisFlag.Ld = true;
+                            _ = isChangeController ? Controller2.LstickD = true : Controller1.LstickD = true;
+                            Debug.Log((_ = Controller1.LstickD ? "Lstick1: " : "Lstick2: ") + "Down");
+                            return;
+                        }
+                        _ = isChangeController ? Controller2.LstickD = false : Controller1.LstickD = false;
+                        return;
+                    }
+                    else
+                    {
+                        if (firstAxisFlag.Lu) firstAxisFlag.Lu = false;
+                        if (firstAxisFlag.Ld) firstAxisFlag.Ld = false;
+                        return;
+                    }
+                case Axis.LstickVertical_2:
+                    input = Input.GetAxis(leftVertical_2);
+                    if (input > 0)
+                    {
+                        if (!secondAxisFlag.Lu)
+                        {
+                            secondAxisFlag.Lu = true;
+                            _ = isChangeController ? Controller1.LstickU = true : Controller2.LstickU = true;
+                            Debug.Log((_ = Controller1.LstickU ? "Lstick1: " : "Lstick2: ") + "Up");
+                            return;
+                        }
+                        _ = isChangeController ? Controller1.LstickU = false : Controller2.LstickU = false;
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        if (!secondAxisFlag.Ld)
+                        {
+                            secondAxisFlag.Ld = true;
+                            _ = isChangeController ? Controller1.LstickD = true : Controller2.LstickD = true;
+                            Debug.Log((_ = Controller1.LstickD ? "Lstick1: " : "Lstick2: ") + "Down");
+                            return;
+                        }
+                        _ = isChangeController ? Controller1.LstickD = false : Controller2.LstickD = false;
+                        return;
+                    }
+                    else
+                    {
+                        if (secondAxisFlag.Lu) secondAxisFlag.Lu = false;
+                        if (secondAxisFlag.Ld) secondAxisFlag.Ld = false;
+                        return;
+                    }
+                case Axis.LstickHorizontal_1:
+                    input = Input.GetAxis(leftHorizontal_1);
+                    if (input > 0)
+                    {
+                        if (firstAxisFlag.Lr)
+                        {
+                            firstAxisFlag.Lr = true;
+                            _ = isChangeController ? Controller2.LstickR = true : Controller1.LstickR = true;
+                            Debug.Log("");
+                            return;
+                        }
+                        _ = isChangeController ? Controller2.LstickR = false : Controller1.LstickR = false;
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                case Axis.LstickHorizontal_2:
+                    input = Input.GetAxis(leftHorizontal_2);
+                    if (input > 0)
+                    {
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                case Axis.RstickVertical_1:
+                    input = Input.GetAxis(rightVertical_1);
+                    if (input > 0)
+                    {
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                case Axis.RstickVertical_2:
+                    input = Input.GetAxis(rightVertical_2);
+                    if (input > 0)
+                    {
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                case Axis.RstickHorizontal_1:
+                    input = Input.GetAxis(rightHorizontal_1);
+                    if (input > 0)
+                    {
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                case Axis.RstickHorizontal_2:
+                    input = Input.GetAxis(rightHorizontal_2);
+                    if (input > 0)
+                    {
+                        return;
+                    }
+                    else if (input < 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                default:
+                    return;
             }
         }
 

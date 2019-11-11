@@ -358,7 +358,7 @@ public class NotesView : NotesModel
         }
     }
 
-    public void SetNotesData(NotesType type, Vector3 start, Vector3 end, TargetPlayer player, float duration, MoveMode mode, float perfect, float good, float bad, Vector3 scale, float spriteAlpha)
+    public void SetNotesData(NotesType type, Vector3 start, Vector3 end, InputController player, float duration, MoveMode mode, float perfect, float good, float bad, Vector3 scale, float spriteAlpha)
     {
         // ノーツ情報
         NotesTypes = type;
