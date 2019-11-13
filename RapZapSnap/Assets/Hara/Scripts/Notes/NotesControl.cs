@@ -20,6 +20,9 @@ public class NotesControl : MonoBehaviour
     private NotesView[] firstPlayerNotes;
     private NotesView[] secondPlayerNotes;
 
+    // ノーツの準備が完了したかをチェックするフラグ
+    private bool notesStartRady = false;
+
     // ノーツプール用のカウンター
     private int firstPlayerCallCount = 0;
     private int secondPlayerCallCount = 0;
@@ -104,10 +107,14 @@ public class NotesControl : MonoBehaviour
                 obj.transform.SetParent(gameObject.transform);
             }
         }
+
+        notesStartRady = true;
     }
 
     public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, InputController targetPlayer = InputController.PlayerOne, float duration = 1.0f)
     {
+        if (!notesStartRady) return;
+
         bool notesActive = targetPlayer == InputController.PlayerOne ? firstPlayerNotes[firstPlayerCallCount].gameObject.activeSelf : secondPlayerNotes[secondPlayerCallCount].gameObject.activeSelf;
 
         if (notesActive)

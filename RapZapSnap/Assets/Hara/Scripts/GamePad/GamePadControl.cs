@@ -20,33 +20,67 @@ namespace DS4
         [SerializeField, Tooltip("PS4コントローラーを使う")]
         private bool usePs4Controller = true;
 
-        [SerializeField, Tooltip("LスティックでUI操作を行う")]
-        private bool useLstickForUI = false;
-
         private UnityEngine.EventSystems.StandaloneInputModule inputModule;
 
         // 現在、操作しているプレイヤー
         public InputController NowControlPlayer { set; private get; } = InputController.PlayerOne;
 
-        // PS4コントローラーの主要なキー名
-        private readonly string submit_1 = "DS4circle_1";
-        private readonly string cancel_1 = "DS4cross_1";
-        private readonly string padVertical_1 = "DS4verticalPad_1";
-        private readonly string padHorizontal_1 = "DS4horizontalPad_1";
-        private readonly string leftVertical_1 = "DS4verticalLstick_1";
-        private readonly string leftHorizontal_1 = "DS4horizontalLstick_1";
-        private readonly string rightVertical_1 = "DS4verticalRstick_1";
-        private readonly string rightHorizontal_1 = "DS4horizontalRstick_1";
-        private readonly string submit_2 = "DS4circle_2";
-        private readonly string cancel_2 = "DS4cross_2";
-        private readonly string padVertical_2 = "DS4verticalPad_2";
-        private readonly string padHorizontal_2 = "DS4horizontalPad_2";
-        private readonly string leftVertical_2 = "DS4verticalLstick_2";
-        private readonly string leftHorizontal_2 = "DS4horizontalLstick_2";
-        private readonly string rightVertical_2 = "DS4verticalRstick_2";
-        private readonly string rightHorizontal_2 = "DS4horizontalRstick_2";
+        private struct DS4KeyName
+        {
+            // UI操作用のキー
+            public readonly string Submit;
+            public readonly string Cancel;
+            public readonly string Horizontal;
+            public readonly string Vertical;
 
-        public struct DS4Input1
+            // 十字キーやアナログスティックの個別入力キー
+            public readonly string PadHorizontal;
+            public readonly string PadVertical;
+            public readonly string LstickHorizontal;
+            public readonly string LstickVertical;
+            public readonly string RstickHorizontal;
+            public readonly string RstickVertical;
+
+            public DS4KeyName(InputController inputPlayer)
+            {
+                if(inputPlayer == InputController.PlayerOne)
+                {
+                    Submit = "Submit_1";
+                    Cancel = "Cancel_1";
+                    Horizontal = "Horizontal_1";
+                    Vertical = "Vertical_1";
+
+                    PadHorizontal = "DS4horizontalPad_1";
+                    PadVertical = "DS4verticalPad_1";
+                    LstickHorizontal = "DS4horizontalLstick_1";
+                    LstickVertical = "DS4verticalLstick_1";
+                    RstickHorizontal = "DS4horizontalRstick_1";
+                    RstickVertical = "DS4verticalRstick_1";
+                }
+                else
+                {
+                    Submit = "Submit_2";
+                    Cancel = "Cancel_2";
+                    Horizontal = "Horizontal_2";
+                    Vertical = "Vertical_2";
+
+                    PadHorizontal = "DS4horizontalPad_2";
+                    PadVertical = "DS4verticalPad_2";
+                    LstickHorizontal = "DS4horizontalLstick_2";
+                    LstickVertical = "DS4verticalLstick_2";
+                    RstickHorizontal = "DS4horizontalRstick_2";
+                    RstickVertical = "DS4verticalRstick_2";
+                }
+            }
+        }
+
+        private DS4KeyName joy1KeyName;
+        private DS4KeyName joy2KeyName;
+
+        /// <summary>
+        /// DS4の入力キー
+        /// </summary>
+        public struct DS4InputKeyType
         {
             public bool Circle;
             public bool Cross;
@@ -106,73 +140,13 @@ namespace DS4
             }
         }
 
-        public struct DS4Input2
-        {
-            public bool Circle;
-            public bool Cross;
-            public bool Triangle;
-            public bool Square;
-            public bool UpKey;
-            public bool DownKey;
-            public bool LeftKey;
-            public bool RightKey;
-            public bool L1;
-            public bool L2;
-            public bool L3;
-            public bool LstickU;
-            public bool LstickD;
-            public bool LstickL;
-            public bool LstickR;
-            public bool R1;
-            public bool R2;
-            public bool R3;
-            public bool RstickU;
-            public bool RstickD;
-            public bool RstickL;
-            public bool RstickR;
-            public bool Option;
-            public bool Share;
-            public bool Home;
-            public bool TrackPad;
-
-            public void ResetKey()
-            {
-                Circle = false;
-                Cross = false;
-                Triangle = false;
-                Square = false;
-                UpKey = false;
-                DownKey = false;
-                LeftKey = false;
-                RightKey = false;
-                L1 = false;
-                L2 = false;
-                L3 = false;
-                LstickU = false;
-                LstickD = false;
-                LstickL = false;
-                LstickR = false;
-                R1 = false;
-                R2 = false;
-                R3 = false;
-                RstickU = false;
-                RstickD = false;
-                RstickL = false;
-                RstickR = false;
-                Option = false;
-                Share = false;
-                Home = false;
-                TrackPad = false;
-            }
-        }
-
-        public DS4Input1 Controller1;
-        public DS4Input2 Controller2;
+        public DS4InputKeyType Controller1;
+        public DS4InputKeyType Controller2;
 
         /// <summary>
-        /// Controller1のGetAxisDown用のフラグ
+        /// GetAxisDown用のフラグ
         /// </summary>
-        private struct AxisFlag_1
+        private struct AxisFlag
         {
             public bool Pu, Pd, Pl, Pr, Lu, Ld, Ll, Lr, Ru, Rd, Rl, Rr;
 
@@ -193,32 +167,8 @@ namespace DS4
             }
         }
 
-        /// <summary>
-        /// Controller2のGetAxisDown用のフラグ
-        /// </summary>
-        private struct AxisFlag_2
-        {
-            public bool Pu, Pd, Pl, Pr, Lu, Ld, Ll, Lr, Ru, Rd, Rl, Rr;
-
-            public void ResetFlag()
-            {
-                Pu = false;
-                Pd = false;
-                Pl = false;
-                Pr = false;
-                Lu = false;
-                Ld = false;
-                Ll = false;
-                Lr = false;
-                Ru = false;
-                Rd = false;
-                Rl = false;
-                Rr = false;
-            }
-        }
-
-        private AxisFlag_1 firstAxisFlag;
-        private AxisFlag_2 secondAxisFlag;
+        private AxisFlag firstAxisFlag;
+        private AxisFlag secondAxisFlag;
 
         private void Awake()
         {
@@ -229,8 +179,9 @@ namespace DS4
                 Controller2.ResetKey();
                 firstAxisFlag.ResetFlag();
                 secondAxisFlag.ResetFlag();
-                //UnityEngine.SceneManagement.SceneManager.sceneLoaded += InputModuleCheck;
-                UnityEngine.SceneManagement.SceneManager.activeSceneChanged += InputModuleCheck;
+                joy1KeyName = new DS4KeyName(InputController.PlayerOne);
+                joy2KeyName = new DS4KeyName(InputController.PlayerTwo);
+                inputModule = GetComponent<UnityEngine.EventSystems.StandaloneInputModule>();
                 DontDestroyOnLoad(gameObject);
             }
             else
@@ -329,7 +280,7 @@ namespace DS4
                 case Axis.PadVertical:
                     if(controller == InputController.PlayerOne)
                     {
-                        input = Input.GetAxis(padVertical_1);
+                        input = Input.GetAxis(joy1KeyName.PadVertical);
                         if (input > 0)
                         {
                             if (!firstAxisFlag.Pu)
@@ -361,7 +312,7 @@ namespace DS4
                     }
                     else
                     {
-                        input = Input.GetAxis(padVertical_2);
+                        input = Input.GetAxis(joy2KeyName.PadVertical);
                         if (input > 0)
                         {
                             if (!secondAxisFlag.Pu)
@@ -394,7 +345,7 @@ namespace DS4
                 case Axis.PadHorizontal:
                     if (controller == InputController.PlayerOne)
                     {
-                        input = Input.GetAxis(padHorizontal_1);
+                        input = Input.GetAxis(joy1KeyName.PadHorizontal);
                         if (input > 0)
                         {
                             if (!firstAxisFlag.Pr)
@@ -426,7 +377,7 @@ namespace DS4
                     }
                     else
                     {
-                        input = Input.GetAxis(padHorizontal_2);
+                        input = Input.GetAxis(joy2KeyName.PadHorizontal);
                         if (input > 0)
                         {
                             if (!secondAxisFlag.Pr)
@@ -459,7 +410,7 @@ namespace DS4
                 case Axis.LstickVertical:
                     if (controller == InputController.PlayerOne)
                     {
-                        input = Input.GetAxis(leftVertical_1);
+                        input = Input.GetAxis(joy1KeyName.LstickVertical);
                         if (input > 0)
                         {
                             if (!firstAxisFlag.Lu)
@@ -491,7 +442,7 @@ namespace DS4
                     }
                     else
                     {
-                        input = Input.GetAxis(leftVertical_2);
+                        input = Input.GetAxis(joy2KeyName.LstickVertical);
                         if (input > 0)
                         {
                             if (!secondAxisFlag.Lu)
@@ -524,7 +475,7 @@ namespace DS4
                 case Axis.LstickHorizontal:
                     if (controller == InputController.PlayerOne)
                     {
-                        input = Input.GetAxis(leftHorizontal_1);
+                        input = Input.GetAxis(joy1KeyName.LstickHorizontal);
                         if (input > 0)
                         {
                             if (!firstAxisFlag.Lr)
@@ -556,7 +507,7 @@ namespace DS4
                     }
                     else
                     {
-                        input = Input.GetAxis(leftHorizontal_2);
+                        input = Input.GetAxis(joy2KeyName.LstickHorizontal);
                         if (input > 0)
                         {
                             if (!secondAxisFlag.Lr)
@@ -589,7 +540,7 @@ namespace DS4
                 case Axis.RstickVertical:
                     if (controller == InputController.PlayerOne)
                     {
-                        input = Input.GetAxis(rightVertical_1);
+                        input = Input.GetAxis(joy1KeyName.RstickVertical);
                         if (input > 0)
                         {
                             if (!firstAxisFlag.Ru)
@@ -621,7 +572,7 @@ namespace DS4
                     }
                     else
                     {
-                        input = Input.GetAxis(rightVertical_2);
+                        input = Input.GetAxis(joy2KeyName.RstickVertical);
                         if (input > 0)
                         {
                             if (!secondAxisFlag.Ru)
@@ -654,7 +605,7 @@ namespace DS4
                 case Axis.RstickHorizontal:
                     if (controller == InputController.PlayerOne)
                     {
-                        input = Input.GetAxis(rightHorizontal_1);
+                        input = Input.GetAxis(joy1KeyName.RstickHorizontal);
                         if (input > 0)
                         {
                             if (!firstAxisFlag.Rr)
@@ -686,7 +637,7 @@ namespace DS4
                     }
                     else
                     {
-                        input = Input.GetAxis(rightHorizontal_2);
+                        input = Input.GetAxis(joy2KeyName.RstickHorizontal);
                         if (input > 0)
                         {
                             if (!secondAxisFlag.Rr)
@@ -732,74 +683,28 @@ namespace DS4
         }
 
         /// <summary>
-        /// シーンが遷移したらそのシーンのStandaloneInputModuleを探す
-        /// </summary>
-        /// <param name="scene"></param>
-        /// <param name="mode"></param>
-        private void InputModuleCheck(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
-        {
-            if(inputModule == null)
-            {
-                // InputModuleを探す
-                inputModule = FindObjectOfType<UnityEngine.EventSystems.StandaloneInputModule>();
-            }
-            SetInputModule(NowControlPlayer);
-        }
-
-        /// <summary>
-        /// アクティブシーンが切り替わったらそのシーンのStandaloneInputModuleを探す
-        /// </summary>
-        /// <param name="scene"></param>
-        /// <param name="mode"></param>
-        private void InputModuleCheck(UnityEngine.SceneManagement.Scene thisScene, UnityEngine.SceneManagement.Scene nextScene)
-        {
-            if (inputModule == null)
-            {
-                // InputModuleを探す
-                inputModule = FindObjectOfType<UnityEngine.EventSystems.StandaloneInputModule>();
-            }
-            SetInputModule(NowControlPlayer);
-        }
-
-        /// <summary>
         /// StandaloneInputModuleをPS4入力に対応させる
         /// </summary>
         /// <param name="input"></param>
         public void SetInputModule(InputController input)
         {
-            // シーン内にStandaloneInputModuleが無ければ処理を終了
+            // StandaloneInputModuleが無ければ処理を終了
             if (inputModule == null) return;
-
+            
             // PS4入力に対応させる
             if(input == InputController.PlayerOne)
             {
-                inputModule.submitButton = isChangeController ? submit_2 : submit_1;
-                inputModule.cancelButton = isChangeController ? cancel_2 : cancel_1;
-                if (useLstickForUI)
-                {
-                    inputModule.verticalAxis = isChangeController ? leftVertical_2 : leftVertical_1;
-                    inputModule.horizontalAxis = isChangeController ? leftHorizontal_2 : leftHorizontal_1;
-                }
-                else
-                {
-                    inputModule.verticalAxis = isChangeController ? padVertical_2 : padVertical_1;
-                    inputModule.horizontalAxis = isChangeController ? padHorizontal_2 : padHorizontal_1;
-                }
+                inputModule.submitButton = isChangeController ? joy2KeyName.Submit : joy1KeyName.Submit;
+                inputModule.cancelButton = isChangeController ? joy2KeyName.Cancel : joy1KeyName.Cancel;
+                inputModule.horizontalAxis = isChangeController ? joy2KeyName.Horizontal : joy1KeyName.Horizontal;
+                inputModule.verticalAxis = isChangeController ? joy2KeyName.Vertical : joy1KeyName.Vertical;
             }
             else
             {
-                inputModule.submitButton = isChangeController ? submit_1 : submit_2;
-                inputModule.cancelButton = isChangeController ? cancel_1 : cancel_2;
-                if (useLstickForUI)
-                {
-                    inputModule.verticalAxis = isChangeController ? leftVertical_1 : leftVertical_2;
-                    inputModule.horizontalAxis = isChangeController ? leftHorizontal_1 : leftHorizontal_2;
-                }
-                else
-                {
-                    inputModule.verticalAxis = isChangeController ? padVertical_1 : padVertical_2;
-                    inputModule.horizontalAxis = isChangeController ? padHorizontal_1 : padHorizontal_2;
-                }
+                inputModule.submitButton = isChangeController ? joy1KeyName.Submit : joy2KeyName.Submit;
+                inputModule.cancelButton = isChangeController ? joy1KeyName.Cancel : joy2KeyName.Cancel;
+                inputModule.horizontalAxis = isChangeController ? joy1KeyName.Horizontal : joy2KeyName.Horizontal;
+                inputModule.verticalAxis = isChangeController ? joy1KeyName.Vertical : joy2KeyName.Vertical;
             }
         }
     }
