@@ -12,8 +12,6 @@ public class calltest : MonoBehaviour
     [SerializeField]
     private float span = 0.0f;
     private float timer = 0.0f;
-    [SerializeField]
-    private MoveMode moveMode = MoveMode.Arrival;
 
     public static calltest Instance { private set; get; } = null;
 
@@ -47,7 +45,7 @@ public class calltest : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))
         {
             NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(-5, -10, 0), new Vector3(-5, 4, 0));
-            //NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(5, -10, 0), new Vector3(5, 4, 0), TargetPlayer.PlayerTwo);
+            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(5, -10, 0), new Vector3(5, 4, 0), InputController.PlayerTwo);
         }
     }
 }

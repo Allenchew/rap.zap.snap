@@ -19,8 +19,6 @@ public class NotesModel : MonoBehaviour
 {
     public NotesType NotesTypes { set; get; }
 
-    public InputController InputPlayer { set; get; }
-
     // ノーツのスプライト画像リスト
     [SerializeField, Tooltip("ノーツの画像リスト")]
     private List<Sprite> notesSprites = new List<Sprite>();

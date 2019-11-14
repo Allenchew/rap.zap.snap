@@ -213,7 +213,6 @@ MonoBehaviour:
   duration: 0.75
   startPos: []
   span: 1
-  moveMode: 1
 --- !u!4 &149990229
 Transform:
   m_ObjectHideFlags: 0
@@ -449,7 +448,7 @@ PrefabInstance:
     - target: {fileID: 6328630671478868998, guid: ad2406f2c3a60e549abab9a53d26bde1,
         type: 3}
       propertyPath: maxNotes
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad2406f2c3a60e549abab9a53d26bde1, type: 3}
