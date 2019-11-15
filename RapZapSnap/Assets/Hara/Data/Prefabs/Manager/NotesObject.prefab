@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a4d4cf57219cc44381e71bcb36b3b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxNotes: 7
+  maxNotes: 20
   notesPrefab: {fileID: 5018433614330757847, guid: 1a09af81682bbc34c88a6541512ebfd4,
     type: 3}
   notesSize: 0.35

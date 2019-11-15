@@ -44,8 +44,8 @@ public class calltest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(-5, -10, 0), new Vector3(-5, 4, 0));
-            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(5, -10, 0), new Vector3(5, 4, 0), InputController.PlayerTwo);
+            NotesControlForUI.Instance.CallNotes(NotesType.UpArrow, new Vector3(-600, -600, 0), new Vector3(-600, 300, 0));
+            NotesControlForUI.Instance.CallNotes(NotesType.UpArrow, new Vector3(600, -300, 0), new Vector3(600, 300, 0), InputController.PlayerTwo);
         }
     }
 }

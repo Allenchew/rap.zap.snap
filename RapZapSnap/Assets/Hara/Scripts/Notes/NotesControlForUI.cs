@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DS4;
 
-public class NotesControl : MonoBehaviour
+public class NotesControlForUI : MonoBehaviour
 {
-    public static NotesControl Instance { get; private set; } = null;
-    
+    public static NotesControlForUI Instance { private set; get; } = null;
+
     // ノーツの最大生成数
     [SerializeField, Tooltip("ノーツの最大生成数"), Range(1, 20)]
     private int maxNotes = 5;
@@ -20,15 +21,15 @@ public class NotesControl : MonoBehaviour
     private struct NotesDataBase
     {
         // ノーツのオブジェクトプール用の配列
-        public NotesView[] NotesObjects;
+        public NotesViewForUI[] NotesObjects;
 
         // ノーツの呼び出し番号
         private int notesCallCount;
-        public int NotesCallCount { set { notesCallCount = value; if (notesCallCount >= NotesObjects.Length || notesCallCount < 0) notesCallCount = 0; } get { return notesCallCount; } }
+        public int NotesCallCount { set { notesCallCount = value; if(notesCallCount >= NotesObjects.Length || notesCallCount < 0) notesCallCount = 0; } get { return notesCallCount; } }
 
         // 判定チェック中のノーツ番号
         private int notesCheckCount;
-        public int NotesCheckCount { set { notesCheckCount = value; if (notesCheckCount >= NotesObjects.Length || notesCheckCount < 0) notesCheckCount = 0; } get { return notesCheckCount; } }
+        public int NotesCheckCount { set { notesCheckCount = value; if(notesCheckCount >= NotesObjects.Length || notesCheckCount < 0) notesCheckCount = 0; } get { return notesCheckCount; } }
 
         // Perfect, Good, Badそれぞれの総数
         public int Perfect, Good, Bad;
@@ -104,8 +105,8 @@ public class NotesControl : MonoBehaviour
         }
 
         // ノーツのプールを初期化
-        dataBase1.NotesObjects = new NotesView[maxNotes];
-        dataBase2.NotesObjects = new NotesView[maxNotes];
+        dataBase1.NotesObjects = new NotesViewForUI[maxNotes];
+        dataBase2.NotesObjects = new NotesViewForUI[maxNotes];
 
         // ノーツのプールを作成し、格納する
         for(int i = 0; i < maxNotes; i++)
@@ -114,14 +115,14 @@ public class NotesControl : MonoBehaviour
             {
                 var obj = Instantiate(notesPrefab);
                 obj.SetActive(false);
-                dataBase1.NotesObjects[i] = obj.GetComponent<NotesView>();
+                dataBase1.NotesObjects[i] = obj.GetComponent<NotesViewForUI>();
                 obj.transform.SetParent(gameObject.transform);
             }
             if(dataBase2.NotesObjects[i] == null)
             {
                 var obj = Instantiate(notesPrefab);
                 obj.SetActive(false);
-                dataBase2.NotesObjects[i] = obj.GetComponent<NotesView>();
+                dataBase2.NotesObjects[i] = obj.GetComponent<NotesViewForUI>();
                 obj.transform.SetParent(gameObject.transform);
             }
         }
@@ -139,12 +140,12 @@ public class NotesControl : MonoBehaviour
     public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, InputController input = InputController.PlayerOne, float duration = 1.0f)
     {
         // ノーツの生成準備が完了していなければ処理を終了
-        if (!notesStartRady) return;
+        if(!notesStartRady) return;
 
         if((input == InputController.PlayerOne && !GamePadControl.Instance.IsChangeController) || (input == InputController.PlayerTwo && GamePadControl.Instance.IsChangeController))
         {
             // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-            if (dataBase1.NotesObjects[dataBase1.NotesCallCount].gameObject.activeSelf) return;
+            if(dataBase1.NotesObjects[dataBase1.NotesCallCount].gameObject.activeSelf) return;
 
             // 第1ノーツプールからノーツを再生
             dataBase1.NotesObjects[dataBase1.NotesCallCount].SetNotesData(notesType, startPos, goalPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
@@ -153,14 +154,14 @@ public class NotesControl : MonoBehaviour
         else
         {
             // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-            if (dataBase2.NotesObjects[dataBase2.NotesCallCount].gameObject.activeSelf) return;
+            if(dataBase2.NotesObjects[dataBase2.NotesCallCount].gameObject.activeSelf) return;
 
             // 第2ノーツプールからノーツを再生
             dataBase2.NotesObjects[dataBase2.NotesCallCount].SetNotesData(notesType, startPos, goalPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
             dataBase2.NotesCallCount++;
         }
     }
-   
+
     /// <summary>
     /// ノーツ入力判定処理
     /// </summary>
@@ -173,63 +174,63 @@ public class NotesControl : MonoBehaviour
         var nextNotes1 = dataBase1.NotesObjects[nextNotesNum1];
         var nextNotes2 = dataBase2.NotesObjects[nextNotesNum2];
 
-        if (nowNotes1.gameObject.activeSelf)
+        if(nowNotes1.gameObject.activeSelf)
         {
             var inputPad = GamePadControl.Instance.IsChangeController ? GamePadControl.Instance.Controller2 : GamePadControl.Instance.Controller1;
-            if (inputPad.Circle)
+            if(inputPad.Circle)
             {
                 NotesResult(nowNotes1.NotesCheck(NotesType.CircleKey), InputController.PlayerOne);
             }
-            else if (inputPad.Cross)
+            else if(inputPad.Cross)
             {
                 NotesResult(nowNotes1.NotesCheck(NotesType.CrossKey), InputController.PlayerOne);
             }
-            else if (inputPad.Triangle)
+            else if(inputPad.Triangle)
             {
                 NotesResult(nowNotes1.NotesCheck(NotesType.TriangleKey), InputController.PlayerOne);
             }
-            else if (inputPad.UpKey)
+            else if(inputPad.UpKey)
             {
                 NotesResult(nowNotes1.NotesCheck(NotesType.UpArrow), InputController.PlayerOne);
             }
-            else if (inputPad.DownKey)
+            else if(inputPad.DownKey)
             {
                 NotesResult(nowNotes1.NotesCheck(NotesType.DownArrow), InputController.PlayerOne);
             }
-            else if (inputPad.LeftKey)
+            else if(inputPad.LeftKey)
             {
                 NotesResult(nowNotes1.NotesCheck(NotesType.LeftArrow), InputController.PlayerOne);
             }
-            else if (!nowNotes1.NotesClickFlag)
+            else if(!nowNotes1.NotesClickFlag)
             {
                 NotesResult(0, InputController.PlayerOne);
             }
         }
 
-        if (nowNotes2.gameObject.activeSelf)
+        if(nowNotes2.gameObject.activeSelf)
         {
             var inputPad = GamePadControl.Instance.IsChangeController ? GamePadControl.Instance.Controller1 : GamePadControl.Instance.Controller2;
-            if (inputPad.Circle)
+            if(inputPad.Circle)
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.CircleKey), InputController.PlayerTwo);
             }
-            else if (inputPad.Cross)
+            else if(inputPad.Cross)
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.CrossKey), InputController.PlayerTwo);
             }
-            else if (inputPad.Triangle)
+            else if(inputPad.Triangle)
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.TriangleKey), InputController.PlayerTwo);
             }
-            else if (inputPad.UpKey)
+            else if(inputPad.UpKey)
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.UpArrow), InputController.PlayerTwo);
             }
-            else if (inputPad.DownKey)
+            else if(inputPad.DownKey)
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.DownArrow), InputController.PlayerTwo);
             }
-            else if (inputPad.LeftKey)
+            else if(inputPad.LeftKey)
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.LeftArrow), InputController.PlayerTwo);
             }
@@ -257,7 +258,7 @@ public class NotesControl : MonoBehaviour
             inputFlag = false;
         }
 
-        switch (resultNum)
+        switch(resultNum)
         {
             case 0:
                 _ = inputFlag ? dataBase1.Bad++ : dataBase2.Bad++;
