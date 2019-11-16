@@ -116,6 +116,6 @@ MonoBehaviour:
     type: 3}
   notesSize: 0.35
   notesSpriteAlpha: 0.25
-  perfectLength: 0.05
-  goodLength: 0.05
-  badLength: 0.05
+  perfectLength: 0.03
+  goodLength: 0.015
+  badLength: 0.005

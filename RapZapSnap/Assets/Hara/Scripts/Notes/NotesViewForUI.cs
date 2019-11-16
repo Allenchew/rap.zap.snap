@@ -23,14 +23,14 @@ public class NotesViewForUI : NotesModel
     public float NotesRate { private set; get; } = 0;
 
     // ノーツの判定範囲
-    private float minPerfect = 0;
-    private float maxPerfect = 0;
-    private float minGood = 0;
-    private float maxGood = 0;
-    private float minBad = 0;
+    public float MinPerfect { private set; get; } = 0;
+    public float MaxPerfect { private set; get; } = 0;
+    public float MinGood { private set; get; } = 0;
+    public float MaxGood { private set; get; } = 0;
+    public float MinBad { private set; get; } = 0;
 
     private bool stopFlag = false;
-    public bool NotesClickFlag { private set; get; } = false;
+    private bool notesClickFlag = false;
     private float firstMoveEndTime = 0;
     private float time = 0;
 
@@ -39,7 +39,7 @@ public class NotesViewForUI : NotesModel
     private GameObject moveNotesObj = null;
     private GameObject goalNotesObj = null;
 
-    // スプライトの透明度を変更できるようにしておく
+    // Imageの透明度を変更できるようにしておく
     private float mainSpriteAlpha = 1.0f;
     private float goalSpriteAlpha = 0.5f;
 
@@ -72,7 +72,7 @@ public class NotesViewForUI : NotesModel
         if(stopFlag)
         {
             // ノーツの移動開始からの経過時間
-            var diff = NotesClickFlag ? (Time.timeSinceLevelLoad - startTime) : (Time.timeSinceLevelLoad - firstMoveEndTime);
+            var diff = notesClickFlag ? (Time.timeSinceLevelLoad - startTime) : (Time.timeSinceLevelLoad - firstMoveEndTime);
 
             // 進行率を算出
             NotesRate = firstMoveEnd ? (diff / moveDuration) : (diff / (moveDuration * 2));
@@ -80,114 +80,18 @@ public class NotesViewForUI : NotesModel
             // ノーツを移動する処理
             moveNotesObj.gameObject.transform.localPosition = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
 
-            if(NotesClickFlag)
+            if(!notesClickFlag)
             {
-                if(NotesRate >= maxGood)
-                {
-                    NotesClickFlag = false;
-                    goalNotesObj.gameObject.SetActive(false);
-
-                    // 第2移動の目的地を設定する
-                    var radius = Vector3.Distance(startPos, endPos);
-                    int direction = 8;    // 方向数
-                    float angleDiff = 360.0f / direction;    // 方向転換する角度の間隔
-                    var xPosDistance = Mathf.Abs(startPos.x - endPos.x);
-                    var yPosDistance = Mathf.Abs(startPos.y - endPos.y);
-                    int directionNum = 0;
-                    int rnd = UnityEngine.Random.Range(0, 3);
-
-                    if((startPos.x - endPos.x) > 0 && xPosDistance >= yPosDistance)
-                    {
-                        // ノーツの移動方向が右→左のとき
-                        switch(rnd)
-                        {
-                            case 0:
-                                directionNum = 5;
-                                break;
-                            case 1:
-                                directionNum = 6;
-                                break;
-                            case 2:
-                                directionNum = 7;
-                                break;
-                        }
-                    }
-                    else if((startPos.x - endPos.x) < 0 && xPosDistance >= yPosDistance)
-                    {
-                        // ノーツの移動方向が左→右のとき
-                        switch(rnd)
-                        {
-                            case 0:
-                                directionNum = 1;
-                                break;
-                            case 1:
-                                directionNum = 2;
-                                break;
-                            case 2:
-                                directionNum = 3;
-                                break;
-                        }
-                    }
-                    else if((startPos.y - endPos.y) > 0 && xPosDistance <= yPosDistance)
-                    {
-                        // ノーツの移動方向が上→下のとき
-                        switch(rnd)
-                        {
-                            case 0:
-                                directionNum = 3;
-                                break;
-                            case 1:
-                                directionNum = 4;
-                                break;
-                            case 2:
-                                directionNum = 5;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        // ノーツの移動方向が下→上のとき
-                        switch(rnd)
-                        {
-                            case 0:
-                                directionNum = 7;
-                                break;
-                            case 1:
-                                directionNum = 8;
-                                break;
-                            case 2:
-                                directionNum = 1;
-                                break;
-                        }
-                    }
-
-                    float angle = (90 - angleDiff * directionNum) * Mathf.Deg2Rad;
-                    Vector3 newMoveStartPos = moveNotesObj.transform.localPosition;
-                    newMoveStartPos.x += radius * Mathf.Cos(angle);
-                    newMoveStartPos.y += radius * Mathf.Sin(angle);
-
-                    // 座標データを更新
-                    moveStartPos = moveNotesObj.gameObject.transform.localPosition;
-                    moveEndPos = newMoveStartPos;
-                    firstMoveEndTime = Time.timeSinceLevelLoad;
-
-                    firstMoveEnd = true;
-                }
-            }
-            else
-            {
-                if(mainSpriteAlpha > 0)
+                if (mainSpriteAlpha > 0)
                 {
                     // 透明度を下げる
                     mainSpriteAlpha -= 0.05f;
                     moveNotesImage.color = new Color(1, 1, 1, mainSpriteAlpha);
                 }
 
-                float halfScreenHeight = Screen.height / 2;
-                float halfScreenWidth = Screen.width / 2;
-                if(NotesRate >= 1.0f || mainSpriteAlpha <= 0 /*|| moveNotesObj.transform.localPosition.x > halfScreenWidth || moveNotesObj.transform.localPosition.x < -halfScreenWidth || moveNotesObj.transform.localPosition.y > halfScreenHeight || moveNotesObj.transform.localPosition.y < -halfScreenHeight*/)
+                if (NotesRate >= 1.0f || mainSpriteAlpha <= 0)
                 {
-                    // ノーツが完全に透明になるか、画面外へ移動したか、目的地に着いたら非表示
+                    // ノーツが完全に透明になるか、目的地に着いたら非表示
                     ResetNotes();
                 }
             }
@@ -204,19 +108,19 @@ public class NotesViewForUI : NotesModel
     {
         var rate = NotesRate;
 
-        if(NotesClickFlag && rate >= minBad)
+        if(notesClickFlag && rate >= MinBad)
         {
-            int num = 0;
+            int num;
 
             // 入力したキーが合っているかチェック
             if(notesType == NotesTypes)
             {
-                if(rate >= minPerfect && rate <= maxPerfect)
+                if(rate >= MinPerfect && rate <= MaxPerfect)
                 {
                     // prefect判定
                     num = 2;
                 }
-                else if((rate >= minGood && rate < minPerfect) || (rate >= maxGood && rate < maxPerfect))
+                else if((rate >= MinGood && rate < MinPerfect) || (rate >= MaxGood && rate < MaxPerfect))
                 {
                     // good判定
                     num = 1;
@@ -280,11 +184,11 @@ public class NotesViewForUI : NotesModel
         }
 
         // ノーツの判定域
-        minPerfect = 0.5f - perfect;
-        maxPerfect = 0.5f + perfect;
-        minGood = minPerfect - good;
-        maxGood = maxPerfect + good;
-        minBad = minGood - bad;
+        MinPerfect = 0.5f - perfect;
+        MaxPerfect = 0.5f + perfect;
+        MinGood = MinPerfect - good;
+        MaxGood = MaxPerfect + good;
+        MinBad = MinGood - bad;
 
         // ノーツの画像を差し替え
         moveNotesImage.sprite = NotesSprites[(int)NotesTypes];
@@ -307,10 +211,105 @@ public class NotesViewForUI : NotesModel
 
         // ノーツを表示する前に初期化するフラグなど
         NotesRate = 0;
-        NotesClickFlag = true;
+        notesClickFlag = true;
         firstMoveEnd = false;
 
         // ノーツの再生
         gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// ノーツの判定終了後の移動を設定する
+    /// </summary>
+    public void SecondMoveSet()
+    {
+        notesClickFlag = false;
+        goalNotesObj.gameObject.SetActive(false);
+
+        // 第2移動の目的地を設定する
+        var radius = Vector3.Distance(startPos, endPos);
+        int direction = 8;    // 方向数
+        float angleDiff = 360.0f / direction;    // 方向転換する角度の間隔
+        var xPosDistance = Mathf.Abs(startPos.x - endPos.x);
+        var yPosDistance = Mathf.Abs(startPos.y - endPos.y);
+        int directionNum = 0;
+        int rnd = Random.Range(0, 3);
+
+        if ((startPos.x - endPos.x) > 0 && xPosDistance >= yPosDistance)
+        {
+            // ノーツの移動方向が右→左のとき
+            switch (rnd)
+            {
+                case 0:
+                    directionNum = 5;
+                    break;
+                case 1:
+                    directionNum = 6;
+                    break;
+                case 2:
+                    directionNum = 7;
+                    break;
+            }
+        }
+        else if ((startPos.x - endPos.x) < 0 && xPosDistance >= yPosDistance)
+        {
+            // ノーツの移動方向が左→右のとき
+            switch (rnd)
+            {
+                case 0:
+                    directionNum = 1;
+                    break;
+                case 1:
+                    directionNum = 2;
+                    break;
+                case 2:
+                    directionNum = 3;
+                    break;
+            }
+        }
+        else if ((startPos.y - endPos.y) > 0 && xPosDistance <= yPosDistance)
+        {
+            // ノーツの移動方向が上→下のとき
+            switch (rnd)
+            {
+                case 0:
+                    directionNum = 3;
+                    break;
+                case 1:
+                    directionNum = 4;
+                    break;
+                case 2:
+                    directionNum = 5;
+                    break;
+            }
+        }
+        else
+        {
+            // ノーツの移動方向が下→上のとき
+            switch (rnd)
+            {
+                case 0:
+                    directionNum = 7;
+                    break;
+                case 1:
+                    directionNum = 8;
+                    break;
+                case 2:
+                    directionNum = 1;
+                    break;
+            }
+        }
+
+        float angle = (90 - angleDiff * directionNum) * Mathf.Deg2Rad;
+        Vector3 newMoveStartPos = moveNotesObj.transform.localPosition;
+        newMoveStartPos.x += radius * Mathf.Cos(angle);
+        newMoveStartPos.y += radius * Mathf.Sin(angle);
+
+        // 座標データを更新
+        moveStartPos = moveNotesObj.gameObject.transform.localPosition;
+        moveEndPos = newMoveStartPos;
+        firstMoveEndTime = Time.timeSinceLevelLoad;
+
+        firstMoveEnd = true;
     }
 }

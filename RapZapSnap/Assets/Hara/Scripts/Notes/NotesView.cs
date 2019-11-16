@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -136,7 +135,7 @@ public class NotesView : NotesModel
                     var xPosDistance = Mathf.Abs(startPos.x - endPos.x);
                     var yPosDistance = Mathf.Abs(startPos.y - endPos.y);
                     int directionNum = 0;
-                    int rnd = UnityEngine.Random.Range(0, 3);
+                    int rnd = Random.Range(0, 3);
 
                     if ((startPos.x - endPos.x) > 0 && xPosDistance >= yPosDistance)
                     {
@@ -225,11 +224,9 @@ public class NotesView : NotesModel
                     moveNotesSprite.color = new Color(1, 1, 1, mainSpriteAlpha);
                 }
 
-                // ノーツが画面外に行ったかをチェック
-                var viewport = Camera.main.WorldToViewportPoint(moveNotesObj.transform.position);    // MainCameraのviewportを取得
-                if (!rect.Contains(viewport) || NotesRate >= 1.0f || mainSpriteAlpha <= 0)
+                if (NotesRate >= 1.0f || mainSpriteAlpha <= 0)
                 {
-                    // ノーツが完全に透明になるか、画面外へ移動したか、目的地に着いたら非表示
+                    // ノーツが完全に透明になるか、目的地に着いたら非表示
                     ResetNotes();
                 }
             }

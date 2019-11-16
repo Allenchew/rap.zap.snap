@@ -17,7 +17,7 @@ public enum NotesType
 
 public class NotesModel : MonoBehaviour
 {
-    public NotesType NotesTypes { set; get; }
+    public NotesType NotesTypes { set; get; } = NotesType.CircleKey;
 
     // ノーツのスプライト画像リスト
     [SerializeField, Tooltip("ノーツの画像リスト")]

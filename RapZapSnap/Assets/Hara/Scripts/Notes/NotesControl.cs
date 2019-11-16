@@ -273,6 +273,6 @@ public class NotesControl : MonoBehaviour
         }
 
         // 歌詞を流す処理（予定）
-        Debug.Log(_ = inputFlag ? "プレイヤー１　　Perfect：" + dataBase1.Perfect + " Good：" + dataBase1.Good + " Bad：" + dataBase1.Bad : "プレイヤー２　　Perfect：" + dataBase2.Perfect + " Good：" + dataBase2.Good + " Bad：" + dataBase2.Bad);
+        //Debug.Log(_ = inputFlag ? "プレイヤー１　　Perfect：" + dataBase1.Perfect + " Good：" + dataBase1.Good + " Bad：" + dataBase1.Bad : "プレイヤー２　　Perfect：" + dataBase2.Perfect + " Good：" + dataBase2.Good + " Bad：" + dataBase2.Bad);
     }
 }
