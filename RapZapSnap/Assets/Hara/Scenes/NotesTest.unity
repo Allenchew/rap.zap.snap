@@ -452,6 +452,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!1 &1587512187
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,6 +573,8 @@ MonoBehaviour:
   perfectLength: 0.03
   goodLength: 0.015
   badLength: 0.005
+=======
+>>>>>>> parent of 497e002... [New]ノーツのUI仕様の作成
 --- !u!1001 &6328630671325892449
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -643,6 +646,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328630671478868998, guid: ad2406f2c3a60e549abab9a53d26bde1,
+        type: 3}
+      propertyPath: maxNotes
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad2406f2c3a60e549abab9a53d26bde1, type: 3}
