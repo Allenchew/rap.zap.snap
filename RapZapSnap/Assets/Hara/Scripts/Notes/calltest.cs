@@ -13,20 +13,9 @@ public class calltest : MonoBehaviour
     private float span = 0.0f;
     private float timer = 0.0f;
 
-    public static calltest Instance { private set; get; } = null;
-
     // Start is called before the first frame update
     void Start()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
         
     }
 
@@ -44,8 +33,14 @@ public class calltest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            NotesControlForUI.Instance.CallNotes(NotesType.UpArrow, new Vector3(-600, -600, 0), new Vector3(-600, 300, 0));
-            NotesControlForUI.Instance.CallNotes(NotesType.UpArrow, new Vector3(600, -300, 0), new Vector3(600, 300, 0), InputController.PlayerTwo);
+            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(-6, 10, 0), new Vector3(-6, -3, 0));
+            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(6, -10, 0), new Vector3(6, 3, 0), InputController.PlayerTwo);
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            NotesControlForUI.Instance.CallNotes(NotesType.UpArrow, new Vector3(-600, 600, 0), new Vector3(-600, -300, 0));
+            NotesControlForUI.Instance.CallNotes(NotesType.UpArrow, new Vector3(600, -600, 0), new Vector3(600, 300, 0), InputController.PlayerTwo);
         }
     }
 }

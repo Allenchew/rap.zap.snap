@@ -113,17 +113,15 @@ public class NotesControlForUI : MonoBehaviour
         {
             if(dataBase1.NotesObjects[i] == null)
             {
-                var obj = Instantiate(notesPrefab);
+                var obj = Instantiate(notesPrefab, transform.localPosition = new Vector3(0, 0, 0), Quaternion.identity, gameObject.transform);
                 obj.SetActive(false);
                 dataBase1.NotesObjects[i] = obj.GetComponent<NotesViewForUI>();
-                obj.transform.SetParent(gameObject.transform);
             }
             if(dataBase2.NotesObjects[i] == null)
             {
-                var obj = Instantiate(notesPrefab);
+                var obj = Instantiate(notesPrefab, transform.localPosition = new Vector3(0, 0, 0), Quaternion.identity, gameObject.transform);
                 obj.SetActive(false);
                 dataBase2.NotesObjects[i] = obj.GetComponent<NotesViewForUI>();
-                obj.transform.SetParent(gameObject.transform);
             }
         }
         notesStartRady = true;

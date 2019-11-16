@@ -229,7 +229,7 @@ public class NotesView : NotesModel
                 var viewport = Camera.main.WorldToViewportPoint(moveNotesObj.transform.position);    // MainCameraのviewportを取得
                 if (!rect.Contains(viewport) || NotesRate >= 1.0f || mainSpriteAlpha <= 0)
                 {
-                    // 画面外に行ったらノーツを非表示にする
+                    // ノーツが完全に透明になるか、画面外へ移動したか、目的地に着いたら非表示
                     ResetNotes();
                 }
             }
@@ -320,32 +320,5 @@ public class NotesView : NotesModel
 
         // ノーツの再生
         gameObject.SetActive(true);
-    }
-
-    /// <summary>
-    /// n秒後に処理を実行
-    /// </summary>
-    /// <param name="waitTime">遅延時間[s]</param>
-    /// <param name="action">実行したい処理</param>
-    /// <returns></returns>
-    private IEnumerator DelayMethod(float waitTime, Action action)
-    {
-        yield return new WaitForSeconds(waitTime);
-        action();
-    }
-
-    /// <summary>
-    /// nフレーム後に処理を実行
-    /// </summary>
-    /// <param name="delayFrameCount">遅延フレーム数</param>
-    /// <param name="action">実行したい処理</param>
-    /// <returns></returns>
-    private IEnumerator DelayMethod(int delayFrameCount, Action action)
-    {
-        for(int i = 0; i < delayFrameCount; i++)
-        {
-            yield return null;
-        }
-        action();
     }
 }
