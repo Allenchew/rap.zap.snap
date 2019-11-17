@@ -12,9 +12,8 @@ GameObject:
   - component: {fileID: 4331173440081971204}
   - component: {fileID: 4331173440081971211}
   - component: {fileID: 4331173440081971210}
-  - component: {fileID: 4331173440081971209}
   m_Layer: 5
-  m_Name: NotesObjectForUI
+  m_Name: NotesUICanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99,23 +98,3 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &4331173440081971209
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4331173440081971208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5b8d8ef140c24048b66932ffa0fb841, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxNotes: 10
-  notesPrefab: {fileID: 5461428526733352716, guid: c3e92720fa6870a4c8a386fee0c276f3,
-    type: 3}
-  notesSize: 0.35
-  notesSpriteAlpha: 0.25
-  perfectLength: 0.03
-  goodLength: 0.015
-  badLength: 0.005

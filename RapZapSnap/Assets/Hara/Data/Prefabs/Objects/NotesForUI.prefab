@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5461428526733352717}
-  - component: {fileID: 5461428526733352718}
+  - component: {fileID: 3141532738491082990}
   m_Layer: 5
   m_Name: NotesForUI
   m_TagString: Untagged
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5461428526733352718
+--- !u!114 &3141532738491082990
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5461428526733352716}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8746ac09aeae91645ab43330fe8ffdb1, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ec950f1977595342a76271e3ae13464, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   notesSprites:

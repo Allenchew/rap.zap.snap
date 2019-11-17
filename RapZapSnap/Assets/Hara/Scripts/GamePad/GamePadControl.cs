@@ -14,9 +14,6 @@ namespace DS4
     {
         public static GamePadControl Instance { private set; get; } = null;
 
-        public bool IsChangeController { private set; get; } = false;    // 1Pのコントローラーと2Pのコントローラーの入力を入れ替えるか
-        private bool oneShotCall = true;
-
         [SerializeField, Tooltip("PS4コントローラーを使う")]
         private bool usePs4Controller = true;
 
@@ -201,34 +198,7 @@ namespace DS4
         {
             if (usePs4Controller)
             {
-                ChangeControllerInput();
                 DS4_SingleInput();
-            }
-        }
-
-        /// <summary>
-        /// PS4の〇ボタンを押したコントローラーを1Pとして設定する
-        /// </summary>
-        private void ChangeControllerInput()
-        {
-            if (!oneShotCall) return;
-
-            if (Input.GetKeyDown(KeyCode.Joystick1Button2))
-            {
-                IsChangeController = false;
-                oneShotCall = false;
-                Debug.Log("1P → 1P");
-                SetInputModule(InputController.PlayerOne);
-                return;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Joystick2Button2))
-            {
-                IsChangeController = true;
-                oneShotCall = false;
-                SetInputModule(InputController.PlayerOne);
-                Debug.Log("2P → 1P");
-                return;
             }
         }
 
@@ -242,28 +212,33 @@ namespace DS4
             GetAxisDown(Axis.PadHorizontal);
             GetAxisDown(Axis.LstickVertical);
             GetAxisDown(Axis.LstickHorizontal);
-            Controller1.Circle = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button2) : Input.GetKeyDown(KeyCode.Joystick1Button2);
-            Controller1.Cross = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button1) : Input.GetKeyDown(KeyCode.Joystick1Button1);
-            Controller1.Triangle = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button3) : Input.GetKeyDown(KeyCode.Joystick1Button3);
-            Controller1.Square = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button0) : Input.GetKeyDown(KeyCode.Joystick1Button0);
-            Controller1.L1 = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button4) : Input.GetKeyDown(KeyCode.Joystick1Button4);
-            Controller1.R1 = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button5) : Input.GetKeyDown(KeyCode.Joystick1Button5);
-            Controller1.L2 = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button6) : Input.GetKeyDown(KeyCode.Joystick1Button6);
-            Controller1.R2 = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick2Button7) : Input.GetKeyDown(KeyCode.Joystick1Button7);
+            Controller1.Circle = Input.GetKeyDown(KeyCode.Joystick1Button2);
+            Controller1.Cross = Input.GetKeyDown(KeyCode.Joystick1Button1);
+            Controller1.Triangle = Input.GetKeyDown(KeyCode.Joystick1Button3);
+            Controller1.Square = Input.GetKeyDown(KeyCode.Joystick1Button0);
+            Controller1.L1 = Input.GetKeyDown(KeyCode.Joystick1Button4);
+            Controller1.R1 = Input.GetKeyDown(KeyCode.Joystick1Button5);
+            Controller1.L2 = Input.GetKeyDown(KeyCode.Joystick1Button6);
+            Controller1.R2 = Input.GetKeyDown(KeyCode.Joystick1Button7);
+            Controller1.Option = Input.GetKeyDown(KeyCode.Joystick1Button9);
 
             // コントローラ２の入力
             GetAxisDown(Axis.PadVertical, InputController.PlayerTwo);
             GetAxisDown(Axis.PadHorizontal, InputController.PlayerTwo);
             GetAxisDown(Axis.LstickVertical, InputController.PlayerTwo);
             GetAxisDown(Axis.LstickHorizontal, InputController.PlayerTwo);
-            Controller2.Circle = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button2) : Input.GetKeyDown(KeyCode.Joystick2Button2);
-            Controller2.Cross = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button1) : Input.GetKeyDown(KeyCode.Joystick2Button1);
-            Controller2.Triangle = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button3) : Input.GetKeyDown(KeyCode.Joystick2Button3);
-            Controller2.Square = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button0) : Input.GetKeyDown(KeyCode.Joystick2Button0);
-            Controller2.L1 = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button4) : Input.GetKeyDown(KeyCode.Joystick2Button4);
-            Controller2.R1 = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button5) : Input.GetKeyDown(KeyCode.Joystick2Button5);
-            Controller2.L2 = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button6) : Input.GetKeyDown(KeyCode.Joystick2Button6);
-            Controller2.R2 = IsChangeController ? Input.GetKeyDown(KeyCode.Joystick1Button7) : Input.GetKeyDown(KeyCode.Joystick2Button7);
+            Controller2.Circle = Input.GetKeyDown(KeyCode.Joystick2Button2);
+            Controller2.Cross = Input.GetKeyDown(KeyCode.Joystick2Button1);
+            Controller2.Triangle = Input.GetKeyDown(KeyCode.Joystick2Button3);
+            Controller2.Square = Input.GetKeyDown(KeyCode.Joystick2Button0);
+            Controller2.L1 = Input.GetKeyDown(KeyCode.Joystick2Button4);
+            Controller2.R1 = Input.GetKeyDown(KeyCode.Joystick2Button5);
+            Controller2.L2 = Input.GetKeyDown(KeyCode.Joystick2Button6);
+            Controller2.R2 = Input.GetKeyDown(KeyCode.Joystick2Button7);
+            Controller2.Option = Input.GetKeyDown(KeyCode.Joystick2Button9);
+
+            if (Controller1.Option) Debug.Log("このコントローラーは1Pです");
+            if (Controller2.Option) Debug.Log("このコントローラーは2Pです");
         }
 
         /// <summary>
@@ -286,10 +261,10 @@ namespace DS4
                             if (!firstAxisFlag.Pu)
                             {
                                 firstAxisFlag.Pu = true;
-                                _ = IsChangeController ? Controller2.UpKey = true : Controller1.UpKey = true;
+                                Controller1.UpKey = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.UpKey = false : Controller1.UpKey = false;
+                            Controller1.UpKey = false;
                             return;
                         }
                         else if (input < 0)
@@ -297,10 +272,10 @@ namespace DS4
                             if (!firstAxisFlag.Pd)
                             {
                                 firstAxisFlag.Pd = true;
-                                _ = IsChangeController ? Controller2.DownKey = true : Controller1.DownKey = true;
+                                Controller1.DownKey = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.DownKey = false : Controller1.DownKey = false;
+                            Controller1.DownKey = false;
                             return;
                         }
                         else
@@ -318,10 +293,10 @@ namespace DS4
                             if (!secondAxisFlag.Pu)
                             {
                                 secondAxisFlag.Pu = true;
-                                _ = IsChangeController ? Controller1.UpKey = true : Controller2.UpKey = true;
+                                Controller2.UpKey = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.UpKey = false : Controller2.UpKey = false;
+                            Controller2.UpKey = false;
                             return;
                         }
                         else if (input < 0)
@@ -329,10 +304,10 @@ namespace DS4
                             if (!secondAxisFlag.Pd)
                             {
                                 secondAxisFlag.Pd = true;
-                                _ = IsChangeController ? Controller1.DownKey = true : Controller2.DownKey = true;
+                                Controller2.DownKey = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.DownKey = false : Controller2.DownKey = false;
+                            Controller2.DownKey = false;
                             return;
                         }
                         else
@@ -351,10 +326,10 @@ namespace DS4
                             if (!firstAxisFlag.Pr)
                             {
                                 firstAxisFlag.Pr = true;
-                                _ = IsChangeController ? Controller2.RightKey = true : Controller1.RightKey = true;
+                                Controller1.RightKey = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.RightKey = false : Controller1.RightKey = false;
+                            Controller1.RightKey = false;
                             return;
                         }
                         else if (input < 0)
@@ -362,10 +337,10 @@ namespace DS4
                             if (!firstAxisFlag.Pl)
                             {
                                 firstAxisFlag.Pl = true;
-                                _ = IsChangeController ? Controller2.LeftKey = true : Controller1.LeftKey = true;
+                                Controller1.LeftKey = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.LeftKey = false : Controller1.LeftKey = false;
+                            Controller1.LeftKey = false;
                             return;
                         }
                         else
@@ -383,10 +358,10 @@ namespace DS4
                             if (!secondAxisFlag.Pr)
                             {
                                 secondAxisFlag.Pr = true;
-                                _ = IsChangeController ? Controller1.RightKey = true : Controller2.RightKey = true;
+                                Controller2.RightKey = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.RightKey = false : Controller2.RightKey = false;
+                            Controller2.RightKey = false;
                             return;
                         }
                         else if (input < 0)
@@ -394,10 +369,10 @@ namespace DS4
                             if (!secondAxisFlag.Pl)
                             {
                                 secondAxisFlag.Pl = true;
-                                _ = IsChangeController ? Controller1.LeftKey = true : Controller2.LeftKey = true;
+                                Controller2.LeftKey = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.LeftKey = false : Controller2.LeftKey = false;
+                            Controller2.LeftKey = false;
                             return;
                         }
                         else
@@ -416,10 +391,10 @@ namespace DS4
                             if (!firstAxisFlag.Lu)
                             {
                                 firstAxisFlag.Lu = true;
-                                _ = IsChangeController ? Controller2.LstickU = true : Controller1.LstickU = true;
+                                Controller1.LstickU = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.LstickU = false : Controller1.LstickU = false;
+                            Controller1.LstickU = false;
                             return;
                         }
                         else if (input < 0)
@@ -427,10 +402,10 @@ namespace DS4
                             if (!firstAxisFlag.Ld)
                             {
                                 firstAxisFlag.Ld = true;
-                                _ = IsChangeController ? Controller2.LstickD = true : Controller1.LstickD = true;
+                                Controller1.LstickD = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.LstickD = false : Controller1.LstickD = false;
+                            Controller1.LstickD = false;
                             return;
                         }
                         else
@@ -448,10 +423,10 @@ namespace DS4
                             if (!secondAxisFlag.Lu)
                             {
                                 secondAxisFlag.Lu = true;
-                                _ = IsChangeController ? Controller1.LstickU = true : Controller2.LstickU = true;
+                                Controller2.LstickU = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.LstickU = false : Controller2.LstickU = false;
+                            Controller2.LstickU = false;
                             return;
                         }
                         else if (input < 0)
@@ -459,10 +434,10 @@ namespace DS4
                             if (!secondAxisFlag.Ld)
                             {
                                 secondAxisFlag.Ld = true;
-                                _ = IsChangeController ? Controller1.LstickD = true : Controller2.LstickD = true;
+                                Controller2.LstickD = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.LstickD = false : Controller2.LstickD = false;
+                            Controller2.LstickD = false;
                             return;
                         }
                         else
@@ -481,10 +456,10 @@ namespace DS4
                             if (!firstAxisFlag.Lr)
                             {
                                 firstAxisFlag.Lr = true;
-                                _ = IsChangeController ? Controller2.LstickR = true : Controller1.LstickR = true;
+                                Controller1.LstickR = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.LstickR = false : Controller1.LstickR = false;
+                            Controller1.LstickR = false;
                             return;
                         }
                         else if (input < 0)
@@ -492,10 +467,10 @@ namespace DS4
                             if (!firstAxisFlag.Ll)
                             {
                                 firstAxisFlag.Ll = true;
-                                _ = IsChangeController ? Controller2.LstickL = true : Controller1.LstickL = true;
+                                Controller1.LstickL = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.LstickL = false : Controller1.LstickL = false;
+                            Controller1.LstickL = false;
                             return;
                         }
                         else
@@ -513,10 +488,10 @@ namespace DS4
                             if (!secondAxisFlag.Lr)
                             {
                                 secondAxisFlag.Lr = true;
-                                _ = IsChangeController ? Controller1.LstickR = true : Controller2.LstickR = true;
+                                Controller2.LstickR = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.LstickR = false : Controller2.LstickR = false;
+                            Controller2.LstickR = false;
                             return;
                         }
                         else if (input < 0)
@@ -524,10 +499,10 @@ namespace DS4
                             if (!secondAxisFlag.Ll)
                             {
                                 secondAxisFlag.Ll = true;
-                                _ = IsChangeController ? Controller1.LstickL = true : Controller2.LstickL = true;
+                                Controller2.LstickL = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.LstickL = false : Controller2.LstickL = false;
+                            Controller2.LstickL = false;
                             return;
                         }
                         else
@@ -546,10 +521,10 @@ namespace DS4
                             if (!firstAxisFlag.Ru)
                             {
                                 firstAxisFlag.Ru = true;
-                                _ = IsChangeController ? Controller2.RstickU = true : Controller1.RstickU = true;
+                                Controller1.RstickU = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.RstickU = false : Controller1.RstickU = false;
+                            Controller1.RstickU = false;
                             return;
                         }
                         else if (input < 0)
@@ -557,10 +532,10 @@ namespace DS4
                             if (!firstAxisFlag.Rd)
                             {
                                 firstAxisFlag.Rd = true;
-                                _ = IsChangeController ? Controller2.RstickD = true : Controller1.RstickD = true;
+                                Controller1.RstickD = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.RstickD = false : Controller1.RstickD = false;
+                            Controller1.RstickD = false;
                             return;
                         }
                         else
@@ -578,10 +553,10 @@ namespace DS4
                             if (!secondAxisFlag.Ru)
                             {
                                 secondAxisFlag.Ru = true;
-                                _ = IsChangeController ? Controller1.RstickU = true : Controller2.RstickU = true;
+                                Controller2.RstickU = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.RstickU = false : Controller2.RstickU = false;
+                            Controller2.RstickU = false;
                             return;
                         }
                         else if (input < 0)
@@ -589,10 +564,10 @@ namespace DS4
                             if (!secondAxisFlag.Rd)
                             {
                                 secondAxisFlag.Rd = true;
-                                _ = IsChangeController ? Controller1.RstickD = true : Controller2.RstickD = true;
+                                Controller2.RstickD = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.RstickD = false : Controller2.RstickD = false;
+                            Controller2.RstickD = false;
                             return;
                         }
                         else
@@ -611,10 +586,10 @@ namespace DS4
                             if (!firstAxisFlag.Rr)
                             {
                                 firstAxisFlag.Rr = true;
-                                _ = IsChangeController ? Controller2.RstickR = true : Controller1.RstickR = true;
+                                Controller1.RstickR = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.RstickR = true : Controller1.RstickR = true;
+                            Controller1.RstickR = true;
                             return;
                         }
                         else if (input < 0)
@@ -622,10 +597,10 @@ namespace DS4
                             if (!firstAxisFlag.Rl)
                             {
                                 firstAxisFlag.Rl = true;
-                                _ = IsChangeController ? Controller2.RstickL = true : Controller1.RstickL = true;
+                                Controller1.RstickL = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller2.RstickL = true : Controller1.RstickL = true;
+                            Controller1.RstickL = true;
                             return;
                         }
                         else
@@ -643,10 +618,10 @@ namespace DS4
                             if (!secondAxisFlag.Rr)
                             {
                                 secondAxisFlag.Rr = true;
-                                _ = IsChangeController ? Controller1.RstickR = true : Controller2.RstickR = true;
+                                Controller2.RstickR = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.RstickR = false : Controller2.RstickR = false;
+                            Controller2.RstickR = false;
                             return;
                         }
                         else if (input < 0)
@@ -654,10 +629,10 @@ namespace DS4
                             if (!secondAxisFlag.Rl)
                             {
                                 secondAxisFlag.Rl = true;
-                                _ = IsChangeController ? Controller1.RstickL = true : Controller2.RstickL = true;
+                                Controller2.RstickL = true;
                                 return;
                             }
-                            _ = IsChangeController ? Controller1.RstickL = false : Controller2.RstickL = false;
+                            Controller2.RstickL = false;
                             return;
                         }
                         else
@@ -685,27 +660,17 @@ namespace DS4
         /// <summary>
         /// StandaloneInputModuleをPS4入力に対応させる
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">入力を許可するプレイヤー</param>
         public void SetInputModule(InputController input)
         {
             // StandaloneInputModuleが無ければ処理を終了
             if (inputModule == null) return;
-            
+
             // PS4入力に対応させる
-            if(input == InputController.PlayerOne)
-            {
-                inputModule.submitButton = IsChangeController ? joy2KeyName.Submit : joy1KeyName.Submit;
-                inputModule.cancelButton = IsChangeController ? joy2KeyName.Cancel : joy1KeyName.Cancel;
-                inputModule.horizontalAxis = IsChangeController ? joy2KeyName.Horizontal : joy1KeyName.Horizontal;
-                inputModule.verticalAxis = IsChangeController ? joy2KeyName.Vertical : joy1KeyName.Vertical;
-            }
-            else
-            {
-                inputModule.submitButton = IsChangeController ? joy1KeyName.Submit : joy2KeyName.Submit;
-                inputModule.cancelButton = IsChangeController ? joy1KeyName.Cancel : joy2KeyName.Cancel;
-                inputModule.horizontalAxis = IsChangeController ? joy1KeyName.Horizontal : joy2KeyName.Horizontal;
-                inputModule.verticalAxis = IsChangeController ? joy1KeyName.Vertical : joy2KeyName.Vertical;
-            }
+            inputModule.submitButton = input == InputController.PlayerOne ? joy1KeyName.Submit : joy2KeyName.Submit;
+            inputModule.cancelButton = input == InputController.PlayerOne ? joy1KeyName.Cancel : joy2KeyName.Cancel;
+            inputModule.horizontalAxis = input == InputController.PlayerOne ? joy1KeyName.Horizontal : joy2KeyName.Horizontal;
+            inputModule.verticalAxis = input == InputController.PlayerOne ? joy1KeyName.Vertical : joy2KeyName.Vertical;
         }
     }
 }
