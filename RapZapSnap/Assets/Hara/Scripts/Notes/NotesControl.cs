@@ -209,16 +209,22 @@ public class NotesControl : MonoBehaviour
     public void CallNotes(Vector3 start, Vector3 end, int time, float span, InputController player = InputController.PlayerOne, float duration = 1.0f)
     {
         ResetResult(player);
-        StartCoroutine(CallTimeSpan(time, span, start, end, player, duration));
+        var startArray = new Vector3[1] { start };
+        var endArray = new Vector3[1] { end };
+        StartCoroutine(CallTimeSpan(time, span, startArray, endArray, player, duration));
     }
 
-    private IEnumerator CallTimeSpan(int time, float span, Vector3 start, Vector3 end, InputController player = InputController.PlayerOne, float duration = 1.0f)
+    private IEnumerator CallTimeSpan(int time, float span, Vector3[] start, Vector3[] end, InputController player = InputController.PlayerOne, float duration = 1.0f)
     {
         int count = 0;
+        int startNum = 0;
+        int endNum = 0;
         while (count < time)
         {
             yield return new WaitForSeconds(span);
-            CallNotes((NotesType)Random.Range(0, 6), start, end, player, duration);
+            CallNotes((NotesType)Random.Range(0, 6), start[startNum], end[endNum], player, duration);
+            startNum = startNum + 1 >= start.Length ? 0 : startNum + 1;
+            endNum = endNum + 1 >= end.Length ? 0 : endNum + 1;
             count++;
         }
     }

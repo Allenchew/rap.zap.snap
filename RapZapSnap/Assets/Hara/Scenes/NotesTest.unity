@@ -182,7 +182,12 @@ PrefabInstance:
     - target: {fileID: 6328630671478868998, guid: ad2406f2c3a60e549abab9a53d26bde1,
         type: 3}
       propertyPath: notesUIMode
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328630671478868998, guid: ad2406f2c3a60e549abab9a53d26bde1,
+        type: 3}
+      propertyPath: maxNotes
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad2406f2c3a60e549abab9a53d26bde1, type: 3}
@@ -385,6 +390,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8368470366465722212, guid: d8ca744b702ac6d44beb0e30d97b0e8d,
+        type: 3}
+      propertyPath: usePs4Controller
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d8ca744b702ac6d44beb0e30d97b0e8d, type: 3}
