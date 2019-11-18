@@ -165,25 +165,25 @@ public class NotesControl : MonoBehaviour
     }
 
     /// <summary>
-    /// ノーツを再生する処理
+    /// ノーツを1回再生する処理
     /// </summary>
-    /// <param name="notesType">再生するノーツのタイプ <para>Example: NotesType.CircleKey → 〇ボタンノーツ</para></param>
+    /// <param name="type">再生するノーツのタイプ <para>Example: NotesType.CircleKey → 〇ボタンノーツ</para></param>
     /// <param name="startPos">ノーツの再生開始座標</param>
-    /// <param name="goalPos">ノーツの判定座標</param>
-    /// <param name="input">このノーツを入力できるプレイヤー</param>
+    /// <param name="endPos">ノーツの判定座標</param>
+    /// <param name="player">このノーツを入力できるプレイヤー</param>
     /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
-    public void CallNotes(NotesType notesType, Vector3 startPos, Vector3 goalPos, InputController input = InputController.PlayerOne, float duration = 1.0f)
+    public void CallNotes(NotesType type, Vector3 startPos, Vector3 endPos, InputController player, float duration = 1.0f)
     {
         // ノーツの生成準備が完了していなければ処理を終了
         if (!notesStartRady) return;
 
-        if (input == InputController.PlayerOne)
+        if (player == InputController.PlayerOne)
         {
             // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
             if (dataBase1.NotesObjects[dataBase1.NotesCallCount].gameObject.activeSelf) return;
 
             // 第1ノーツプールからノーツを再生
-            dataBase1.NotesObjects[dataBase1.NotesCallCount].SetNotesData(notesType, startPos, goalPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
+            dataBase1.NotesObjects[dataBase1.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
             dataBase1.NotesCallCount++;
         }
         else
@@ -192,9 +192,24 @@ public class NotesControl : MonoBehaviour
             if (dataBase2.NotesObjects[dataBase2.NotesCallCount].gameObject.activeSelf) return;
 
             // 第2ノーツプールからノーツを再生
-            dataBase2.NotesObjects[dataBase2.NotesCallCount].SetNotesData(notesType, startPos, goalPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
+            dataBase2.NotesObjects[dataBase2.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
             dataBase2.NotesCallCount++;
         }
+    }
+
+    /// <summary>
+    /// ノーツを1回再生する処理
+    /// </summary>
+    /// <param name="type">再生するノーツのタイプ <para>Example: NotesType.CircleKey → 〇ボタンノーツ</para></param>
+    /// <param name="startObj">ノーツの再生開始座標<para>再生を開始する位置にオブジェクトを配置し、その座標を参照。</para></param>
+    /// <param name="endObj">ノーツの判定座標<para>再生を開始する位置にオブジェクトを配置し、その座標を参照。</para></param>
+    /// <param name="player">このノーツを入力できるプレイヤー</param>
+    /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
+    public void CallNotes(NotesType type, GameObject startObj, GameObject endObj, InputController player, float duration = 1.0f)
+    {
+        var startPos = notesUIMode ? startObj.transform.localPosition : startObj.transform.position;
+        var endPos = notesUIMode ? endObj.transform.localPosition : endObj.transform.position;
+        CallNotes(type, startPos, endPos, player, duration);
     }
 
     /// <summary>
@@ -202,29 +217,62 @@ public class NotesControl : MonoBehaviour
     /// </summary>
     /// <param name="start">ノーツの再生開始座標</param>
     /// <param name="end">ノーツの判定座標</param>
+    /// <param name="player">このノーツを入力できるプレイヤー</param>
+    /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
     /// <param name="time">ノーツを呼び出す回数</param>
     /// <param name="span">ノーツを呼び出す間隔[s]</param>
-    /// <param name="player">ノーツの対象プレイヤー</param>
-    /// <param name="duration">ノーツの到達所要時間</param>
-    public void CallNotes(Vector3 start, Vector3 end, int time, float span, InputController player = InputController.PlayerOne, float duration = 1.0f)
+    public void CallNotes(Vector3 start, Vector3 end, InputController player, float duration = 1.0f, int time = 10, float span = 1.0f)
     {
         ResetResult(player);
         var startArray = new Vector3[1] { start };
         var endArray = new Vector3[1] { end };
-        StartCoroutine(CallTimeSpan(time, span, startArray, endArray, player, duration));
+        StartCoroutine(CallTimeSpan(startArray, endArray, player, duration, time, span));
     }
 
-    private IEnumerator CallTimeSpan(int time, float span, Vector3[] start, Vector3[] end, InputController player = InputController.PlayerOne, float duration = 1.0f)
+    /// <summary>
+    /// 指定した間隔で指定した数だけノーツを再生する処理
+    /// </summary>
+    /// <param name="startObj">ノーツの再生開始座標<para>再生を開始する位置にオブジェクトを配置し、その座標を参照。</para></param>
+    /// <param name="endObj">ノーツの判定座標<para>再生を開始する位置にオブジェクトを配置し、その座標を参照。</para></param>
+    /// <param name="player">このノーツを入力できるプレイヤー</param>
+    /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
+    /// <param name="time">ノーツを呼び出す回数</param>
+    /// <param name="span">ノーツを呼び出す間隔[s]</param>
+    public void CallNotes(GameObject startObj, GameObject endObj, InputController player, float duration = 1.0f, int time = 10, float span = 1.0f)
+    {
+        ResetResult(player);
+        var startArray = new Vector3[1] { _ = notesUIMode ? startObj.transform.localPosition : startObj.transform.position };
+        var endArray = new Vector3[1] { _ = notesUIMode ? endObj.transform.localPosition : endObj.transform.position };
+        StartCoroutine(CallTimeSpan(startArray, endArray, player, duration, time, span));
+    }
+
+    /// <summary>
+    /// 指定した間隔で指定した数だけノーツを再生する処理
+    /// </summary>
+    /// <param name="startPosArray">ノーツの再生開始座標の配列データ<para>Vector3[] の配列データを参照</para></param>
+    /// <param name="endPosArray">ノーツの判定座標の配列データ<para>Vector3[] の配列データを参照</para></param>
+    /// <param name="player">このノーツを入力できるプレイヤー</param>
+    /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
+    /// <param name="time">ノーツを呼び出す回数</param>
+    /// <param name="span">ノーツを呼び出す間隔[s]</param>
+    public void CallNotes(Vector3[] startPosArray, Vector3[] endPosArray, InputController player, float duration = 1.0f, int time = 10, float span = 1.0f)
+    {
+        ResetResult(player);
+        StartCoroutine(CallTimeSpan(startPosArray, endPosArray, player, duration, time, span));
+    }
+
+    private IEnumerator CallTimeSpan(Vector3[] startArray, Vector3[] endArray, InputController player, float duration, int time, float span)
     {
         int count = 0;
         int startNum = 0;
         int endNum = 0;
+
         while (count < time)
         {
             yield return new WaitForSeconds(span);
-            CallNotes((NotesType)Random.Range(0, 6), start[startNum], end[endNum], player, duration);
-            startNum = startNum + 1 >= start.Length ? 0 : startNum + 1;
-            endNum = endNum + 1 >= end.Length ? 0 : endNum + 1;
+            CallNotes((NotesType)Random.Range(0, 6), startArray[startNum], endArray[endNum], player, duration);
+            startNum = startNum + 1 >= startArray.Length ? 0 : startNum + 1;
+            endNum = endNum + 1 >= endArray.Length ? 0 : endNum + 1;
             count++;
         }
     }

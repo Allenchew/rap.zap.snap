@@ -14,6 +14,16 @@ public class calltest : MonoBehaviour
     private float span = 0.0f;
     private float timer = 0.0f;
 
+    [SerializeField]
+    private GameObject startObj = null;
+    [SerializeField]
+    private GameObject endObj = null;
+
+    [SerializeField]
+    private List<GameObject> staroObjs = new List<GameObject>();
+    [SerializeField]
+    private List<GameObject> endObjs = new List<GameObject>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,31 +33,20 @@ public class calltest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        timer += Time.deltaTime;
-        if(timer >= span)
-        {
-            //NotesControl.Instance.CallNotes(NotesType.CircleKey, new Vector3(-5, 0, 0), new Vector3(5, 0, 0), TargetPlayer.PlayerTwo);
-            timer = 0;
-        }
-        
-
         if (Input.GetKeyDown(KeyCode.G))
         {
-            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(-6, 10, 0), new Vector3(-6, -3, 0));
-            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(6, -10, 0), new Vector3(6, 3, 0), InputController.PlayerTwo);
+            
         }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(-600, 800, 0), new Vector3(-600, -300, 0));
-            NotesControl.Instance.CallNotes(NotesType.UpArrow, new Vector3(600, -800, 0), new Vector3(600, 300, 0), InputController.PlayerTwo);
+            
         }
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            NotesControl.Instance.CallNotes(new Vector3(-600, 800, 0), new Vector3(-600, -300, 0), 30, 0.75f, InputController.PlayerOne, 0.65f);
-            NotesControl.Instance.CallNotes(new Vector3(600, -800, 0), new Vector3(600, 300, 0), 30, 0.75f, InputController.PlayerTwo, 0.65f);
+            NotesControl.Instance.CallNotes(new Vector3(-600, 800, 0), new Vector3(-600, -300, 0), InputController.PlayerOne, 0.6f, 30, 0.75f);
+            //NotesControl.Instance.CallNotes(new Vector3(600, -800, 0), new Vector3(600, 300, 0), InputController.PlayerTwo, 0.6f, 30, 0.75f);
         }
 
         if (Input.GetKeyDown(KeyCode.R))
