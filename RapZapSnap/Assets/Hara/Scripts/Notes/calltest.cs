@@ -7,12 +7,6 @@ public class calltest : MonoBehaviour
 {
     [SerializeField]
     private float duration;
-    [SerializeField]
-    private List<Vector3> startPos = new List<Vector3>();
-
-    [SerializeField]
-    private float span = 0.0f;
-    private float timer = 0.0f;
 
     [SerializeField]
     private GameObject startObj = null;
@@ -20,9 +14,9 @@ public class calltest : MonoBehaviour
     private GameObject endObj = null;
 
     [SerializeField]
-    private List<GameObject> staroObjs = new List<GameObject>();
+    private GameObject[] staroObjs = null;
     [SerializeField]
-    private List<GameObject> endObjs = new List<GameObject>();
+    private GameObject[] endObjs = null;
 
     // Start is called before the first frame update
     void Start()
@@ -43,13 +37,12 @@ public class calltest : MonoBehaviour
             
         }
 
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            NotesControl.Instance.CallNotes(new Vector3(-600, 800, 0), new Vector3(-600, -300, 0), InputController.PlayerOne, 0.6f, 30, 0.75f);
-            //NotesControl.Instance.CallNotes(new Vector3(600, -800, 0), new Vector3(600, 300, 0), InputController.PlayerTwo, 0.6f, 30, 0.75f);
+            NotesControl.Instance.PlayNotes(staroObjs, endObjs, InputController.PlayerOne, time: 30);
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.Return))
         {
             Debug.Log("ユーザー1  Perfect : " + NotesControl.Instance.GetResult(2, InputController.PlayerOne) + "  Good : " + NotesControl.Instance.GetResult(1, InputController.PlayerOne) + "  Bad : " + NotesControl.Instance.GetResult(0, InputController.PlayerOne));
             Debug.Log("ユーザー2  Perfect : " + NotesControl.Instance.GetResult(2, InputController.PlayerTwo) + "  Good : " + NotesControl.Instance.GetResult(1, InputController.PlayerTwo) + "  Bad : " + NotesControl.Instance.GetResult(0, InputController.PlayerTwo));

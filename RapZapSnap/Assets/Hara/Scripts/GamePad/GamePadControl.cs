@@ -199,6 +199,7 @@ namespace DS4
             if (usePs4Controller)
             {
                 DS4_SingleInput();
+                SetInputModule(NowControlPlayer);
             }
         }
 
@@ -212,6 +213,8 @@ namespace DS4
             GetAxisDown(Axis.PadHorizontal);
             GetAxisDown(Axis.LstickVertical);
             GetAxisDown(Axis.LstickHorizontal);
+            GetAxisDown(Axis.RstickVertical);
+            GetAxisDown(Axis.RstickHorizontal);
             Controller1.Circle = Input.GetKeyDown(KeyCode.Joystick1Button2);
             Controller1.Cross = Input.GetKeyDown(KeyCode.Joystick1Button1);
             Controller1.Triangle = Input.GetKeyDown(KeyCode.Joystick1Button3);
@@ -220,13 +223,20 @@ namespace DS4
             Controller1.R1 = Input.GetKeyDown(KeyCode.Joystick1Button5);
             Controller1.L2 = Input.GetKeyDown(KeyCode.Joystick1Button6);
             Controller1.R2 = Input.GetKeyDown(KeyCode.Joystick1Button7);
+            Controller1.Share = Input.GetKeyDown(KeyCode.Joystick1Button8);
             Controller1.Option = Input.GetKeyDown(KeyCode.Joystick1Button9);
+            Controller1.L3 = Input.GetKeyDown(KeyCode.Joystick1Button10);
+            Controller1.R3 = Input.GetKeyDown(KeyCode.Joystick1Button11);
+            Controller1.Home = Input.GetKeyDown(KeyCode.Joystick1Button12);
+            Controller1.TrackPad = Input.GetKeyDown(KeyCode.Joystick1Button13);
 
             // コントローラ２の入力
             GetAxisDown(Axis.PadVertical, InputController.PlayerTwo);
             GetAxisDown(Axis.PadHorizontal, InputController.PlayerTwo);
             GetAxisDown(Axis.LstickVertical, InputController.PlayerTwo);
             GetAxisDown(Axis.LstickHorizontal, InputController.PlayerTwo);
+            GetAxisDown(Axis.RstickVertical, InputController.PlayerTwo);
+            GetAxisDown(Axis.RstickHorizontal, InputController.PlayerTwo);
             Controller2.Circle = Input.GetKeyDown(KeyCode.Joystick2Button2);
             Controller2.Cross = Input.GetKeyDown(KeyCode.Joystick2Button1);
             Controller2.Triangle = Input.GetKeyDown(KeyCode.Joystick2Button3);
@@ -235,7 +245,12 @@ namespace DS4
             Controller2.R1 = Input.GetKeyDown(KeyCode.Joystick2Button5);
             Controller2.L2 = Input.GetKeyDown(KeyCode.Joystick2Button6);
             Controller2.R2 = Input.GetKeyDown(KeyCode.Joystick2Button7);
+            Controller2.Share = Input.GetKeyDown(KeyCode.Joystick2Button8);
             Controller2.Option = Input.GetKeyDown(KeyCode.Joystick2Button9);
+            Controller2.L3 = Input.GetKeyDown(KeyCode.Joystick2Button10);
+            Controller2.R3 = Input.GetKeyDown(KeyCode.Joystick2Button11);
+            Controller2.Home = Input.GetKeyDown(KeyCode.Joystick2Button12);
+            Controller2.TrackPad = Input.GetKeyDown(KeyCode.Joystick2Button13);
 
             if (Controller1.Option) Debug.Log("このコントローラーは1Pです");
             if (Controller2.Option) Debug.Log("このコントローラーは2Pです");
@@ -661,7 +676,7 @@ namespace DS4
         /// StandaloneInputModuleをPS4入力に対応させる
         /// </summary>
         /// <param name="input">入力を許可するプレイヤー</param>
-        public void SetInputModule(InputController input)
+        private void SetInputModule(InputController input)
         {
             // StandaloneInputModuleが無ければ処理を終了
             if (inputModule == null) return;
