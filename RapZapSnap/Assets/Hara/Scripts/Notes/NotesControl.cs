@@ -7,9 +7,6 @@ public class NotesControl : MonoBehaviour
 {
     public static NotesControl Instance { get; private set; } = null;
 
-    [SerializeField, Tooltip("ノーツをUIとして生成するか")]
-    private bool notesUIMode = true;
-
     // ノーツの最大生成数
     [SerializeField, Tooltip("ノーツの最大生成数"), Range(1, 20)]
     private int maxNotes = 5;
@@ -17,12 +14,9 @@ public class NotesControl : MonoBehaviour
     // ノーツのプレファブオブジェクト
     [SerializeField, Tooltip("ノーツのPrefab")]
     private GameObject notesPrefab = null;
-    [SerializeField, Tooltip("UIノーツのPrefab")]
-    private GameObject notesUIPrefab = null;
-    [SerializeField, Tooltip("UIノーツ用のCanvas")]
-    private GameObject notesUICanvasPrefab = null;
 
-    private RectTransform canvasRect = null;
+    [SerializeField, Tooltip("ノーツのSpriteイメージデータ")]
+    private Sprite[] notesSprites = null;
 
     /// <summary>
     /// ノーツの管理用データベース
@@ -105,7 +99,7 @@ public class NotesControl : MonoBehaviour
     /// </summary>
     private void CreateNotes()
     {
-        if ((notesPrefab == null && !notesUIMode) || (notesUIPrefab == null && notesUIMode) || (notesUICanvasPrefab == null && notesUIMode))
+        if (notesPrefab == null)
         {
             Debug.LogError("プレファブが設定されていません");
             return;
@@ -115,46 +109,23 @@ public class NotesControl : MonoBehaviour
         dataBase1.NotesObjects = new NotesView[maxNotes];
         dataBase2.NotesObjects = new NotesView[maxNotes];
 
-        // UIノーツ用のCanvasがあるかチェック
-        if(canvasRect == null && notesUIMode)
-        {
-            canvasRect = Instantiate(notesUICanvasPrefab).GetComponent<RectTransform>();
-            DontDestroyOnLoad(canvasRect);
-        }
-
         // ノーツのプールを作成し、格納する
         for (int i = 0; i < maxNotes; i++)
         {
             GameObject obj;
             if (dataBase1.NotesObjects[i] == null)
             {
-                obj = notesUIMode ? Instantiate(notesUIPrefab, canvasRect.transform, false) : Instantiate(notesPrefab, gameObject.transform, false);
+                obj = Instantiate(notesPrefab, gameObject.transform, false);
                 obj.SetActive(false);
                 dataBase1.NotesObjects[i] = obj.GetComponent<NotesView>();
-                if (notesUIMode)
-                {
-                    dataBase1.NotesObjects[i].NotesUIMode = true;
-                }
-                else
-                {
-                    dataBase1.NotesObjects[i].NotesUIMode = false;
-                }
                 dataBase1.NotesObjects[i].MoveNotesObj = obj.transform.GetChild(1).gameObject;
                 dataBase1.NotesObjects[i].GoalNotesObj = obj.transform.GetChild(0).gameObject;
             }
             if (dataBase2.NotesObjects[i] == null)
             {
-                obj = notesUIMode ? Instantiate(notesUIPrefab, canvasRect.transform, false) : Instantiate(notesPrefab, gameObject.transform, false);
+                obj = Instantiate(notesPrefab, gameObject.transform, false);
                 obj.SetActive(false);
                 dataBase2.NotesObjects[i] = obj.GetComponent<NotesView>();
-                if (notesUIMode)
-                {
-                    dataBase2.NotesObjects[i].NotesUIMode = true;
-                }
-                else
-                {
-                    dataBase2.NotesObjects[i].NotesUIMode = false;
-                }
                 dataBase2.NotesObjects[i].MoveNotesObj = obj.transform.GetChild(1).gameObject;
                 dataBase2.NotesObjects[i].GoalNotesObj = obj.transform.GetChild(0).gameObject;
             }
@@ -162,16 +133,21 @@ public class NotesControl : MonoBehaviour
     }
 
     /// <summary>
-    /// ノーツを1回再生する処理(Vector3)
+    /// ノーツを1回再生する処理
     /// </summary>
-    /// <param name="type">再生するノーツのタイプ <para>Example: NotesType.CircleKey → 〇ボタンノーツ</para></param>
+    /// <param name="type">再生するノーツのタイプ 
+    /// <para>Example: NotesType.CircleKey → 〇ボタンノーツ</para>
+    /// <para>int型で宣言しても可  0:〇ボタン 1:×ボタン 2:△ボタン 3:↑ボタン 4:↓ボタン 5:←ボタン</para>
+    /// </param>
     /// <param name="startPos">ノーツの再生開始座標</param>
     /// <param name="endPos">ノーツの判定座標</param>
     /// <param name="player">このノーツを入力できるプレイヤー</param>
     /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
-    public void PlayNotesOneShot(NotesType type, Vector3 startPos, Vector3 endPos, InputController player, float duration = 1.0f)
+    public void PlayNotesOneShot(NotesType type, Vector3 startPos, Vector3 endPos, InputController player = InputController.PlayerOne, float duration = 1.0f)
     {
         if (startPos == endPos) return;
+
+        Sprite sprite = notesSprites[(int)type];
 
         if (player == InputController.PlayerOne)
         {
@@ -179,7 +155,7 @@ public class NotesControl : MonoBehaviour
             if (dataBase1.NotesObjects[dataBase1.NotesCallCount].gameObject.activeSelf) return;
 
             // 第1ノーツプールからノーツを再生
-            dataBase1.NotesObjects[dataBase1.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
+            dataBase1.NotesObjects[dataBase1.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), sprite, notesSpriteAlpha);
             dataBase1.NotesCallCount++;
         }
         else
@@ -188,120 +164,8 @@ public class NotesControl : MonoBehaviour
             if (dataBase2.NotesObjects[dataBase2.NotesCallCount].gameObject.activeSelf) return;
 
             // 第2ノーツプールからノーツを再生
-            dataBase2.NotesObjects[dataBase2.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSpriteAlpha);
+            dataBase2.NotesObjects[dataBase2.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), sprite, notesSpriteAlpha);
             dataBase2.NotesCallCount++;
-        }
-    }
-
-    /// <summary>
-    /// ノーツを1回再生する処理(GameObject)
-    /// </summary>
-    /// <param name="type">再生するノーツのタイプ <para>Example: NotesType.CircleKey → 〇ボタンノーツ</para></param>
-    /// <param name="startPosObj">ノーツの再生開始座標<para>再生を開始する位置にオブジェクトを配置し、その座標を参照。</para></param>
-    /// <param name="endPosObj">ノーツの判定座標<para>再生を開始する位置にオブジェクトを配置し、その座標を参照。</para></param>
-    /// <param name="player">このノーツを入力できるプレイヤー</param>
-    /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
-    public void PlayNotesOneShot(NotesType type, GameObject startPosObj, GameObject endPosObj, InputController player, float duration = 1.0f)
-    {
-        var startPos = startPosObj == null ? new Vector3(0, 0, 0) : (notesUIMode ? startPosObj.transform.localPosition : startPosObj.transform.position);
-        var endPos = endPosObj == null ? new Vector3(0, 0, 0) : (notesUIMode ? endPosObj.transform.localPosition : endPosObj.transform.position);
-        if (startPos == endPos) return;
-        PlayNotesOneShot(type, startPos, endPos, player, duration);
-    }
-
-    /// <summary>
-    /// 指定した間隔で指定した数だけノーツを再生する処理(Vector3)
-    /// </summary>
-    /// <param name="startPos">ノーツの再生開始座標</param>
-    /// <param name="endPos">ノーツの判定座標</param>
-    /// <param name="player">このノーツを入力できるプレイヤー</param>
-    /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
-    /// <param name="time">ノーツを呼び出す回数</param>
-    /// <param name="span">ノーツを呼び出す間隔[s]</param>
-    public void PlayNotes(Vector3 startPos, Vector3 endPos, InputController player, float duration = 1.0f, int time = 10, float span = 1.0f)
-    {
-        ResetResult(player);
-        if (startPos == endPos) return;
-        var startArray = new Vector3[1] { startPos };
-        var endArray = new Vector3[1] { endPos };
-        StartCoroutine(CallTimeSpan(startArray, endArray, player, duration, time, span));
-    }
-
-    /// <summary>
-    /// 指定した間隔で指定した数だけノーツを再生する処理(GameObject)
-    /// </summary>
-    /// <param name="startPosObj">ノーツの再生開始座標<para>再生を開始する位置にオブジェクトを配置し、その座標を参照。</para></param>
-    /// <param name="endPosObj">ノーツの判定座標<para>再生を開始する位置にオブジェクトを配置し、その座標を参照。</para></param>
-    /// <param name="player">このノーツを入力できるプレイヤー</param>
-    /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
-    /// <param name="time">ノーツを呼び出す回数</param>
-    /// <param name="span">ノーツを呼び出す間隔[s]</param>
-    public void PlayNotes(GameObject startPosObj, GameObject endPosObj, InputController player, float duration = 1.0f, int time = 10, float span = 1.0f)
-    {
-        ResetResult(player);
-        var startPos = startPosObj == null ? new Vector3(0, 0, 0) : (notesUIMode ? startPosObj.transform.localPosition : startPosObj.transform.position);
-        var endPos = endPosObj == null ? new Vector3(0, 0, 0) : (notesUIMode ? endPosObj.transform.localPosition : endPosObj.transform.position);
-        if (startPos == endPos) return;
-        var startArray = new Vector3[1] { startPos };
-        var endArray = new Vector3[1] { endPos };
-        StartCoroutine(CallTimeSpan(startArray, endArray, player, duration, time, span));
-    }
-
-    /// <summary>
-    /// 指定した間隔で指定した数だけノーツを再生する処理(Vector3[])
-    /// </summary>
-    /// <param name="startPosArray">ノーツの再生開始座標の配列データ<para>Vector3[] の配列データを参照</para></param>
-    /// <param name="endPosArray">ノーツの判定座標の配列データ<para>Vector3[] の配列データを参照</para></param>
-    /// <param name="player">このノーツを入力できるプレイヤー</param>
-    /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
-    /// <param name="time">ノーツを呼び出す回数</param>
-    /// <param name="span">ノーツを呼び出す間隔[s]</param>
-    public void PlayNotes(Vector3[] startPosArray, Vector3[] endPosArray, InputController player, float duration = 1.0f, int time = 10, float span = 1.0f)
-    {
-        ResetResult(player);
-        if (startPosArray.Length <= 0 || endPosArray.Length <= 0) return;
-        StartCoroutine(CallTimeSpan(startPosArray, endPosArray, player, duration, time, span));
-    }
-
-    /// <summary>
-    /// 指定した間隔で指定した数だけノーツを再生する処理(GameObject[])
-    /// </summary>
-    /// <param name="startPosObjArray">ノーツの再生開始座標オブジェクトの配列データ<para>GameObject[] の配列データを参照</para></param>
-    /// <param name="endPosObjArray">ノーツの判定座標オブジェクトの配列データ<para>GameObject[] の配列データを参照</para></param>
-    /// <param name="player">このノーツを入力できるプレイヤー</param>
-    /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
-    /// <param name="time">ノーツを呼び出す回数</param>
-    /// <param name="span">ノーツを呼び出す間隔[s]</param>
-    public void PlayNotes(GameObject[] startPosObjArray, GameObject[] endPosObjArray, InputController player, float duration = 1.0f, int time = 10, float span = 1.0f)
-    {
-        ResetResult(player);
-        if (startPosObjArray.Length <= 0 || endPosObjArray.Length <= 0) return;
-        var startPosArray = new Vector3[startPosObjArray.Length];
-        var endPosArray = new Vector3[endPosObjArray.Length];
-        for(int i = 0; i < startPosArray.Length; i++)
-        {
-            startPosArray[i] = startPosObjArray[i] == null ? new Vector3(0, 0, 0) : (notesUIMode ? startPosObjArray[i].transform.localPosition : startPosObjArray[i].transform.position); 
-        }
-        for(int i = 0; i < endPosArray.Length; i++)
-        {
-            endPosArray[i] = endPosObjArray[i] == null ? new Vector3(0, 0, 0) : (notesUIMode ? endPosObjArray[i].transform.localPosition : endPosObjArray[i].transform.position);
-        }
-        StartCoroutine(CallTimeSpan(startPosArray, endPosArray, player, duration, time, span));
-    }
-
-    private IEnumerator CallTimeSpan(Vector3[] startPosArray, Vector3[] endPosArray, InputController player, float duration, int time, float span)
-    {
-        int count = 0;
-        int startNum = 0;
-        int endNum = 0;
-
-        while (count < time)
-        {
-            yield return new WaitForSeconds(span);
-            PlayNotesOneShot((NotesType)Random.Range(0, 6), startPosArray[startNum], endPosArray[endNum], player, duration);
-            startNum = startNum + 1 >= startPosArray.Length ? 0 : startNum + 1;
-            endNum = endNum + 1 >= endPosArray.Length ? 0 : endNum + 1;
-            count++;
         }
     }
 
@@ -371,32 +235,32 @@ public class NotesControl : MonoBehaviour
         if (nowNotes2.gameObject.activeSelf)
         {
             var inputPad = GamePadControl.Instance.Controller2;
-            if (inputPad.Circle || Input.GetKeyDown(KeyCode.A))
+            if (inputPad.Circle || Input.GetKeyDown(KeyCode.J))
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.CircleKey), InputController.PlayerTwo);
                 return;
             }
-            else if (inputPad.Cross || Input.GetKeyDown(KeyCode.S))
+            else if (inputPad.Cross || Input.GetKeyDown(KeyCode.K))
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.CrossKey), InputController.PlayerTwo);
                 return;
             }
-            else if (inputPad.Triangle || Input.GetKeyDown(KeyCode.D))
+            else if (inputPad.Triangle || Input.GetKeyDown(KeyCode.L))
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.TriangleKey), InputController.PlayerTwo);
                 return;
             }
-            else if (inputPad.UpKey || Input.GetKeyDown(KeyCode.UpArrow))
+            else if (inputPad.UpKey || Input.GetKeyDown(KeyCode.Keypad8))
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.UpArrow), InputController.PlayerTwo);
                 return;
             }
-            else if (inputPad.DownKey || Input.GetKeyDown(KeyCode.DownArrow))
+            else if (inputPad.DownKey || Input.GetKeyDown(KeyCode.Keypad2))
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.DownArrow), InputController.PlayerTwo);
                 return;
             }
-            else if (inputPad.LeftKey || Input.GetKeyDown(KeyCode.LeftArrow))
+            else if (inputPad.LeftKey || Input.GetKeyDown(KeyCode.Keypad4))
             {
                 NotesResult(nowNotes2.NotesCheck(NotesType.LeftArrow), InputController.PlayerTwo);
                 return;
@@ -444,7 +308,6 @@ public class NotesControl : MonoBehaviour
                 _ = inputFlag ? dataBase1.Perfect++ : dataBase2.Perfect++;
                 break;
         }
-        //Debug.Log(_ = inputFlag ? "プレイヤー１　　Perfect：" + dataBase1.Perfect + " Good：" + dataBase1.Good + " Bad：" + dataBase1.Bad : "プレイヤー２　　Perfect：" + dataBase2.Perfect + " Good：" + dataBase2.Good + " Bad：" + dataBase2.Bad);
 
         // 歌詞を流す処理（予定）
 

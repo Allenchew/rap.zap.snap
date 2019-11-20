@@ -19,9 +19,6 @@ namespace DS4
 
         private UnityEngine.EventSystems.StandaloneInputModule inputModule;
 
-        // 現在、操作しているプレイヤー
-        public InputController NowControlPlayer { set; private get; } = InputController.PlayerOne;
-
         private struct DS4KeyName
         {
             // UI操作用のキー
@@ -190,7 +187,7 @@ namespace DS4
         // Start is called before the first frame update
         void Start()
         {
-            
+            SetInputModule(InputController.PlayerOne);
         }
 
         // Update is called once per frame
@@ -199,7 +196,6 @@ namespace DS4
             if (usePs4Controller)
             {
                 DS4_SingleInput();
-                SetInputModule(NowControlPlayer);
             }
         }
 

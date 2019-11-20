@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class NotesView : NotesModel
 {
-    // ノーツの移動をUIモードで行うか
-    public bool NotesUIMode { set; private get; } = false;
-
     // ノーツのGameObject
     public GameObject MoveNotesObj { set; private get; } = null;
     public GameObject GoalNotesObj { set; private get; } = null;
@@ -42,8 +39,6 @@ public class NotesView : NotesModel
     // ノーツのイメージデータ情報
     private SpriteRenderer moveNotesSprite = null;
     private SpriteRenderer goalNotesSprite = null;
-    private UnityEngine.UI.Image moveNotesImage = null;
-    private UnityEngine.UI.Image goalNotesImage = null;
 
     // Imageの透明度を変更できるようにしておく
     private float mainSpriteAlpha = 1.0f;
@@ -84,7 +79,7 @@ public class NotesView : NotesModel
             NotesRate = firstMoveEnd ? (diff / moveDuration) : (diff / (moveDuration * 2));
 
             // ノーツを移動する処理
-            _=NotesUIMode ? MoveNotesObj.gameObject.transform.localPosition = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate) : MoveNotesObj.gameObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
+            MoveNotesObj.gameObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
 
             if (!notesClickFlag)
             {
@@ -92,7 +87,7 @@ public class NotesView : NotesModel
                 {
                     // 透明度を下げる
                     mainSpriteAlpha -= 0.05f;
-                    _ = NotesUIMode ? moveNotesImage.color = new Color(1, 1, 1, mainSpriteAlpha) : moveNotesSprite.color = new Color(1, 1, 1, mainSpriteAlpha);
+                    moveNotesSprite.color = new Color(1, 1, 1, mainSpriteAlpha);
                 }
 
                 if (NotesRate >= 1.0f || mainSpriteAlpha <= 0)
@@ -160,12 +155,12 @@ public class NotesView : NotesModel
         gameObject.SetActive(false);
     }
 
-    public void SetNotesData(NotesType type, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, float spriteAlpha)
+    public void SetNotesData(NotesType type, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite notesSprite, float spriteAlpha)
     {
         // durationが0秒以下または移動開始座標と判定座標が同じならreturnする
         if (duration <= 0 || start == end) return;
 
-        // 共通変数の初期化
+        // ノーツのデータを初期化
         NotesTypes = type;
         startPos = start;
         endPos = end;
@@ -177,53 +172,34 @@ public class NotesView : NotesModel
             GoalNotesObj.gameObject.SetActive(true);
         }
 
+        // 判定域の設定
         MinPerfect = 0.5f - perfect;
         MaxPerfect = 0.5f + perfect;
         MinGood = MinPerfect - good;
         MaxGood = MaxPerfect + good;
         MinBad = MinGood - bad;
-        
-        mainSpriteAlpha = 1.0f;
-        
-        MoveNotesObj.transform.localScale = scale;
-        GoalNotesObj.transform.localScale = scale;
-
         moveEndPos = (endPos - startPos).normalized * Vector3.Distance(startPos, endPos) + endPos;
         moveStartPos = startPos;
+        
+        // ノーツの表示サイズ&座標を初期化
+        MoveNotesObj.transform.localScale = scale;
+        GoalNotesObj.transform.localScale = scale;
+        MoveNotesObj.transform.position = startPos;
+        GoalNotesObj.transform.position = endPos;
 
+        // フラグの初期化
         NotesRate = 0;
         notesClickFlag = true;
         firstMoveEnd = false;
 
-        // UIモードと通常モードそれぞれで使う変数の初期化
-        if (NotesUIMode)
-        {
-            if (moveNotesImage == null) moveNotesImage = MoveNotesObj.GetComponent<UnityEngine.UI.Image>();
-            if (goalNotesImage == null) goalNotesImage = GoalNotesObj.GetComponent<UnityEngine.UI.Image>();
-
-            moveNotesImage.sprite = NotesSprites[(int)NotesTypes];
-            moveNotesImage.SetNativeSize();
-            moveNotesImage.color = new Color(1, 1, 1, 1);
-            goalNotesImage.sprite = NotesSprites[(int)NotesTypes];
-            goalNotesImage.SetNativeSize();
-            goalNotesImage.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
-
-            MoveNotesObj.transform.localPosition = startPos;
-            GoalNotesObj.transform.localPosition = endPos;
-        }
-        else
-        {
-            if (moveNotesSprite == null) moveNotesSprite = MoveNotesObj.GetComponent<SpriteRenderer>();
-            if (goalNotesSprite == null) goalNotesSprite = GoalNotesObj.GetComponent<SpriteRenderer>();
-
-            moveNotesSprite.sprite = NotesSprites[(int)NotesTypes];
-            moveNotesSprite.color = new Color(1, 1, 1, 1);
-            goalNotesSprite.sprite = NotesSprites[(int)NotesTypes];
-            goalNotesSprite.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
-
-            MoveNotesObj.transform.position = startPos;
-            GoalNotesObj.transform.position = endPos;
-        }
+        // ノーツのSprite情報を初期化
+        if (moveNotesSprite == null) moveNotesSprite = MoveNotesObj.GetComponent<SpriteRenderer>();
+        if (goalNotesSprite == null) goalNotesSprite = GoalNotesObj.GetComponent<SpriteRenderer>();
+        moveNotesSprite.sprite = notesSprite;
+        moveNotesSprite.color = new Color(1, 1, 1, 1);
+        goalNotesSprite.sprite = notesSprite;
+        goalNotesSprite.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
+        mainSpriteAlpha = 1.0f;
 
         // ノーツの再生
         gameObject.SetActive(true);
@@ -312,12 +288,12 @@ public class NotesView : NotesModel
         }
 
         float angle = (90 - angleDiff * directionNum) * Mathf.Deg2Rad;
-        Vector3 newMoveStartPos = NotesUIMode ? MoveNotesObj.transform.localPosition : MoveNotesObj.transform.position;
+        Vector3 newMoveStartPos = MoveNotesObj.transform.position;
         newMoveStartPos.x += radius * Mathf.Cos(angle);
         newMoveStartPos.y += radius * Mathf.Sin(angle);
 
         // 座標データを更新
-        moveStartPos = NotesUIMode ? MoveNotesObj.gameObject.transform.localPosition : MoveNotesObj.transform.position;
+        moveStartPos = MoveNotesObj.transform.position;
         moveEndPos = newMoveStartPos;
         firstMoveEndTime = Time.timeSinceLevelLoad;
 

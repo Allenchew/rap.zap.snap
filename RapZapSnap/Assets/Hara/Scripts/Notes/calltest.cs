@@ -29,17 +29,18 @@ public class calltest : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
-            
+            NotesControl.Instance.ResetResult(InputController.PlayerOne);
         }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            
+            NotesControl.Instance.ResetResult(InputController.PlayerTwo);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            NotesControl.Instance.PlayNotes(staroObjs, endObjs, InputController.PlayerOne, time: 30);
+            NotesControl.Instance.PlayNotesOneShot(NotesType.CircleKey, new Vector3(-5, -5, 0), new Vector3(-5, 3, 0), duration: 0.75f);
+            NotesControl.Instance.PlayNotesOneShot(NotesType.CrossKey, new Vector3(5, -5, 0), new Vector3(5, 3, 0), InputController.PlayerTwo, 0.75f);
         }
 
         if (Input.GetKeyDown(KeyCode.Return))

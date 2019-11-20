@@ -12,7 +12,7 @@ public class ObstacleSoundControl : MonoBehaviour
     private AudioSource audioSource;
 
     [SerializeField, Tooltip("ノーツ入力を邪魔する用のSE音源リスト")]
-    private List<AudioClip> audioClips = new List<AudioClip>();
+    private List<AudioClip> audioClips = null;
 
     private void Awake()
     {
