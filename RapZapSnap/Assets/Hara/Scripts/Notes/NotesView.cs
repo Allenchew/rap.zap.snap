@@ -25,6 +25,8 @@ public class NotesView : NotesModel
     // ノーツの判定位置までの進行率
     public float NotesRate { private set; get; } = 0;
 
+    public bool NotesClickFlag { private set; get; } = false;
+
     // ノーツの判定範囲
     public float MinPerfect { private set; get; } = 0;
     public float MaxPerfect { private set; get; } = 0;
@@ -33,7 +35,6 @@ public class NotesView : NotesModel
     public float MinBad { private set; get; } = 0;
 
     private bool stopFlag = false;
-    private bool notesClickFlag = false;
     private float firstMoveEndTime = 0;
 
     // ノーツのイメージデータ情報
@@ -73,7 +74,7 @@ public class NotesView : NotesModel
         if (stopFlag)
         {
             // ノーツの移動開始からの経過時間
-            var diff = notesClickFlag ? (Time.timeSinceLevelLoad - startTime) : (Time.timeSinceLevelLoad - firstMoveEndTime);
+            var diff = NotesClickFlag ? (Time.timeSinceLevelLoad - startTime) : (Time.timeSinceLevelLoad - firstMoveEndTime);
 
             // 進行率を算出
             NotesRate = firstMoveEnd ? (diff / moveDuration) : (diff / (moveDuration * 2));
@@ -81,7 +82,7 @@ public class NotesView : NotesModel
             // ノーツを移動する処理
             MoveNotesObj.gameObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
 
-            if (!notesClickFlag)
+            if (!NotesClickFlag)
             {
                 if (mainSpriteAlpha > 0)
                 {
@@ -100,56 +101,9 @@ public class NotesView : NotesModel
     }
 
     /// <summary>
-    /// ノーツの判定処理
-    /// <para>返り値 2:Perfect 1:Good 0:Bad -1:判定外</para>
-    /// </summary>
-    /// <param name="notesType">入力したキー</param>
-    /// <param name="rate">ノーツの判定値</param>
-    public int NotesCheck(NotesType notesType)
-    {
-        var rate = NotesRate;
-
-        if (notesClickFlag && rate >= MinBad)
-        {
-            int num;
-
-            // 入力したキーが合っているかチェック
-            if (notesType == NotesTypes)
-            {
-                if (rate >= MinPerfect && rate <= MaxPerfect)
-                {
-                    // prefect判定
-                    num = 2;
-                }
-                else if ((rate >= MinGood && rate < MinPerfect) || (rate >= MaxGood && rate < MaxPerfect))
-                {
-                    // good判定
-                    num = 1;
-                }
-                else
-                {
-                    // bad判定
-                    num = 0;
-                }
-            }
-            else
-            {
-                num = 0;
-            }
-
-            ResetNotes();
-            return num;
-        }
-        else
-        {
-            return -1;
-        }
-    }
-
-    /// <summary>
     /// ノーツの判定結果を返す＆ノーツの初期化処理
     /// </summary>
-    private void ResetNotes()
+    public void ResetNotes()
     {
         stopFlag = false;
         gameObject.SetActive(false);
@@ -189,7 +143,7 @@ public class NotesView : NotesModel
 
         // フラグの初期化
         NotesRate = 0;
-        notesClickFlag = true;
+        NotesClickFlag = true;
         firstMoveEnd = false;
 
         // ノーツのSprite情報を初期化
@@ -210,7 +164,7 @@ public class NotesView : NotesModel
     /// </summary>
     public void SecondMoveSet()
     {
-        notesClickFlag = false;
+        NotesClickFlag = false;
         GoalNotesObj.gameObject.SetActive(false);
 
         // 第2移動の目的地を設定する

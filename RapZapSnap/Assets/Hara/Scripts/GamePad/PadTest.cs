@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DS4;
 
 public class PadTest : MonoBehaviour
 {
