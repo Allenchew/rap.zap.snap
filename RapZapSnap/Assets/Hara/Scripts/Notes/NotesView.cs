@@ -71,10 +71,10 @@ public class NotesView : NotesModel
     /// </summary>
     private void NotesAction()
     {
-        if (stopFlag)
+        if (stopFlag == true)
         {
             // ノーツの移動開始からの経過時間
-            var diff = NotesClickFlag ? (Time.timeSinceLevelLoad - startTime) : (Time.timeSinceLevelLoad - firstMoveEndTime);
+            var diff = NotesClickFlag == true ? (Time.timeSinceLevelLoad - startTime) : (Time.timeSinceLevelLoad - firstMoveEndTime);
 
             // 進行率を算出
             NotesRate = firstMoveEnd ? (diff / moveDuration) : (diff / (moveDuration * 2));
@@ -82,7 +82,7 @@ public class NotesView : NotesModel
             // ノーツを移動する処理
             MoveNotesObj.gameObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
 
-            if (!NotesClickFlag)
+            if (NotesClickFlag == false)
             {
                 if (mainSpriteAlpha > 0)
                 {
@@ -112,7 +112,7 @@ public class NotesView : NotesModel
     public void SetNotesData(NotesType type, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite notesSprite, float spriteAlpha)
     {
         // durationが0秒以下または移動開始座標と判定座標が同じならreturnする
-        if (duration <= 0 || start == end) return;
+        if (duration <= 0 || start == end) { return; }
 
         // ノーツのデータを初期化
         NotesTypes = type;
@@ -121,7 +121,7 @@ public class NotesView : NotesModel
         moveDuration = duration;
         goalSpriteAlpha = spriteAlpha;
 
-        if (!GoalNotesObj.gameObject.activeSelf)
+        if (GoalNotesObj.gameObject.activeSelf == false)
         {
             GoalNotesObj.gameObject.SetActive(true);
         }

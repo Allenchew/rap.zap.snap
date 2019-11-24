@@ -7,7 +7,7 @@ public class BooingControl : MonoBehaviour
     public static BooingControl Instance { private set; get; } = null;
 
     [SerializeField, Tooltip("ブーイングができるプレイヤー")]
-    private InputPlayer booingPlayer = InputPlayer.P2;
+    private ControllerNum booingPlayer = ControllerNum.P2;
 
     [SerializeField, Tooltip("ブーイングシステムを使うか")]
     private bool booingFlag = false;
@@ -123,25 +123,25 @@ public class BooingControl : MonoBehaviour
     /// </summary>
     private void PlayBooing()
     {
-        if (!booingFlag || booingPlayCount <= 0) return;
+        if (booingFlag == false || booingPlayCount <= 0) { return; }
 
         GamePadControl.DS4InputKeyType key;
-        DS4ControllerType type;
-        if (booingPlayer == InputPlayer.P1)
+        ControllerNum player;
+        if (booingPlayer == ControllerNum.P1)
         {
             key = GamePadControl.Instance.Controller1;
-            type = DS4ControllerType.P1;
+            player = ControllerNum.P2;
         }
         else
         {
             key = GamePadControl.Instance.Controller2;
-            type = DS4ControllerType.P2;
+            player = ControllerNum.P1;
         }
 
         // 〇ボタンでSEのみ再生
         if (key.Circle)
         {
-            if (!booingDataBase.PlaySE) return;
+            if (booingDataBase.PlaySE == false) { return; }
             PlaySE(0);
             booingDataBase.PlaySE = false;
             booingPlayCount--;
@@ -150,9 +150,9 @@ public class BooingControl : MonoBehaviour
         // ×ボタンでSE再生とバイブレーションを実行
         if (key.Cross)
         {
-            if (!booingDataBase.PlaySE_Vibration) return;
+            if (booingDataBase.PlaySE_Vibration == false) { return; }
             PlaySE(0);
-            GamePadControl.Instance.SetVibration(type, 255f, 2.0f);
+            GamePadControl.Instance.SetVibration(player, 255f, 2.0f);
             booingDataBase.PlaySE_Vibration = false;
             booingPlayCount--;
         }
@@ -160,7 +160,7 @@ public class BooingControl : MonoBehaviour
         // □ボタンでSE再生と画面の揺れを実行
         if (key.Square)
         {
-            if (!booingDataBase.PlaySE_ShakeCamera) return;
+            if (booingDataBase.PlaySE_ShakeCamera == false) { return; }
             PlaySE(0);
             ShakeCameraAction(1.0f, 0.5f);
             booingDataBase.PlaySE_ShakeCamera = false;
@@ -181,11 +181,11 @@ public class BooingControl : MonoBehaviour
     /// ブーイングシステムを使うプレイヤーを決める
     /// </summary>
     /// <param name="player">ブーイングシステムを使うプレイヤー</param>
-    public void SetBooingPlayer(InputPlayer player)
+    public void SetBooingPlayer(ControllerNum player)
     {
         ResetBooingSystem();
         booingPlayer = player;
-        if (!booingFlag) booingFlag = true;
+        if (booingFlag == false) { booingFlag = true; }
     }
 
     /// <summary>
@@ -193,7 +193,7 @@ public class BooingControl : MonoBehaviour
     /// </summary>
     public void BooingSystemOff()
     {
-        if (!booingFlag) return;
+        if (booingFlag == false) { return; }
         ResetBooingSystem();
         booingFlag = false;
     }

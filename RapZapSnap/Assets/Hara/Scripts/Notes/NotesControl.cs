@@ -141,18 +141,18 @@ public class NotesControl : MonoBehaviour
     /// </param>
     /// <param name="startPos">ノーツの再生開始座標</param>
     /// <param name="endPos">ノーツの判定座標</param>
-    /// <param name="player">このノーツを入力できるプレイヤー</param>
+    /// <param name="id">入力対象のコントローラ番号</param>
     /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
-    public void PlayNotesOneShot(NotesType type, Vector3 startPos, Vector3 endPos, InputPlayer player = InputPlayer.P1, float duration = 1.0f)
+    public void PlayNotesOneShot(NotesType type, Vector3 startPos, Vector3 endPos, ControllerNum id = ControllerNum.P1, float duration = 1.0f)
     {
-        if (startPos == endPos) return;
+        if (startPos == endPos) { return; }
 
         Sprite sprite = notesSprites[(int)type];
 
-        if (player == InputPlayer.P1)
+        if (id == ControllerNum.P1)
         {
             // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-            if (dataBase1.NotesObjects[dataBase1.NotesCallCount].gameObject.activeSelf) return;
+            if (dataBase1.NotesObjects[dataBase1.NotesCallCount].gameObject.activeSelf) { return; }
 
             // 第1ノーツプールからノーツを再生
             dataBase1.NotesObjects[dataBase1.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), sprite, notesSpriteAlpha);
@@ -161,7 +161,7 @@ public class NotesControl : MonoBehaviour
         else
         {
             // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-            if (dataBase2.NotesObjects[dataBase2.NotesCallCount].gameObject.activeSelf) return;
+            if (dataBase2.NotesObjects[dataBase2.NotesCallCount].gameObject.activeSelf) { return; }
 
             // 第2ノーツプールからノーツを再生
             dataBase2.NotesObjects[dataBase2.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), sprite, notesSpriteAlpha);
@@ -181,34 +181,34 @@ public class NotesControl : MonoBehaviour
         if (nowNotes1.gameObject.activeSelf)
         {
             var inputPad = GamePadControl.Instance.Controller1;
-            if (inputPad.Circle || Input.GetKeyDown(KeyCode.A))
+            if (inputPad.Circle == true || Input.GetKeyDown(KeyCode.A) == true)
             {
-                NotesCheck(nowNotes1, NotesType.CircleKey, InputPlayer.P1);
+                NotesCheck(nowNotes1, NotesType.CircleKey, ControllerNum.P1);
                 return;
             }
-            else if (inputPad.Cross || Input.GetKeyDown(KeyCode.S))
+            else if (inputPad.Cross == true || Input.GetKeyDown(KeyCode.S) == true)
             {
-                NotesCheck(nowNotes1, NotesType.CrossKey, InputPlayer.P1);
+                NotesCheck(nowNotes1, NotesType.CrossKey, ControllerNum.P1);
                 return;
             }
-            else if (inputPad.Triangle || Input.GetKeyDown(KeyCode.D))
+            else if (inputPad.Triangle == true || Input.GetKeyDown(KeyCode.D) == true)
             {
-                NotesCheck(nowNotes1, NotesType.TriangleKey, InputPlayer.P1);
+                NotesCheck(nowNotes1, NotesType.TriangleKey, ControllerNum.P1);
                 return;
             }
-            else if (inputPad.UpKey || Input.GetKeyDown(KeyCode.UpArrow))
+            else if (inputPad.Up == true || Input.GetKeyDown(KeyCode.UpArrow) == true)
             {
-                NotesCheck(nowNotes1, NotesType.UpArrow, InputPlayer.P1);
+                NotesCheck(nowNotes1, NotesType.UpArrow, ControllerNum.P1);
                 return;
             }
-            else if (inputPad.DownKey || Input.GetKeyDown(KeyCode.DownArrow))
+            else if (inputPad.Down == true || Input.GetKeyDown(KeyCode.DownArrow) == true)
             {
-                NotesCheck(nowNotes1, NotesType.DownArrow, InputPlayer.P1);
+                NotesCheck(nowNotes1, NotesType.DownArrow, ControllerNum.P1);
                 return;
             }
-            else if (inputPad.LeftKey || Input.GetKeyDown(KeyCode.LeftArrow))
+            else if (inputPad.Left == true || Input.GetKeyDown(KeyCode.LeftArrow) == true)
             {
-                NotesCheck(nowNotes1, NotesType.LeftArrow, InputPlayer.P1);
+                NotesCheck(nowNotes1, NotesType.LeftArrow, ControllerNum.P1);
                 return;
             }
             else
@@ -216,7 +216,7 @@ public class NotesControl : MonoBehaviour
                 if ((nowNotes1.NotesRate >= nowNotes1.MaxGood) || (nextNotes1.gameObject.activeSelf && Mathf.Abs(0.5f - nowNotes1.NotesRate) > Mathf.Abs(0.5f - nextNotes1.NotesRate)))
                 {
                     nowNotes1.SecondMoveSet();
-                    NotesResult(0, 0, InputPlayer.P1);
+                    NotesResult(0, 0, ControllerNum.P1);
                     return;
                 }
             }
@@ -235,34 +235,34 @@ public class NotesControl : MonoBehaviour
         if (nowNotes2.gameObject.activeSelf)
         {
             var inputPad = GamePadControl.Instance.Controller2;
-            if (inputPad.Circle || Input.GetKeyDown(KeyCode.J))
+            if (inputPad.Circle == true || Input.GetKeyDown(KeyCode.J) == true)
             {
-                NotesCheck(nowNotes2, NotesType.CircleKey, InputPlayer.P2);
+                NotesCheck(nowNotes2, NotesType.CircleKey, ControllerNum.P2);
                 return;
             }
-            else if (inputPad.Cross || Input.GetKeyDown(KeyCode.K))
+            else if (inputPad.Cross == true || Input.GetKeyDown(KeyCode.K) == true)
             {
-                NotesCheck(nowNotes2, NotesType.CrossKey, InputPlayer.P2);
+                NotesCheck(nowNotes2, NotesType.CrossKey, ControllerNum.P2);
                 return;
             }
-            else if (inputPad.Triangle || Input.GetKeyDown(KeyCode.L))
+            else if (inputPad.Triangle == true || Input.GetKeyDown(KeyCode.L) == true)
             {
-                NotesCheck(nowNotes2, NotesType.TriangleKey, InputPlayer.P2);
+                NotesCheck(nowNotes2, NotesType.TriangleKey, ControllerNum.P2);
                 return;
             }
-            else if (inputPad.UpKey || Input.GetKeyDown(KeyCode.Keypad8))
+            else if (inputPad.Up == true || Input.GetKeyDown(KeyCode.Keypad8) == true)
             {
-                NotesCheck(nowNotes2, NotesType.UpArrow, InputPlayer.P2);
+                NotesCheck(nowNotes2, NotesType.UpArrow, ControllerNum.P2);
                 return;
             }
-            else if (inputPad.DownKey || Input.GetKeyDown(KeyCode.Keypad2))
+            else if (inputPad.Down == true || Input.GetKeyDown(KeyCode.Keypad2) == true)
             {
-                NotesCheck(nowNotes2, NotesType.DownArrow, InputPlayer.P2);
+                NotesCheck(nowNotes2, NotesType.DownArrow, ControllerNum.P2);
                 return;
             }
-            else if (inputPad.LeftKey || Input.GetKeyDown(KeyCode.Keypad4))
+            else if (inputPad.Left == true || Input.GetKeyDown(KeyCode.Keypad4) == true)
             {
-                NotesCheck(nowNotes2, NotesType.LeftArrow, InputPlayer.P2);
+                NotesCheck(nowNotes2, NotesType.LeftArrow, ControllerNum.P2);
                 return;
             }
             else
@@ -270,7 +270,7 @@ public class NotesControl : MonoBehaviour
                 if ((nowNotes2.NotesRate >= nowNotes2.MaxGood) || (nextNotes2.gameObject.activeSelf && Mathf.Abs(0.5f - nowNotes2.NotesRate) > Mathf.Abs(0.5f - nextNotes2.NotesRate)))
                 {
                     nowNotes2.SecondMoveSet();
-                    NotesResult(0, 0, InputPlayer.P2);
+                    NotesResult(0, 0, ControllerNum.P2);
                     return;
                 }
             }
@@ -280,11 +280,17 @@ public class NotesControl : MonoBehaviour
     /// <summary>
     /// ノーツの判定処理
     /// </summary>
-    private void NotesCheck(NotesView view,  NotesType type, InputPlayer player = InputPlayer.P1)
+    /// <param name="view">判定をチェックしたいノーツ</param>
+    /// <param name="type">入力されたノーツタイプID</param>
+    /// <param name="id">プレイヤー番号</param>
+    private void NotesCheck(NotesView view,  NotesType type, ControllerNum id = ControllerNum.P1)
     {
         // ノーツの進行率をチェック
         var rate = view.NotesRate;
-        if(rate < view.MinBad || !view.NotesClickFlag) { return; }
+        if(rate < view.MinBad || view.NotesClickFlag == false) { return; }
+
+        // ノーツを非表示
+        view.ResetNotes();
 
         // ノーツの判定をチェック
         int result;
@@ -314,10 +320,9 @@ public class NotesControl : MonoBehaviour
         }
 
         // 結果を算出
-        NotesResult(result, score, player);
+        NotesResult(result, score, id);
 
-        // ノーツを非表示
-        view.ResetNotes();
+        Debug.Log(rate + " : " + result);
     }
 
     /// <summary>
@@ -325,10 +330,10 @@ public class NotesControl : MonoBehaviour
     /// </summary>
     /// <param name="result">ノーツの判定値</param>
     /// <param name="score">獲得スコア</param>
-    /// <param name="player">プレイヤー番号</param>
-    private void NotesResult(int result, int score, InputPlayer player = InputPlayer.P1)
+    /// <param name="id">プレイヤー番号</param>
+    private void NotesResult(int result, int score, ControllerNum id = ControllerNum.P1)
     {
-        if (player == InputPlayer.P1)
+        if (id == ControllerNum.P1)
         {
             dataBase1.NotesCheckCount++;
             dataBase1.TotalScore += score;
@@ -371,13 +376,13 @@ public class NotesControl : MonoBehaviour
     /// ノーツの結果を取得する
     /// </summary>
     /// <param name="resultNum">0:Badの数 1:Goodの数 2:Perfectの数 3:トータルスコア 0～3以外:返り値0</param>
-    /// <param name="playerNum">結果を取得する対象プレイヤー</param>
+    /// <param name="id">結果を取得する対象プレイヤー</param>
     /// <returns></returns>
-    public int GetResult(int resultNum, InputPlayer playerNum = InputPlayer.P1)
+    public int GetResult(int resultNum, ControllerNum id = ControllerNum.P1)
     {
         if (resultNum < 0 || resultNum > 3) return 0;
 
-        NotesDataBase data = playerNum == InputPlayer.P1 ? dataBase1 : dataBase2;
+        NotesDataBase data = id == ControllerNum.P1 ? dataBase1 : dataBase2;
         
         switch (resultNum)
         {
@@ -397,10 +402,10 @@ public class NotesControl : MonoBehaviour
     /// <summary>
     /// ノーツのリザルトを初期化する
     /// </summary>
-    /// <param name="playerNum">初期化対象プレイヤー</param>
-    public void ResetResult(InputPlayer playerNum = InputPlayer.P1)
+    /// <param name="id">初期化対象プレイヤー</param>
+    public void ResetResult(ControllerNum id = ControllerNum.P1)
     {
-        if (playerNum == InputPlayer.P1)
+        if (id == ControllerNum.P1)
         {
             dataBase1.Perfect = 0;
             dataBase1.Good = 0;

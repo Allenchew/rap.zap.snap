@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum InputPlayer
+public enum ControllerNum
 {
     P1,
     P2
@@ -27,43 +27,23 @@ public class GamePadControl : MonoBehaviour
         public readonly string Horizontal;
         public readonly string Vertical;
 
-        // 十字キーやアナログスティックの個別入力キー
-        public readonly string PadHorizontal;
-        public readonly string PadVertical;
-        public readonly string LstickHorizontal;
-        public readonly string LstickVertical;
-        public readonly string RstickHorizontal;
-        public readonly string RstickVertical;
-
-        public DS4KeyName(InputPlayer inputPlayer)
+        public DS4KeyName(ControllerNum inputPlayer)
         {
-            if (inputPlayer == InputPlayer.P1)
-            {
-                Submit = "Submit_1";
-                Cancel = "Cancel_1";
-                Horizontal = "Horizontal_1";
-                Vertical = "Vertical_1";
+            // ※Unityの仕様上の都合、1Pコントローラーが2P(2Pが1P)として取得されてしまうので注意
 
-                PadHorizontal = "DS4horizontalPad_1";
-                PadVertical = "DS4verticalPad_1";
-                LstickHorizontal = "DS4horizontalLstick_1";
-                LstickVertical = "DS4verticalLstick_1";
-                RstickHorizontal = "DS4horizontalRstick_1";
-                RstickVertical = "DS4verticalRstick_1";
-            }
-            else
+            if (inputPlayer == ControllerNum.P1)
             {
                 Submit = "Submit_2";
                 Cancel = "Cancel_2";
                 Horizontal = "Horizontal_2";
                 Vertical = "Vertical_2";
-
-                PadHorizontal = "DS4horizontalPad_2";
-                PadVertical = "DS4verticalPad_2";
-                LstickHorizontal = "DS4horizontalLstick_2";
-                LstickVertical = "DS4verticalLstick_2";
-                RstickHorizontal = "DS4horizontalRstick_2";
-                RstickVertical = "DS4verticalRstick_2";
+            }
+            else
+            {
+                Submit = "Submit_1";
+                Cancel = "Cancel_1";
+                Horizontal = "Horizontal_1";
+                Vertical = "Vertical_1";
             }
         }
     }
@@ -80,10 +60,10 @@ public class GamePadControl : MonoBehaviour
         public bool Cross;
         public bool Triangle;
         public bool Square;
-        public bool UpKey;
-        public bool DownKey;
-        public bool LeftKey;
-        public bool RightKey;
+        public bool Up;
+        public bool Down;
+        public bool Left;
+        public bool Right;
         public bool L1;
         public bool L2;
         public bool L3;
@@ -98,10 +78,8 @@ public class GamePadControl : MonoBehaviour
         public bool RstickD;
         public bool RstickL;
         public bool RstickR;
-        public bool Option;
-        public bool Share;
-        public bool Home;
-        public bool TrackPad;
+        public bool OPTION;
+        public bool SHARE;
 
         public void ResetKey()
         {
@@ -109,10 +87,10 @@ public class GamePadControl : MonoBehaviour
             Cross = false;
             Triangle = false;
             Square = false;
-            UpKey = false;
-            DownKey = false;
-            LeftKey = false;
-            RightKey = false;
+            Up = false;
+            Down = false;
+            Left = false;
+            Right = false;
             L1 = false;
             L2 = false;
             L3 = false;
@@ -127,10 +105,8 @@ public class GamePadControl : MonoBehaviour
             RstickD = false;
             RstickL = false;
             RstickR = false;
-            Option = false;
-            Share = false;
-            Home = false;
-            TrackPad = false;
+            OPTION = false;
+            SHARE = false;
         }
     }
 
@@ -138,26 +114,38 @@ public class GamePadControl : MonoBehaviour
     public DS4InputKeyType Controller2;
 
     /// <summary>
-    /// GetAxisDown用のフラグ
+    /// 入力管理用のフラグ
     /// </summary>
     private struct AxisFlag
     {
-        public bool Pu, Pd, Pl, Pr, Lu, Ld, Ll, Lr, Ru, Rd, Rl, Rr;
+        public bool Ci, Cr, Tr, Sq, Pu, Pd, Pl, Pr, L1, L2, L3, Lu, Ld, Ll, Lr, R1, R2, R3, Ru, Rd, Rl, Rr, Op, Sh;
 
         public void ResetFlag()
         {
+            Ci = false;
+            Cr = false;
+            Tr = false;
+            Sq = false;
             Pu = false;
             Pd = false;
             Pl = false;
             Pr = false;
+            L1 = false;
+            L2 = false;
+            L3 = false;
             Lu = false;
             Ld = false;
             Ll = false;
             Lr = false;
+            R1 = false;
+            R2 = false;
+            R3 = false;
             Ru = false;
             Rd = false;
             Rl = false;
             Rr = false;
+            Op = false;
+            Sh = false;
         }
     }
 
@@ -173,8 +161,8 @@ public class GamePadControl : MonoBehaviour
             Controller2.ResetKey();
             firstAxisFlag.ResetFlag();
             secondAxisFlag.ResetFlag();
-            joy1KeyName = new DS4KeyName(InputPlayer.P1);
-            joy2KeyName = new DS4KeyName(InputPlayer.P2);
+            joy1KeyName = new DS4KeyName(ControllerNum.P1);
+            joy2KeyName = new DS4KeyName(ControllerNum.P2);
             inputModule = GetComponent<UnityEngine.EventSystems.StandaloneInputModule>();
             ds4Input = GetComponent<DS4InputCustom.DS4InputCustom>();
             DontDestroyOnLoad(gameObject);
@@ -188,498 +176,833 @@ public class GamePadControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SetInputModule(InputPlayer.P1);
+        SetInputModule(ControllerNum.P1);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (usePs4Controller)
-        {
-            DS4_SingleInput();
-        }
+        DS4Input_1P();
+        DS4Input_2P();
     }
 
     /// <summary>
-    /// DS4のキーを1度だけ押したことを検知する
+    /// 1PのDS4のButtonDownを取得する
     /// </summary>
-    private void DS4_SingleInput()
+    /// <param name="player">コントローラ番号</param>
+    private void DS4Input_1P()
     {
-        // コントローラ１の入力
-        GetAxisDown(Axis.PadVertical);
-        GetAxisDown(Axis.PadHorizontal);
-        GetAxisDown(Axis.LstickVertical);
-        GetAxisDown(Axis.LstickHorizontal);
-        GetAxisDown(Axis.RstickVertical);
-        GetAxisDown(Axis.RstickHorizontal);
-        Controller1.Circle = Input.GetKeyDown(KeyCode.Joystick1Button2);
-        Controller1.Cross = Input.GetKeyDown(KeyCode.Joystick1Button1);
-        Controller1.Triangle = Input.GetKeyDown(KeyCode.Joystick1Button3);
-        Controller1.Square = Input.GetKeyDown(KeyCode.Joystick1Button0);
-        Controller1.L1 = Input.GetKeyDown(KeyCode.Joystick1Button4);
-        Controller1.R1 = Input.GetKeyDown(KeyCode.Joystick1Button5);
-        Controller1.L2 = Input.GetKeyDown(KeyCode.Joystick1Button6);
-        Controller1.R2 = Input.GetKeyDown(KeyCode.Joystick1Button7);
-        Controller1.Share = Input.GetKeyDown(KeyCode.Joystick1Button8);
-        Controller1.Option = Input.GetKeyDown(KeyCode.Joystick1Button9);
-        Controller1.L3 = Input.GetKeyDown(KeyCode.Joystick1Button10);
-        Controller1.R3 = Input.GetKeyDown(KeyCode.Joystick1Button11);
-        Controller1.Home = Input.GetKeyDown(KeyCode.Joystick1Button12);
-        Controller1.TrackPad = Input.GetKeyDown(KeyCode.Joystick1Button13);
+        if(ds4Input == null || usePs4Controller == false) { return; }
 
-        // コントローラ２の入力
-        GetAxisDown(Axis.PadVertical, InputPlayer.P2);
-        GetAxisDown(Axis.PadHorizontal, InputPlayer.P2);
-        GetAxisDown(Axis.LstickVertical, InputPlayer.P2);
-        GetAxisDown(Axis.LstickHorizontal, InputPlayer.P2);
-        GetAxisDown(Axis.RstickVertical, InputPlayer.P2);
-        GetAxisDown(Axis.RstickHorizontal, InputPlayer.P2);
-        Controller2.Circle = Input.GetKeyDown(KeyCode.Joystick2Button2);
-        Controller2.Cross = Input.GetKeyDown(KeyCode.Joystick2Button1);
-        Controller2.Triangle = Input.GetKeyDown(KeyCode.Joystick2Button3);
-        Controller2.Square = Input.GetKeyDown(KeyCode.Joystick2Button0);
-        Controller2.L1 = Input.GetKeyDown(KeyCode.Joystick2Button4);
-        Controller2.R1 = Input.GetKeyDown(KeyCode.Joystick2Button5);
-        Controller2.L2 = Input.GetKeyDown(KeyCode.Joystick2Button6);
-        Controller2.R2 = Input.GetKeyDown(KeyCode.Joystick2Button7);
-        Controller2.Share = Input.GetKeyDown(KeyCode.Joystick2Button8);
-        Controller2.Option = Input.GetKeyDown(KeyCode.Joystick2Button9);
-        Controller2.L3 = Input.GetKeyDown(KeyCode.Joystick2Button10);
-        Controller2.R3 = Input.GetKeyDown(KeyCode.Joystick2Button11);
-        Controller2.Home = Input.GetKeyDown(KeyCode.Joystick2Button12);
-        Controller2.TrackPad = Input.GetKeyDown(KeyCode.Joystick2Button13);
-    }
+        // ボタン系の取得
 
-    /// <summary>
-    /// GetAxisをGetButtonDownのように入力したときだけ取得する
-    /// </summary>
-    /// <param name="axis">取得したいAxis</param>
-    /// /// <param name="controller">対象コントローラー</param>
-    /// <returns></returns>
-    private void GetAxisDown(Axis axis, InputPlayer controller = InputPlayer.P1)
-    {
-        float input;
-        switch (axis)
+        if(ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.Circle) == true)
         {
-            case Axis.PadVertical:
-                if (controller == InputPlayer.P1)
-                {
-                    input = Input.GetAxis(joy1KeyName.PadVertical);
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Pu)
-                        {
-                            firstAxisFlag.Pu = true;
-                            Controller1.UpKey = true;
-                            return;
-                        }
-                        Controller1.UpKey = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!firstAxisFlag.Pd)
-                        {
-                            firstAxisFlag.Pd = true;
-                            Controller1.DownKey = true;
-                            return;
-                        }
-                        Controller1.DownKey = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (firstAxisFlag.Pu) firstAxisFlag.Pu = false;
-                        if (firstAxisFlag.Pd) firstAxisFlag.Pd = false;
-                        return;
-                    }
-                }
-                else
-                {
-                    input = Input.GetAxis(joy2KeyName.PadVertical);
-                    if (input > 0)
-                    {
-                        if (!secondAxisFlag.Pu)
-                        {
-                            secondAxisFlag.Pu = true;
-                            Controller2.UpKey = true;
-                            return;
-                        }
-                        Controller2.UpKey = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!secondAxisFlag.Pd)
-                        {
-                            secondAxisFlag.Pd = true;
-                            Controller2.DownKey = true;
-                            return;
-                        }
-                        Controller2.DownKey = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (secondAxisFlag.Pu) secondAxisFlag.Pu = false;
-                        if (secondAxisFlag.Pd) secondAxisFlag.Pd = false;
-                        return;
-                    }
-                }
-            case Axis.PadHorizontal:
-                if (controller == InputPlayer.P1)
-                {
-                    input = Input.GetAxis(joy1KeyName.PadHorizontal);
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Pr)
-                        {
-                            firstAxisFlag.Pr = true;
-                            Controller1.RightKey = true;
-                            return;
-                        }
-                        Controller1.RightKey = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!firstAxisFlag.Pl)
-                        {
-                            firstAxisFlag.Pl = true;
-                            Controller1.LeftKey = true;
-                            return;
-                        }
-                        Controller1.LeftKey = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (firstAxisFlag.Pr) firstAxisFlag.Pr = false;
-                        if (firstAxisFlag.Pl) firstAxisFlag.Pl = false;
-                        return;
-                    }
-                }
-                else
-                {
-                    input = Input.GetAxis(joy2KeyName.PadHorizontal);
-                    if (input > 0)
-                    {
-                        if (!secondAxisFlag.Pr)
-                        {
-                            secondAxisFlag.Pr = true;
-                            Controller2.RightKey = true;
-                            return;
-                        }
-                        Controller2.RightKey = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!secondAxisFlag.Pl)
-                        {
-                            secondAxisFlag.Pl = true;
-                            Controller2.LeftKey = true;
-                            return;
-                        }
-                        Controller2.LeftKey = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (secondAxisFlag.Pr) secondAxisFlag.Pr = false;
-                        if (secondAxisFlag.Pl) secondAxisFlag.Pl = false;
-                        return;
-                    }
-                }
-            case Axis.LstickVertical:
-                if (controller == InputPlayer.P1)
-                {
-                    input = Input.GetAxis(joy1KeyName.LstickVertical);
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Lu)
-                        {
-                            firstAxisFlag.Lu = true;
-                            Controller1.LstickU = true;
-                            return;
-                        }
-                        Controller1.LstickU = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!firstAxisFlag.Ld)
-                        {
-                            firstAxisFlag.Ld = true;
-                            Controller1.LstickD = true;
-                            return;
-                        }
-                        Controller1.LstickD = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (firstAxisFlag.Lu) firstAxisFlag.Lu = false;
-                        if (firstAxisFlag.Ld) firstAxisFlag.Ld = false;
-                        return;
-                    }
-                }
-                else
-                {
-                    input = Input.GetAxis(joy2KeyName.LstickVertical);
-                    if (input > 0)
-                    {
-                        if (!secondAxisFlag.Lu)
-                        {
-                            secondAxisFlag.Lu = true;
-                            Controller2.LstickU = true;
-                            return;
-                        }
-                        Controller2.LstickU = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!secondAxisFlag.Ld)
-                        {
-                            secondAxisFlag.Ld = true;
-                            Controller2.LstickD = true;
-                            return;
-                        }
-                        Controller2.LstickD = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (secondAxisFlag.Lu) secondAxisFlag.Lu = false;
-                        if (secondAxisFlag.Ld) secondAxisFlag.Ld = false;
-                        return;
-                    }
-                }
-            case Axis.LstickHorizontal:
-                if (controller == InputPlayer.P1)
-                {
-                    input = Input.GetAxis(joy1KeyName.LstickHorizontal);
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Lr)
-                        {
-                            firstAxisFlag.Lr = true;
-                            Controller1.LstickR = true;
-                            return;
-                        }
-                        Controller1.LstickR = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!firstAxisFlag.Ll)
-                        {
-                            firstAxisFlag.Ll = true;
-                            Controller1.LstickL = true;
-                            return;
-                        }
-                        Controller1.LstickL = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (firstAxisFlag.Lr) firstAxisFlag.Lr = false;
-                        if (firstAxisFlag.Ll) firstAxisFlag.Ll = false;
-                        return;
-                    }
-                }
-                else
-                {
-                    input = Input.GetAxis(joy2KeyName.LstickHorizontal);
-                    if (input > 0)
-                    {
-                        if (!secondAxisFlag.Lr)
-                        {
-                            secondAxisFlag.Lr = true;
-                            Controller2.LstickR = true;
-                            return;
-                        }
-                        Controller2.LstickR = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!secondAxisFlag.Ll)
-                        {
-                            secondAxisFlag.Ll = true;
-                            Controller2.LstickL = true;
-                            return;
-                        }
-                        Controller2.LstickL = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (secondAxisFlag.Lr) secondAxisFlag.Lr = false;
-                        if (secondAxisFlag.Ll) secondAxisFlag.Ll = false;
-                        return;
-                    }
-                }
-            case Axis.RstickVertical:
-                if (controller == InputPlayer.P1)
-                {
-                    input = Input.GetAxis(joy1KeyName.RstickVertical);
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Ru)
-                        {
-                            firstAxisFlag.Ru = true;
-                            Controller1.RstickU = true;
-                            return;
-                        }
-                        Controller1.RstickU = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!firstAxisFlag.Rd)
-                        {
-                            firstAxisFlag.Rd = true;
-                            Controller1.RstickD = true;
-                            return;
-                        }
-                        Controller1.RstickD = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (firstAxisFlag.Ru) firstAxisFlag.Ru = false;
-                        if (firstAxisFlag.Rd) firstAxisFlag.Rd = false;
-                        return;
-                    }
-                }
-                else
-                {
-                    input = Input.GetAxis(joy2KeyName.RstickVertical);
-                    if (input > 0)
-                    {
-                        if (!secondAxisFlag.Ru)
-                        {
-                            secondAxisFlag.Ru = true;
-                            Controller2.RstickU = true;
-                            return;
-                        }
-                        Controller2.RstickU = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!secondAxisFlag.Rd)
-                        {
-                            secondAxisFlag.Rd = true;
-                            Controller2.RstickD = true;
-                            return;
-                        }
-                        Controller2.RstickD = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (secondAxisFlag.Ru) secondAxisFlag.Ru = false;
-                        if (secondAxisFlag.Rd) secondAxisFlag.Rd = false;
-                        return;
-                    }
-                }
-            case Axis.RstickHorizontal:
-                if (controller == InputPlayer.P1)
-                {
-                    input = Input.GetAxis(joy1KeyName.RstickHorizontal);
-                    if (input > 0)
-                    {
-                        if (!firstAxisFlag.Rr)
-                        {
-                            firstAxisFlag.Rr = true;
-                            Controller1.RstickR = true;
-                            return;
-                        }
-                        Controller1.RstickR = true;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!firstAxisFlag.Rl)
-                        {
-                            firstAxisFlag.Rl = true;
-                            Controller1.RstickL = true;
-                            return;
-                        }
-                        Controller1.RstickL = true;
-                        return;
-                    }
-                    else
-                    {
-                        if (firstAxisFlag.Rr) firstAxisFlag.Rr = false;
-                        if (firstAxisFlag.Rl) firstAxisFlag.Rl = false;
-                        return;
-                    }
-                }
-                else
-                {
-                    input = Input.GetAxis(joy2KeyName.RstickHorizontal);
-                    if (input > 0)
-                    {
-                        if (!secondAxisFlag.Rr)
-                        {
-                            secondAxisFlag.Rr = true;
-                            Controller2.RstickR = true;
-                            return;
-                        }
-                        Controller2.RstickR = false;
-                        return;
-                    }
-                    else if (input < 0)
-                    {
-                        if (!secondAxisFlag.Rl)
-                        {
-                            secondAxisFlag.Rl = true;
-                            Controller2.RstickL = true;
-                            return;
-                        }
-                        Controller2.RstickL = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (secondAxisFlag.Rr) secondAxisFlag.Rr = false;
-                        if (secondAxisFlag.Rl) secondAxisFlag.Rl = false;
-                        return;
-                    }
-                }
-            default:
+            if(firstAxisFlag.Ci == false)
+            {
+                firstAxisFlag.Ci = true;
+                Controller1.Circle = true;
                 return;
+            }
+            Controller1.Circle = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Ci = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.Cross) == true)
+        {
+            if (firstAxisFlag.Cr == false)
+            {
+                firstAxisFlag.Cr = true;
+                Controller1.Cross = true;
+                return;
+            }
+            Controller1.Cross = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Cr = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.Triangle) == true)
+        {
+            if (firstAxisFlag.Tr == false)
+            {
+                firstAxisFlag.Tr = true;
+                Controller1.Triangle = true;
+                return;
+            }
+            Controller1.Triangle = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Tr = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.Square) == true)
+        {
+            if (firstAxisFlag.Sq == false)
+            {
+                firstAxisFlag.Sq = true;
+                Controller1.Square = true;
+                return;
+            }
+            Controller1.Square = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Sq = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.Up) == true)
+        {
+            if (firstAxisFlag.Pu == false)
+            {
+                firstAxisFlag.Pu = true;
+                Controller1.Up = true;
+                return;
+            }
+            Controller1.Up = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Pu = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.Down) == true)
+        {
+            if (firstAxisFlag.Pd == false)
+            {
+                firstAxisFlag.Pd = true;
+                Controller1.Down = true;
+                return;
+            }
+            Controller1.Down = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Pd = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.Left) == true)
+        {
+            if (firstAxisFlag.Pl == false)
+            {
+                firstAxisFlag.Pl = true;
+                Controller1.Left = true;
+                return;
+            }
+            Controller1.Left = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Pl = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.Right) == true)
+        {
+            if (firstAxisFlag.Pr == false)
+            {
+                firstAxisFlag.Pr = true;
+                Controller1.Right = true;
+                return;
+            }
+            Controller1.Right = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Pr = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.L1) == true)
+        {
+            if (firstAxisFlag.L1 == false)
+            {
+                firstAxisFlag.L1 = true;
+                Controller1.L1 = true;
+                return;
+            }
+            Controller1.L1 = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.L1 = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.L3) == true)
+        {
+            if (firstAxisFlag.L3 == false)
+            {
+                firstAxisFlag.L3 = true;
+                Controller1.L3 = true;
+                return;
+            }
+            Controller1.L3 = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.L3 = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.R1) == true)
+        {
+            if (firstAxisFlag.R1 == false)
+            {
+                firstAxisFlag.R1 = true;
+                Controller1.R1 = true;
+                return;
+            }
+            Controller1.R1 = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.R1 = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.R3) == true)
+        {
+            if (firstAxisFlag.R3 == false)
+            {
+                firstAxisFlag.R3 = true;
+                Controller1.R3 = true;
+                return;
+            }
+            Controller1.R3 = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.R3 = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.OPTION) == true)
+        {
+            if (firstAxisFlag.Op == false)
+            {
+                firstAxisFlag.Op = true;
+                Controller1.OPTION = true;
+                return;
+            }
+            Controller1.OPTION = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Op = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P1, DS4ButtonType.SHARE) == true)
+        {
+            if (firstAxisFlag.Sh == false)
+            {
+                firstAxisFlag.Sh = true;
+                Controller1.SHARE = true;
+                return;
+            }
+            Controller1.SHARE = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Sh = false;
+        }
+
+        // Axis系の取得
+
+        if(ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.LeftStickX) > 0.5f)
+        {
+            if(firstAxisFlag.Lr == false)
+            {
+                firstAxisFlag.Lr = true;
+                Controller1.LstickR = true;
+                return;
+            }
+            Controller1.LstickR = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Lr = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.LeftStickX) < -0.5f)
+        {
+            if (firstAxisFlag.Ll == false)
+            {
+                firstAxisFlag.Ll = true;
+                Controller1.LstickL = true;
+                return;
+            }
+            Controller1.LstickL = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Ll = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.LeftStickY) > 0.5f)
+        {
+            if (firstAxisFlag.Ld == false)
+            {
+                firstAxisFlag.Ld = true;
+                Controller1.LstickD = true;
+                return;
+            }
+            Controller1.LstickD = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Ld = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.LeftStickY) < -0.5f)
+        {
+            if (firstAxisFlag.Lu == false)
+            {
+                firstAxisFlag.Lu = true;
+                Controller1.LstickU = true;
+                return;
+            }
+            Controller1.LstickU = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Lu = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.RightStickX) > 0.5f)
+        {
+            if (firstAxisFlag.Rr == false)
+            {
+                firstAxisFlag.Rr = true;
+                Controller1.RstickR = true;
+                return;
+            }
+            Controller1.RstickR = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Rr = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.RightStickX) < -0.5f)
+        {
+            if (firstAxisFlag.Rl == false)
+            {
+                firstAxisFlag.Rl = true;
+                Controller1.RstickL = true;
+                return;
+            }
+            Controller1.RstickL = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Rl = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.RightStickY) > 0.5f)
+        {
+            if (firstAxisFlag.Rd == false)
+            {
+                firstAxisFlag.Rd = true;
+                Controller1.RstickD = true;
+                return;
+            }
+            Controller1.RstickD = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Rd = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.RightStickY) < -0.5f)
+        {
+            if (firstAxisFlag.Ru == false)
+            {
+                firstAxisFlag.Ru = true;
+                Controller1.RstickU = true;
+                return;
+            }
+            Controller1.RstickU = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.Ru = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.L2) > 0.5f)
+        {
+            if (firstAxisFlag.L2 == false)
+            {
+                firstAxisFlag.L2 = true;
+                Controller1.L2 = true;
+                return;
+            }
+            Controller1.L2 = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.L2 = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P1, DS4AxisType.R2) > 0.5f)
+        {
+            if (firstAxisFlag.R2 == false)
+            {
+                firstAxisFlag.R2 = true;
+                Controller1.R2 = true;
+                return;
+            }
+            Controller1.R2 = false;
+            return;
+        }
+        else
+        {
+            firstAxisFlag.R2 = false;
         }
     }
 
-    private enum Axis
+    /// <summary>
+    /// 2PのDS4のButtonDownを取得する
+    /// </summary>
+    /// <param name="player">コントローラ番号</param>
+    private void DS4Input_2P()
     {
-        PadVertical,
-        PadHorizontal,
-        LstickVertical,
-        LstickHorizontal,
-        RstickVertical,
-        RstickHorizontal
+        if (ds4Input == null || usePs4Controller == false) { return; }
+
+        // ボタン系の取得
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.Circle) == true)
+        {
+            if (secondAxisFlag.Ci == false)
+            {
+                secondAxisFlag.Ci = true;
+                Controller2.Circle = true;
+                return;
+            }
+            Controller2.Circle = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Ci = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.Cross) == true)
+        {
+            if (secondAxisFlag.Cr == false)
+            {
+                secondAxisFlag.Cr = true;
+                Controller2.Cross = true;
+                return;
+            }
+            Controller2.Cross = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Cr = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.Triangle) == true)
+        {
+            if (secondAxisFlag.Tr == false)
+            {
+                secondAxisFlag.Tr = true;
+                Controller2.Triangle = true;
+                return;
+            }
+            Controller2.Triangle = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Tr = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.Square) == true)
+        {
+            if (secondAxisFlag.Sq == false)
+            {
+                secondAxisFlag.Sq = true;
+                Controller2.Square = true;
+                return;
+            }
+            Controller2.Square = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Sq = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.Up) == true)
+        {
+            if (secondAxisFlag.Pu == false)
+            {
+                secondAxisFlag.Pu = true;
+                Controller2.Up = true;
+                return;
+            }
+            Controller2.Up = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Pu = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.Down) == true)
+        {
+            if (secondAxisFlag.Pd == false)
+            {
+                secondAxisFlag.Pd = true;
+                Controller2.Down = true;
+                return;
+            }
+            Controller2.Down = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Pd = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.Left) == true)
+        {
+            if (secondAxisFlag.Pl == false)
+            {
+                secondAxisFlag.Pl = true;
+                Controller2.Left = true;
+                return;
+            }
+            Controller2.Left = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Pl = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.Right) == true)
+        {
+            if (secondAxisFlag.Pr == false)
+            {
+                secondAxisFlag.Pr = true;
+                Controller2.Right = true;
+                return;
+            }
+            Controller2.Right = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Pr = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.L1) == true)
+        {
+            if (secondAxisFlag.L1 == false)
+            {
+                secondAxisFlag.L1 = true;
+                Controller2.L1 = true;
+                return;
+            }
+            Controller2.L1 = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.L1 = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.L3) == true)
+        {
+            if (secondAxisFlag.L3 == false)
+            {
+                secondAxisFlag.L3 = true;
+                Controller2.L3 = true;
+                return;
+            }
+            Controller2.L3 = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.L3 = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.R1) == true)
+        {
+            if (secondAxisFlag.R1 == false)
+            {
+                secondAxisFlag.R1 = true;
+                Controller2.R1 = true;
+                return;
+            }
+            Controller2.R1 = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.R1 = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.R3) == true)
+        {
+            if (secondAxisFlag.R3 == false)
+            {
+                secondAxisFlag.R3 = true;
+                Controller2.R3 = true;
+                return;
+            }
+            Controller2.R3 = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.R3 = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.OPTION) == true)
+        {
+            if (secondAxisFlag.Op == false)
+            {
+                secondAxisFlag.Op = true;
+                Controller2.OPTION = true;
+                return;
+            }
+            Controller2.OPTION = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Op = false;
+        }
+
+        if (ds4Input.IsButton(DS4ControllerType.P2, DS4ButtonType.SHARE) == true)
+        {
+            if (secondAxisFlag.Sh == false)
+            {
+                secondAxisFlag.Sh = true;
+                Controller2.SHARE = true;
+                return;
+            }
+            Controller2.SHARE = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Sh = false;
+        }
+
+        // Axis系の取得
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.LeftStickX) > 0.5f)
+        {
+            if (secondAxisFlag.Lr == false)
+            {
+                secondAxisFlag.Lr = true;
+                Controller2.LstickR = true;
+                return;
+            }
+            Controller2.LstickR = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Lr = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.LeftStickX) < -0.5f)
+        {
+            if (secondAxisFlag.Ll == false)
+            {
+                secondAxisFlag.Ll = true;
+                Controller2.LstickL = true;
+                return;
+            }
+            Controller2.LstickL = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Ll = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.LeftStickY) > 0.5f)
+        {
+            if (secondAxisFlag.Ld == false)
+            {
+                secondAxisFlag.Ld = true;
+                Controller2.LstickD = true;
+                return;
+            }
+            Controller2.LstickD = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Ld = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.LeftStickY) < -0.5f)
+        {
+            if (secondAxisFlag.Lu == false)
+            {
+                secondAxisFlag.Lu = true;
+                Controller2.LstickU = true;
+                return;
+            }
+            Controller2.LstickU = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Lu = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.RightStickX) > 0.5f)
+        {
+            if (secondAxisFlag.Rr == false)
+            {
+                secondAxisFlag.Rr = true;
+                Controller2.RstickR = true;
+                return;
+            }
+            Controller2.RstickR = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Rr = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.RightStickX) < -0.5f)
+        {
+            if (secondAxisFlag.Rl == false)
+            {
+                secondAxisFlag.Rl = true;
+                Controller2.RstickL = true;
+                return;
+            }
+            Controller2.RstickL = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Rl = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.RightStickY) > 0.5f)
+        {
+            if (secondAxisFlag.Rd == false)
+            {
+                secondAxisFlag.Rd = true;
+                Controller2.RstickD = true;
+                return;
+            }
+            Controller2.RstickD = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Rd = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.RightStickY) < -0.5f)
+        {
+            if (secondAxisFlag.Ru == false)
+            {
+                secondAxisFlag.Ru = true;
+                Controller2.RstickU = true;
+                return;
+            }
+            Controller2.RstickU = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.Ru = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.L2) > 0.5f)
+        {
+            if (secondAxisFlag.L2 == false)
+            {
+                secondAxisFlag.L2 = true;
+                Controller2.L2 = true;
+                return;
+            }
+            Controller2.L2 = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.L2 = false;
+        }
+
+        if (ds4Input.IsAxis(DS4ControllerType.P2, DS4AxisType.R2) > 0.5f)
+        {
+            if (secondAxisFlag.R2 == false)
+            {
+                secondAxisFlag.R2 = true;
+                Controller2.R2 = true;
+                return;
+            }
+            Controller2.R2 = false;
+            return;
+        }
+        else
+        {
+            secondAxisFlag.R2 = false;
+        }
     }
 
     /// <summary>
     /// StandaloneInputModuleをPS4入力に対応させる
     /// </summary>
     /// <param name="input">入力を許可するプレイヤー</param>
-    public void SetInputModule(InputPlayer input)
+    public void SetInputModule(ControllerNum input)
     {
         // StandaloneInputModuleが無ければ処理を終了
-        if (inputModule == null) return;
+        if (inputModule == null) { return; }
+
+        if (ds4Input.IsController(DS4ControllerType.P2) == false)
+        {
+            inputModule.submitButton = joy2KeyName.Submit;
+            inputModule.cancelButton = joy2KeyName.Cancel;
+            inputModule.horizontalAxis = joy2KeyName.Horizontal;
+            inputModule.verticalAxis = joy2KeyName.Vertical;
+            return;
+        }
 
         // PS4入力に対応させる
-        inputModule.submitButton = input == InputPlayer.P1 ? joy1KeyName.Submit : joy2KeyName.Submit;
-        inputModule.cancelButton = input == InputPlayer.P1 ? joy1KeyName.Cancel : joy2KeyName.Cancel;
-        inputModule.horizontalAxis = input == InputPlayer.P1 ? joy1KeyName.Horizontal : joy2KeyName.Horizontal;
-        inputModule.verticalAxis = input == InputPlayer.P1 ? joy1KeyName.Vertical : joy2KeyName.Vertical;
+        inputModule.submitButton = input == ControllerNum.P1 ? joy1KeyName.Submit : joy2KeyName.Submit;
+        inputModule.cancelButton = input == ControllerNum.P1 ? joy1KeyName.Cancel : joy2KeyName.Cancel;
+        inputModule.horizontalAxis = input == ControllerNum.P1 ? joy1KeyName.Horizontal : joy2KeyName.Horizontal;
+        inputModule.verticalAxis = input == ControllerNum.P1 ? joy1KeyName.Vertical : joy2KeyName.Vertical;
     }
 
     /// <summary>
@@ -688,10 +1011,10 @@ public class GamePadControl : MonoBehaviour
     /// <param name="id">コントローラ番号</param>
     /// <param name="vibration">振動値</param>
     /// <param name="duration">振動時間</param>
-    public void SetVibration(DS4ControllerType id, float vibration, float duration)
+    public void SetVibration(ControllerNum id, float vibration, float duration)
     {
-        if(vibration <= 0f || duration <= 0f) { return; }
-        StartCoroutine(DoVibration(id, vibration, duration));
+        if(vibration <= 0f || duration <= 0f || ds4Input.IsController((DS4ControllerType)id) == false) { return; }
+        StartCoroutine(DoVibration((DS4ControllerType)id, vibration, duration));
     }
 
     private IEnumerator DoVibration(DS4ControllerType id, float vibration, float duration)
