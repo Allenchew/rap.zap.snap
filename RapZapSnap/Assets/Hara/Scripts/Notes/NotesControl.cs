@@ -67,7 +67,7 @@ public class NotesControl : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (Instance == null && Instance != this)
         {
             Instance = this;
             dataBase1.ResetDataBase();
@@ -137,7 +137,6 @@ public class NotesControl : MonoBehaviour
     /// </summary>
     /// <param name="type">再生するノーツのタイプ 
     /// <para>Example: NotesType.CircleKey → 〇ボタンノーツ</para>
-    /// <para>int型で宣言しても可  0:〇ボタン 1:×ボタン 2:△ボタン 3:↑ボタン 4:↓ボタン 5:←ボタン</para>
     /// </param>
     /// <param name="startPos">ノーツの再生開始座標</param>
     /// <param name="endPos">ノーツの判定座標</param>
@@ -267,7 +266,7 @@ public class NotesControl : MonoBehaviour
             }
             else
             {
-                if ((nowNotes2.NotesRate >= nowNotes2.MaxGood) || (nextNotes2.gameObject.activeSelf && Mathf.Abs(0.5f - nowNotes2.NotesRate) > Mathf.Abs(0.5f - nextNotes2.NotesRate)))
+                if ((nowNotes2.NotesRate > nowNotes2.MaxGood) || (nextNotes2.gameObject.activeSelf && Mathf.Abs(0.5f - nowNotes2.NotesRate) > Mathf.Abs(0.5f - nextNotes2.NotesRate)))
                 {
                     nowNotes2.SecondMoveSet();
                     NotesResult(0, 0, ControllerNum.P2);
@@ -302,7 +301,7 @@ public class NotesControl : MonoBehaviour
                 result = 2;
                 score = 200;
             }
-            else if((rate >= view.MinGood && rate < view.MinPerfect) || (rate >= view.MaxGood && rate < view.MaxPerfect))
+            else if((rate >= view.MinGood && rate < view.MinPerfect) || (rate <= view.MaxGood && rate > view.MaxPerfect))
             {
                 result = 1;
                 score = 100;
@@ -340,12 +339,15 @@ public class NotesControl : MonoBehaviour
             switch (result)
             {
                 case 0:
+                    Debug.Log("BAD");
                     dataBase1.Bad++;
                     break;
                 case 1:
+                    Debug.Log("GOOD");
                     dataBase1.Good++;
                     break;
                 case 2:
+                    Debug.Log("PERFECT");
                     dataBase1.Perfect++;
                     break;
             }

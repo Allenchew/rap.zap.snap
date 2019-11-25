@@ -1,10 +1,11 @@
-2019/11/19 更新
-
 ---NotesObject導入方法---
+
 1. シーン上にNotesObjectを配置する
 
 2. インスペクターで設定可能な項目
     
+	MaxNotes              1度に画面上に表示できるノーツの最大数
+
     NotesSize    　       生成されるノーツのScale
 
 	NotesSpriteAlpha      判定ノーツの透明度

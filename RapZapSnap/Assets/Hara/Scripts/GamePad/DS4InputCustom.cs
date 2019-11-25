@@ -6,6 +6,42 @@ using System.Runtime.InteropServices;
 
 namespace DS4InputCustom
 {
+    public enum DS4ControllerType
+    {
+        P1,
+        P2,
+        P3,
+        P4
+    }
+
+    public enum DS4ButtonType : byte
+    {
+        Square,
+        Cross,
+        Circle,
+        Triangle,
+        Up,
+        Right,
+        Down,
+        Left,
+        L1,
+        R1,
+        SHARE,
+        OPTION,
+        L3,
+        R3
+    }
+
+    public enum DS4AxisType : byte
+    {
+        RightStickX,
+        RightStickY,
+        LeftStickX,
+        LeftStickY,
+        L2,
+        R2
+    }
+
     public struct DS4Color
     {
         public byte red;

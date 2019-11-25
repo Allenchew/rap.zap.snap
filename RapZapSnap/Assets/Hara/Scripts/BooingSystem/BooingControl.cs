@@ -41,7 +41,7 @@ public class BooingControl : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (Instance == null && Instance != this)
         {
             Instance = this;
             booingDataBase.ResetFlag();

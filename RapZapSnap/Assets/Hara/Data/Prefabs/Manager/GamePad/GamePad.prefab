@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   usePs4Controller: 1
+  axisValue: 0.8
 --- !u!114 &6207044091517602901
 MonoBehaviour:
   m_ObjectHideFlags: 0
