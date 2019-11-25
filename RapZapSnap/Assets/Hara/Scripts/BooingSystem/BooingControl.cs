@@ -139,7 +139,7 @@ public class BooingControl : MonoBehaviour
         }
 
         // 〇ボタンでSEのみ再生
-        if (key.Circle)
+        if (key.Circle == true)
         {
             if (booingDataBase.PlaySE == false) { return; }
             PlaySE(0);
@@ -148,7 +148,7 @@ public class BooingControl : MonoBehaviour
         }
 
         // ×ボタンでSE再生とバイブレーションを実行
-        if (key.Cross)
+        if (key.Cross == true)
         {
             if (booingDataBase.PlaySE_Vibration == false) { return; }
             PlaySE(0);
@@ -158,7 +158,7 @@ public class BooingControl : MonoBehaviour
         }
 
         // □ボタンでSE再生と画面の揺れを実行
-        if (key.Square)
+        if (key.Square == true)
         {
             if (booingDataBase.PlaySE_ShakeCamera == false) { return; }
             PlaySE(0);

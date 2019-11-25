@@ -207,7 +207,6 @@ namespace DS4InputCustom
         /// <param name="vibration">振動値</param>
         public void SetVibration(DS4ControllerType id, DS4Vibration vibration)
         {
-            if (!GetController()) return;
             ChangeVibration((int)id, vibration.right, vibration.left);
             SendOutput((int)id);
         }
