@@ -125,21 +125,11 @@ public class BooingControl : MonoBehaviour
     {
         if (booingFlag == false || booingPlayCount <= 0) { return; }
 
-        GamePadControl.DS4InputKeyType key;
-        ControllerNum player;
-        if (booingPlayer == ControllerNum.P1)
-        {
-            key = GamePadControl.Instance.Controller1;
-            player = ControllerNum.P2;
-        }
-        else
-        {
-            key = GamePadControl.Instance.Controller2;
-            player = ControllerNum.P1;
-        }
+        ControllerNum target = booingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1;
+        GamePadControl pad = GamePadControl.Instance;
 
         // 〇ボタンでSEのみ再生
-        if (key.Circle == true)
+        if (pad.GetButtonDown(booingPlayer, DS4ButtonKey.Circle) == true)
         {
             if (booingDataBase.PlaySE == false) { return; }
             PlaySE(0);
@@ -148,17 +138,17 @@ public class BooingControl : MonoBehaviour
         }
 
         // ×ボタンでSE再生とバイブレーションを実行
-        if (key.Cross == true)
+        if (pad.GetButtonDown(booingPlayer, DS4ButtonKey.Cross) == true)
         {
             if (booingDataBase.PlaySE_Vibration == false) { return; }
             PlaySE(0);
-            GamePadControl.Instance.SetVibration(player, 255f, 2.0f);
+            GamePadControl.Instance.SetVibration(target, 255f, 2.0f);
             booingDataBase.PlaySE_Vibration = false;
             booingPlayCount--;
         }
 
         // □ボタンでSE再生と画面の揺れを実行
-        if (key.Square == true)
+        if (pad.GetButtonDown(booingPlayer, DS4ButtonKey.Square) == true)
         {
             if (booingDataBase.PlaySE_ShakeCamera == false) { return; }
             PlaySE(0);

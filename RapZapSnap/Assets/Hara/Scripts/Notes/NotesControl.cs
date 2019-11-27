@@ -90,8 +90,8 @@ public class NotesControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        InputNotesAction1();
-        InputNotesAction2();
+        InputNotesAction(ControllerNum.P1);
+        InputNotesAction(ControllerNum.P2);
     }
 
     /// <summary>
@@ -169,110 +169,73 @@ public class NotesControl : MonoBehaviour
     }
 
     /// <summary>
-    /// プレイヤー１のノーツ入力判定処理
+    /// ノーツの入力処理
     /// </summary>
-    private void InputNotesAction1()
+    /// <param name="id">コントローラ番号</param>
+    private void InputNotesAction(ControllerNum id)
     {
-        var nowNotes1 = dataBase1.NotesObjects[dataBase1.NotesCheckCount];
-        int nextNotesNum1 = dataBase1.NotesCheckCount + 1 >= dataBase1.NotesObjects.Length ? 0 : dataBase1.NotesCheckCount + 1;
-        var nextNotes1 = dataBase1.NotesObjects[nextNotesNum1];
+        NotesView nowNotes;
+        int nextNotesNum;
+        NotesView nextNotes;
 
-        if (nowNotes1.gameObject.activeSelf)
+        if(id == ControllerNum.P1)
         {
-            var inputPad = GamePadControl.Instance.Controller1;
-            if (inputPad.Circle == true || Input.GetKeyDown(KeyCode.A) == true)
-            {
-                NotesCheck(nowNotes1, NotesType.CircleKey, ControllerNum.P1);
-                return;
-            }
-            else if (inputPad.Cross == true || Input.GetKeyDown(KeyCode.S) == true)
-            {
-                NotesCheck(nowNotes1, NotesType.CrossKey, ControllerNum.P1);
-                return;
-            }
-            else if (inputPad.Triangle == true || Input.GetKeyDown(KeyCode.D) == true)
-            {
-                NotesCheck(nowNotes1, NotesType.TriangleKey, ControllerNum.P1);
-                return;
-            }
-            else if (inputPad.Up == true || Input.GetKeyDown(KeyCode.UpArrow) == true)
-            {
-                NotesCheck(nowNotes1, NotesType.UpArrow, ControllerNum.P1);
-                return;
-            }
-            else if (inputPad.Down == true || Input.GetKeyDown(KeyCode.DownArrow) == true)
-            {
-                NotesCheck(nowNotes1, NotesType.DownArrow, ControllerNum.P1);
-                return;
-            }
-            else if (inputPad.Left == true || Input.GetKeyDown(KeyCode.LeftArrow) == true)
-            {
-                NotesCheck(nowNotes1, NotesType.LeftArrow, ControllerNum.P1);
-                return;
-            }
-            else
-            {
-                if ((nowNotes1.NotesRate >= nowNotes1.MaxGood) || (nextNotes1.gameObject.activeSelf && Mathf.Abs(0.5f - nowNotes1.NotesRate) > Mathf.Abs(0.5f - nextNotes1.NotesRate)))
-                {
-                    nowNotes1.SecondMoveSet();
-                    NotesResult(0, 0, ControllerNum.P1);
-                    return;
-                }
-            }
+            nowNotes = dataBase1.NotesObjects[dataBase1.NotesCheckCount];
+            nextNotesNum = dataBase1.NotesCheckCount + 1 >= dataBase1.NotesObjects.Length ? 0 : dataBase1.NotesCheckCount + 1;
+            nextNotes = dataBase1.NotesObjects[nextNotesNum];
         }
-    }
-
-    /// <summary>
-    /// プレイヤー２のノーツ入力判定処理
-    /// </summary>
-    private void InputNotesAction2()
-    {
-        var nowNotes2 = dataBase2.NotesObjects[dataBase2.NotesCheckCount];
-        int nextNotesNum2 = dataBase2.NotesCheckCount + 1 >= dataBase2.NotesObjects.Length ? 0 : dataBase2.NotesCheckCount + 1;
-        var nextNotes2 = dataBase2.NotesObjects[nextNotesNum2];
-
-        if (nowNotes2.gameObject.activeSelf)
+        else
         {
-            var inputPad = GamePadControl.Instance.Controller2;
-            if (inputPad.Circle == true || Input.GetKeyDown(KeyCode.J) == true)
-            {
-                NotesCheck(nowNotes2, NotesType.CircleKey, ControllerNum.P2);
-                return;
-            }
-            else if (inputPad.Cross == true || Input.GetKeyDown(KeyCode.K) == true)
-            {
-                NotesCheck(nowNotes2, NotesType.CrossKey, ControllerNum.P2);
-                return;
-            }
-            else if (inputPad.Triangle == true || Input.GetKeyDown(KeyCode.L) == true)
-            {
-                NotesCheck(nowNotes2, NotesType.TriangleKey, ControllerNum.P2);
-                return;
-            }
-            else if (inputPad.Up == true || Input.GetKeyDown(KeyCode.Keypad8) == true)
-            {
-                NotesCheck(nowNotes2, NotesType.UpArrow, ControllerNum.P2);
-                return;
-            }
-            else if (inputPad.Down == true || Input.GetKeyDown(KeyCode.Keypad2) == true)
-            {
-                NotesCheck(nowNotes2, NotesType.DownArrow, ControllerNum.P2);
-                return;
-            }
-            else if (inputPad.Left == true || Input.GetKeyDown(KeyCode.Keypad4) == true)
-            {
-                NotesCheck(nowNotes2, NotesType.LeftArrow, ControllerNum.P2);
-                return;
-            }
-            else
-            {
-                if ((nowNotes2.NotesRate > nowNotes2.MaxGood) || (nextNotes2.gameObject.activeSelf && Mathf.Abs(0.5f - nowNotes2.NotesRate) > Mathf.Abs(0.5f - nextNotes2.NotesRate)))
-                {
-                    nowNotes2.SecondMoveSet();
-                    NotesResult(0, 0, ControllerNum.P2);
-                    return;
-                }
-            }
+            nowNotes = dataBase2.NotesObjects[dataBase2.NotesCheckCount];
+            nextNotesNum = dataBase2.NotesCheckCount + 1 >= dataBase2.NotesObjects.Length ? 0 : dataBase2.NotesCheckCount + 1;
+            nextNotes = dataBase2.NotesObjects[nextNotesNum];
+        }
+
+        if(nowNotes.gameObject.activeSelf == false) { return; }
+
+        GamePadControl pad = GamePadControl.Instance;
+
+        if(pad.GetButtonDown(id, DS4ButtonKey.Circle) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true))
+        {
+            NotesCheck(nowNotes, NotesType.CircleKey, id);
+            return;
+        }
+
+        if (pad.GetButtonDown(id, DS4ButtonKey.Cross) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.S) == true : Input.GetKeyDown(KeyCode.K) == true))
+        {
+            NotesCheck(nowNotes, NotesType.CrossKey, id);
+            return;
+        }
+
+        if (pad.GetButtonDown(id, DS4ButtonKey.Triangle) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.D) == true : Input.GetKeyDown(KeyCode.L) == true))
+        {
+            NotesCheck(nowNotes, NotesType.TriangleKey, id);
+            return;
+        }
+
+        if (pad.GetButtonDown(id, DS4ButtonKey.Up) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.UpArrow) == true : Input.GetKeyDown(KeyCode.Keypad8) == true))
+        {
+            NotesCheck(nowNotes, NotesType.UpArrow, id);
+            return;
+        }
+
+        if (pad.GetButtonDown(id, DS4ButtonKey.Down) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.DownArrow) == true : Input.GetKeyDown(KeyCode.Keypad2) == true))
+        {
+            NotesCheck(nowNotes, NotesType.DownArrow, id);
+            return;
+        }
+
+        if (pad.GetButtonDown(id, DS4ButtonKey.Left) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.LeftArrow) == true : Input.GetKeyDown(KeyCode.Keypad4) == true))
+        {
+            NotesCheck(nowNotes, NotesType.LeftArrow, id);
+            return;
+        }
+
+        if ((nowNotes.NotesRate >= nowNotes.MaxGood) || (nextNotes.gameObject.activeSelf && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
+        {
+            nowNotes.SecondMoveSet();
+            NotesResult(0, 0, id);
+            return;
         }
     }
 
