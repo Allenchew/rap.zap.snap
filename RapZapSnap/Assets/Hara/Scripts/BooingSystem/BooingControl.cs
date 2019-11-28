@@ -142,7 +142,7 @@ public class BooingControl : MonoBehaviour
         {
             if (booingDataBase.PlaySE_Vibration == false) { return; }
             PlaySE(0);
-            GamePadControl.Instance.SetVibration(target, 255f, 2.0f);
+            pad.SetVibration(target, 255f, 2.0f);
             booingDataBase.PlaySE_Vibration = false;
             booingPlayCount--;
         }

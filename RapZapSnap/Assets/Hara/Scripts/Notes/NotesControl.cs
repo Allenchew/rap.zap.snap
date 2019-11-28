@@ -41,6 +41,11 @@ public class NotesControl : MonoBehaviour
         {
             notesCallCount = 0;
             notesCheckCount = 0;
+            ResetScore();
+        }
+
+        public void ResetScore()
+        {
             Perfect = 0;
             Good = 0;
             Bad = 0;
@@ -72,7 +77,7 @@ public class NotesControl : MonoBehaviour
             Instance = this;
             dataBase1.ResetDataBase();
             dataBase2.ResetDataBase();
-            CreateNotes();
+            for (int i = 0; i < 2; i++) { CreateNotes((ControllerNum)i); }
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -90,14 +95,14 @@ public class NotesControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        InputNotesAction(ControllerNum.P1);
-        InputNotesAction(ControllerNum.P2);
+        for(int i = 0; i < 2; i++) { InputNotesAction((ControllerNum)i); }
     }
 
     /// <summary>
-    /// ノーツを必要数生成する
+    /// ノーツの生成
     /// </summary>
-    private void CreateNotes()
+    /// <param name="id">プレイヤー番号</param>
+    private void CreateNotes(ControllerNum id)
     {
         if (notesPrefab == null)
         {
@@ -105,31 +110,24 @@ public class NotesControl : MonoBehaviour
             return;
         }
 
-        // ノーツのプールを初期化
-        dataBase1.NotesObjects = new NotesView[maxNotes];
-        dataBase2.NotesObjects = new NotesView[maxNotes];
+        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
 
-        // ノーツのプールを作成し、格納する
-        for (int i = 0; i < maxNotes; i++)
+        // NotesView配列の初期化
+        notesData.NotesObjects = new NotesView[maxNotes];
+
+        for(int i = 0; i < maxNotes; i++)
         {
-            GameObject obj;
-            if (dataBase1.NotesObjects[i] == null)
+            if(notesData.NotesObjects[i] == null)
             {
-                obj = Instantiate(notesPrefab, gameObject.transform, false);
+                GameObject obj = Instantiate(notesPrefab, gameObject.transform, false);
                 obj.SetActive(false);
-                dataBase1.NotesObjects[i] = obj.GetComponent<NotesView>();
-                dataBase1.NotesObjects[i].MoveNotesObj = obj.transform.GetChild(1).gameObject;
-                dataBase1.NotesObjects[i].GoalNotesObj = obj.transform.GetChild(0).gameObject;
-            }
-            if (dataBase2.NotesObjects[i] == null)
-            {
-                obj = Instantiate(notesPrefab, gameObject.transform, false);
-                obj.SetActive(false);
-                dataBase2.NotesObjects[i] = obj.GetComponent<NotesView>();
-                dataBase2.NotesObjects[i].MoveNotesObj = obj.transform.GetChild(1).gameObject;
-                dataBase2.NotesObjects[i].GoalNotesObj = obj.transform.GetChild(0).gameObject;
+                notesData.NotesObjects[i] = obj.GetComponent<NotesView>();
+                notesData.NotesObjects[i].MoveNotesObj = obj.transform.GetChild(1).gameObject;
+                notesData.NotesObjects[i].GoalNotesObj = obj.transform.GetChild(0).gameObject;
             }
         }
+
+        _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
     }
 
     /// <summary>
@@ -142,30 +140,20 @@ public class NotesControl : MonoBehaviour
     /// <param name="endPos">ノーツの判定座標</param>
     /// <param name="id">入力対象のコントローラ番号</param>
     /// <param name="duration">再生開始位置から判定位置まで移動するのにかかる時間[s]</param>
-    public void PlayNotesOneShot(NotesType type, Vector3 startPos, Vector3 endPos, ControllerNum id = ControllerNum.P1, float duration = 1.0f)
+    public void PlayNotesOneShot(NotesType type, Vector3 startPos, Vector3 endPos, ControllerNum id, float duration = 1.0f)
     {
         if (startPos == endPos) { return; }
 
-        Sprite sprite = notesSprites[(int)type];
+        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
 
-        if (id == ControllerNum.P1)
-        {
-            // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-            if (dataBase1.NotesObjects[dataBase1.NotesCallCount].gameObject.activeSelf) { return; }
+        // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
+        if (notesData.NotesObjects[notesData.NotesCallCount].gameObject.activeSelf == true) { return; }
 
-            // 第1ノーツプールからノーツを再生
-            dataBase1.NotesObjects[dataBase1.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), sprite, notesSpriteAlpha);
-            dataBase1.NotesCallCount++;
-        }
-        else
-        {
-            // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-            if (dataBase2.NotesObjects[dataBase2.NotesCallCount].gameObject.activeSelf) { return; }
+        // ノーツにデータをセットして再生する
+        notesData.NotesObjects[notesData.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSprites[(int)type], notesSpriteAlpha);
+        notesData.NotesCallCount++;
 
-            // 第2ノーツプールからノーツを再生
-            dataBase2.NotesObjects[dataBase2.NotesCallCount].SetNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), sprite, notesSpriteAlpha);
-            dataBase2.NotesCallCount++;
-        }
+        _ = id == ControllerNum.P1 ? dataBase1.NotesCallCount = notesData.NotesCallCount : dataBase2.NotesCallCount = notesData.NotesCallCount;
     }
 
     /// <summary>
@@ -245,7 +233,7 @@ public class NotesControl : MonoBehaviour
     /// <param name="view">判定をチェックしたいノーツ</param>
     /// <param name="type">入力されたノーツタイプID</param>
     /// <param name="id">プレイヤー番号</param>
-    private void NotesCheck(NotesView view,  NotesType type, ControllerNum id = ControllerNum.P1)
+    private void NotesCheck(NotesView view,  NotesType type, ControllerNum id)
     {
         // ノーツの進行率をチェック
         var rate = view.NotesRate;
@@ -283,8 +271,6 @@ public class NotesControl : MonoBehaviour
 
         // 結果を算出
         NotesResult(result, score, id);
-
-        Debug.Log(rate + " : " + result);
     }
 
     /// <summary>
@@ -293,45 +279,32 @@ public class NotesControl : MonoBehaviour
     /// <param name="result">ノーツの判定値</param>
     /// <param name="score">獲得スコア</param>
     /// <param name="id">プレイヤー番号</param>
-    private void NotesResult(int result, int score, ControllerNum id = ControllerNum.P1)
+    private void NotesResult(int result, int score, ControllerNum id)
     {
-        if (id == ControllerNum.P1)
+        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
+
+        switch (result)
         {
-            dataBase1.NotesCheckCount++;
-            dataBase1.TotalScore += score;
-            switch (result)
-            {
-                case 0:
-                    Debug.Log("BAD");
-                    dataBase1.Bad++;
-                    break;
-                case 1:
-                    Debug.Log("GOOD");
-                    dataBase1.Good++;
-                    break;
-                case 2:
-                    Debug.Log("PERFECT");
-                    dataBase1.Perfect++;
-                    break;
-            }
+            case 0:
+                Debug.Log(id + " : BAD");
+                notesData.Bad++;
+                break;
+            case 1:
+                Debug.Log(id + " : GOOD");
+                notesData.Good++;
+                break;
+            case 2:
+                Debug.Log(id + " : PERFECT");
+                notesData.Perfect++;
+                break;
+            default:
+                return;
         }
-        else
-        {
-            dataBase2.NotesCheckCount++;
-            dataBase2.TotalScore += score;
-            switch (result)
-            {
-                case 0:
-                    dataBase2.Bad++;
-                    break;
-                case 1:
-                    dataBase2.Good++;
-                    break;
-                case 2:
-                    dataBase2.Perfect++;
-                    break;
-            }
-        }
+
+        notesData.NotesCheckCount++;
+        notesData.TotalScore += score;
+
+        _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
 
         // 歌詞を流す処理（予定）
 
@@ -347,18 +320,18 @@ public class NotesControl : MonoBehaviour
     {
         if (resultNum < 0 || resultNum > 3) return 0;
 
-        NotesDataBase data = id == ControllerNum.P1 ? dataBase1 : dataBase2;
+        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
         
         switch (resultNum)
         {
             case 0:
-                return data.Bad;
+                return notesData.Bad;
             case 1:
-                return data.Good;
+                return notesData.Good;
             case 2:
-                return data.Perfect;
+                return notesData.Perfect;
             case 3:
-                return data.TotalScore;
+                return notesData.TotalScore;
             default:
                 return 0;
         }
@@ -367,22 +340,11 @@ public class NotesControl : MonoBehaviour
     /// <summary>
     /// ノーツのリザルトを初期化する
     /// </summary>
-    /// <param name="id">初期化対象プレイヤー</param>
+    /// <param name="id">プレイヤー番号</param>
     public void ResetResult(ControllerNum id = ControllerNum.P1)
     {
-        if (id == ControllerNum.P1)
-        {
-            dataBase1.Perfect = 0;
-            dataBase1.Good = 0;
-            dataBase1.Bad = 0;
-            dataBase1.TotalScore = 0;
-        }
-        else
-        {
-            dataBase2.Perfect = 0;
-            dataBase2.Good = 0;
-            dataBase2.Bad = 0;
-            dataBase2.TotalScore = 0;
-        }
+        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
+        notesData.ResetScore();
+        _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
     }
 }

@@ -170,6 +170,8 @@ public class GamePadControl : MonoBehaviour
     /// <returns></returns>
     public bool GetButtonDown(ControllerNum id, DS4ButtonKey type)
     {
+        if(usePs4Controller == false) { return false; }
+
         bool buttonFlag;
         DS4ControllerType inputID = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
         DS4ButtonType buttonType;
@@ -317,6 +319,8 @@ public class GamePadControl : MonoBehaviour
     /// <returns></returns>
     public bool GetAxisDown(ControllerNum id, DS4AxisKey type)
     {
+        if (usePs4Controller == false) { return false; }
+
         bool axisFlag;
         DS4ControllerType inputID = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
         DS4AxisType axisType;
