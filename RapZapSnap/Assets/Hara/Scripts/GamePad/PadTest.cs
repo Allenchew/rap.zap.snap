@@ -22,7 +22,7 @@ public class PadTest : MonoBehaviour
 
     private void CheckInput(ControllerNum id)
     {
-        DS4InputDownKey input = id == ControllerNum.P1 ? GamePadControl.Instance.Input_1 : GamePadControl.Instance.Input_2;
+        DS4InputKey input = id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1 : GamePadControl.Instance.GetKeyDown_2;
         if(input.Circle == true)
         {
             Debug.Log(id + " : ○ボタン");

@@ -602,7 +602,7 @@ PrefabInstance:
     - target: {fileID: 1048972796834214839, guid: 30d34751b7b12e5478935863688cf8fc,
         type: 3}
       propertyPath: booingFlag
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1048972796834214839, guid: 30d34751b7b12e5478935863688cf8fc,
         type: 3}

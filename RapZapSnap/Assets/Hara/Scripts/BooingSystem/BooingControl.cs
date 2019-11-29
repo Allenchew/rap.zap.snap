@@ -17,9 +17,11 @@ public class BooingControl : MonoBehaviour
     [SerializeField, Tooltip("ノーツ入力を邪魔する用のSE音源リスト")]
     private List<AudioClip> audioClips = null;
 
-    [SerializeField, Tooltip("画面を揺らす用のカメラ")]
+    [SerializeField, Tooltip("揺らしたいオブジェクト")]
     private GameObject shakeObject = null;
     public GameObject ShakeObject { set { shakeObject = value; } }
+
+    private bool isRunning = false;
 
     private void Awake()
     {
@@ -66,9 +68,9 @@ public class BooingControl : MonoBehaviour
     /// </summary>
     /// <param name="duration">揺らす時間</param>
     /// <param name="magnitude">揺れの強さ</param>
-    private void ShakeCameraAction(float duration, float magnitude)
+    private void ShakeAction(float duration, float magnitude)
     {
-        if(duration <= 0f || magnitude <= 0f) { return; }
+        if(duration <= 0f || magnitude <= 0f || isRunning == true) { return; }
         StartCoroutine(DoShake(duration, magnitude));
     }
 
@@ -80,7 +82,9 @@ public class BooingControl : MonoBehaviour
     /// <returns></returns>
     private IEnumerator DoShake(float duration, float magnitude)
     {
-        // カメラが設定されていないならMainCameraを使う
+        isRunning = true;
+
+        // 設定されていないならMainCameraを使う
         if(shakeObject == null) { shakeObject = Camera.main.gameObject; }
 
         var pos = shakeObject.transform.localPosition;
@@ -96,7 +100,10 @@ public class BooingControl : MonoBehaviour
 
             yield return null;
         }
+        
         shakeObject.transform.localPosition = pos;
+
+        isRunning = false;
     }
 
     /// <summary>
@@ -107,27 +114,29 @@ public class BooingControl : MonoBehaviour
         if (booingFlag == false) { return; }
 
         ControllerNum target = booingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1;
-        GamePadControl pad = GamePadControl.Instance;
-        DS4InputDownKey input = booingPlayer == ControllerNum.P1 ? pad.Input_1 : pad.Input_2;
+        DS4InputKey input = booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1 : GamePadControl.Instance.GetKeyDown_2;
 
         // 〇ボタンでSEのみ再生
         if (input.Circle == true)
         {
             PlaySE(0);
+            Debug.Log("SE再生");
         }
 
         // ×ボタンでSE再生とバイブレーションを実行
         if (input.Cross == true)
         {
             PlaySE(0);
-            pad.SetVibration(target, 255f, 2.0f);
+            GamePadControl.Instance.SetVibration(target, 255f, 2.0f);
+            Debug.Log("バイブレーション実行");
         }
 
         // □ボタンでSE再生と画面の揺れを実行
         if (input.Square == true)
         {
             PlaySE(0);
-            ShakeCameraAction(1.0f, 0.5f);
+            ShakeAction(2.0f, 0.5f);
+            Debug.Log("画面揺れ実行");
         }
     }
 

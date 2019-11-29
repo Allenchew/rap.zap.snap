@@ -181,8 +181,7 @@ public class NotesControl : MonoBehaviour
 
         if(nowNotes.gameObject.activeSelf == false) { return; }
 
-        GamePadControl pad = GamePadControl.Instance;
-        DS4InputDownKey input = id == ControllerNum.P1 ? pad.Input_1 : pad.Input_2;
+        DS4InputKey input = id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1 : GamePadControl.Instance.GetKeyDown_2;
 
         if(input.Circle == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true))
         {
@@ -238,7 +237,7 @@ public class NotesControl : MonoBehaviour
     {
         // ノーツの進行率をチェック
         var rate = view.NotesRate;
-        if(rate < view.MinBad || view.NotesClickFlag == false) { return; }
+        if(rate < view.MinBad) { return; }
 
         // ノーツを非表示
         view.ResetNotes();
@@ -319,7 +318,7 @@ public class NotesControl : MonoBehaviour
     /// <returns></returns>
     public int GetResult(int resultNum, ControllerNum id = ControllerNum.P1)
     {
-        if (resultNum < 0 || resultNum > 3) return 0;
+        if (resultNum < 0 || resultNum > 3) { return 0; }
 
         NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
         
