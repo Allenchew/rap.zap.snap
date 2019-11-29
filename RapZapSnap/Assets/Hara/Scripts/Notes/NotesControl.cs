@@ -182,38 +182,39 @@ public class NotesControl : MonoBehaviour
         if(nowNotes.gameObject.activeSelf == false) { return; }
 
         GamePadControl pad = GamePadControl.Instance;
+        DS4InputDownKey input = id == ControllerNum.P1 ? pad.Input_1 : pad.Input_2;
 
-        if(pad.GetButtonDown(id, DS4ButtonKey.Circle) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true))
+        if(input.Circle == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true))
         {
             NotesCheck(nowNotes, NotesType.CircleKey, id);
             return;
         }
 
-        if (pad.GetButtonDown(id, DS4ButtonKey.Cross) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.S) == true : Input.GetKeyDown(KeyCode.K) == true))
+        if (input.Cross == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.S) == true : Input.GetKeyDown(KeyCode.K) == true))
         {
             NotesCheck(nowNotes, NotesType.CrossKey, id);
             return;
         }
 
-        if (pad.GetButtonDown(id, DS4ButtonKey.Triangle) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.D) == true : Input.GetKeyDown(KeyCode.L) == true))
+        if (input.Triangle == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.D) == true : Input.GetKeyDown(KeyCode.L) == true))
         {
             NotesCheck(nowNotes, NotesType.TriangleKey, id);
             return;
         }
 
-        if (pad.GetButtonDown(id, DS4ButtonKey.Up) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.UpArrow) == true : Input.GetKeyDown(KeyCode.Keypad8) == true))
+        if (input.Up == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.UpArrow) == true : Input.GetKeyDown(KeyCode.Keypad8) == true))
         {
             NotesCheck(nowNotes, NotesType.UpArrow, id);
             return;
         }
 
-        if (pad.GetButtonDown(id, DS4ButtonKey.Down) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.DownArrow) == true : Input.GetKeyDown(KeyCode.Keypad2) == true))
+        if (input.Down == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.DownArrow) == true : Input.GetKeyDown(KeyCode.Keypad2) == true))
         {
             NotesCheck(nowNotes, NotesType.DownArrow, id);
             return;
         }
 
-        if (pad.GetButtonDown(id, DS4ButtonKey.Left) == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.LeftArrow) == true : Input.GetKeyDown(KeyCode.Keypad4) == true))
+        if (input.Left == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.LeftArrow) == true : Input.GetKeyDown(KeyCode.Keypad4) == true))
         {
             NotesCheck(nowNotes, NotesType.LeftArrow, id);
             return;

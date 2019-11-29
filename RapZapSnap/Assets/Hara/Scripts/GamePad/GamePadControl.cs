@@ -41,6 +41,62 @@ public enum DS4AxisKey
     R2
 }
 
+public struct DS4InputDownKey
+{
+    public bool Circle;
+    public bool Cross;
+    public bool Triangle;
+    public bool Square;
+    public bool Up;
+    public bool Down;
+    public bool Left;
+    public bool Right;
+    public bool LeftStick_Up;
+    public bool LeftStick_Down;
+    public bool LeftStick_Left;
+    public bool LeftStick_Right;
+    public bool RightStick_Up;
+    public bool RightStick_Down;
+    public bool RightStick_Left;
+    public bool RightStick_Right;
+    public bool L1;
+    public bool L2;
+    public bool L3;
+    public bool R1;
+    public bool R2;
+    public bool R3;
+    public bool OPTION;
+    public bool SHARE;
+
+    public void ResetFlag()
+    {
+        Circle = false;
+        Cross = false;
+        Triangle = false;
+        Square = false;
+        Up = false;
+        Down = false;
+        Left = false;
+        Right = false;
+        LeftStick_Up = false;
+        LeftStick_Down = false;
+        LeftStick_Left = false;
+        LeftStick_Right = false;
+        RightStick_Up = false;
+        RightStick_Down = false;
+        RightStick_Left = false;
+        RightStick_Right = false;
+        L1 = false;
+        L2 = false;
+        L3 = false;
+        R1 = false;
+        R2 = false;
+        R3 = false;
+        OPTION = false;
+        SHARE = false;
+    }
+}
+
 public class GamePadControl : MonoBehaviour
 {
     public static GamePadControl Instance { private set; get; } = null;
@@ -57,6 +113,9 @@ public class GamePadControl : MonoBehaviour
 
     // コルーチン用のフラグ
     private bool isRunning = false;
+
+    public DS4InputDownKey Input_1 { private set; get; } = new DS4InputDownKey();
+    public DS4InputDownKey Input_2 { private set; get; } = new DS4InputDownKey();
 
     private struct DS4KeyName
     {
@@ -138,6 +197,8 @@ public class GamePadControl : MonoBehaviour
             secondAxisFlag.ResetFlag();
             joy1KeyName = new DS4KeyName(ControllerNum.P1);
             joy2KeyName = new DS4KeyName(ControllerNum.P2);
+            Input_1.ResetFlag();
+            Input_2.ResetFlag();
             inputModule = GetComponent<UnityEngine.EventSystems.StandaloneInputModule>();
             ds4Input = GetComponent<DS4InputCustom.DS4InputCustom>();
             DontDestroyOnLoad(gameObject);
@@ -157,18 +218,48 @@ public class GamePadControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        for(int i = 0; i < 2; i++) { SetDS4Input((ControllerNum)i); }
+    }
+
+    private void SetDS4Input(ControllerNum id)
+    {
+        DS4InputDownKey input = id == ControllerNum.P1 ? Input_1 : Input_2;
+        input.Circle = GetButtonDown(id, DS4ButtonKey.Circle);
+        input.Cross = GetButtonDown(id, DS4ButtonKey.Cross);
+        input.Triangle = GetButtonDown(id, DS4ButtonKey.Triangle);
+        input.Square = GetButtonDown(id, DS4ButtonKey.Square);
+        input.Up = GetButtonDown(id, DS4ButtonKey.Up);
+        input.Down = GetButtonDown(id, DS4ButtonKey.Down);
+        input.Left = GetButtonDown(id, DS4ButtonKey.Left);
+        input.Right = GetButtonDown(id, DS4ButtonKey.Right);
+        input.LeftStick_Up = GetAxisDown(id, DS4AxisKey.LeftStick_Up);
+        input.LeftStick_Down = GetAxisDown(id, DS4AxisKey.LeftStick_Down);
+        input.LeftStick_Left = GetAxisDown(id, DS4AxisKey.LeftStick_Left);
+        input.LeftStick_Right = GetAxisDown(id, DS4AxisKey.LeftStick_Right);
+        input.RightStick_Up = GetAxisDown(id, DS4AxisKey.RightStick_Up);
+        input.RightStick_Down = GetAxisDown(id, DS4AxisKey.RightStick_Down);
+        input.RightStick_Left = GetAxisDown(id, DS4AxisKey.RightStick_Left);
+        input.RightStick_Right = GetAxisDown(id, DS4AxisKey.RightStick_Right);
+        input.L1 = GetButtonDown(id, DS4ButtonKey.L1);
+        input.L2 = GetAxisDown(id, DS4AxisKey.L2);
+        input.L3 = GetButtonDown(id, DS4ButtonKey.L3);
+        input.R1 = GetButtonDown(id, DS4ButtonKey.R1);
+        input.R2 = GetAxisDown(id, DS4AxisKey.R2);
+        input.R3 = GetButtonDown(id, DS4ButtonKey.R3);
+        input.OPTION = GetButtonDown(id, DS4ButtonKey.OPTION);
+        input.SHARE = GetButtonDown(id, DS4ButtonKey.SHARE);
+        _ = id == ControllerNum.P1 ? Input_1 = input : Input_2 = input;
     }
 
     /// <summary>
-    /// DS4のボタン入力を検知する
+    /// DS4のボタン入力を検知する (複数のUpdate処理で呼び出そうとすると取得できない場合があります)
     /// </summary>
     /// <param name="id">コントローラ番号</param>
     /// <param name="type">入力を検知したいボタンの種類
     /// <para>Example :　GetButtonDown(ControllerNum.P1, DS4ButtonKey.Circle)　1Pの〇ボタンの入力を検知する</para>
     /// </param>
     /// <returns></returns>
-    public bool GetButtonDown(ControllerNum id, DS4ButtonKey type)
+    private bool GetButtonDown(ControllerNum id, DS4ButtonKey type)
     {
         if(usePs4Controller == false) { return false; }
 
@@ -241,6 +332,8 @@ public class GamePadControl : MonoBehaviour
             default:
                 return false;
         }
+
+        if(ds4Input.MultithreadUpdate == false) { return ds4Input.IsButtonDown(inputID, buttonType); }
 
         if(ds4Input.IsButton(inputID, buttonType) == true)
         {
@@ -317,7 +410,7 @@ public class GamePadControl : MonoBehaviour
     /// <para>Example :　GetAxisDown(ControllerNum.P1, DS4AxisKey.LeftStick_Up)　1PのLスティックの↑方向の入力を検知する</para>
     /// </param>
     /// <returns></returns>
-    public bool GetAxisDown(ControllerNum id, DS4AxisKey type)
+    private bool GetAxisDown(ControllerNum id, DS4AxisKey type)
     {
         if (usePs4Controller == false) { return false; }
 

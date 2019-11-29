@@ -12,24 +12,6 @@ public class BooingControl : MonoBehaviour
     [SerializeField, Tooltip("ブーイングシステムを使うか")]
     private bool booingFlag = false;
 
-    [SerializeField, Tooltip("ブーイングを実行できる回数")]
-    private int booingPlayCount = 3;
-    private int booingDefaultCount = 0;
-
-    private struct BooingSystem
-    {
-        public bool PlaySE;
-        public bool PlaySE_Vibration;
-        public bool PlaySE_ShakeCamera;
-        public void ResetFlag()
-        {
-            PlaySE = true;
-            PlaySE_Vibration = true;
-            PlaySE_ShakeCamera = true;
-        }
-    }
-    private BooingSystem booingDataBase;
-
     private AudioSource audioSource;
 
     [SerializeField, Tooltip("ノーツ入力を邪魔する用のSE音源リスト")]
@@ -44,7 +26,6 @@ public class BooingControl : MonoBehaviour
         if (Instance == null && Instance != this)
         {
             Instance = this;
-            booingDataBase.ResetFlag();
             audioSource = GetComponent<AudioSource>();
             DontDestroyOnLoad(gameObject);
         }
@@ -57,7 +38,7 @@ public class BooingControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        booingDefaultCount = booingPlayCount;
+        
     }
 
     // Update is called once per frame
@@ -123,48 +104,31 @@ public class BooingControl : MonoBehaviour
     /// </summary>
     private void PlayBooing()
     {
-        if (booingFlag == false || booingPlayCount <= 0) { return; }
+        if (booingFlag == false) { return; }
 
         ControllerNum target = booingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1;
         GamePadControl pad = GamePadControl.Instance;
+        DS4InputDownKey input = booingPlayer == ControllerNum.P1 ? pad.Input_1 : pad.Input_2;
 
         // 〇ボタンでSEのみ再生
-        if (pad.GetButtonDown(booingPlayer, DS4ButtonKey.Circle) == true)
+        if (input.Circle == true)
         {
-            if (booingDataBase.PlaySE == false) { return; }
             PlaySE(0);
-            booingDataBase.PlaySE = false;
-            booingPlayCount--;
         }
 
         // ×ボタンでSE再生とバイブレーションを実行
-        if (pad.GetButtonDown(booingPlayer, DS4ButtonKey.Cross) == true)
+        if (input.Cross == true)
         {
-            if (booingDataBase.PlaySE_Vibration == false) { return; }
             PlaySE(0);
             pad.SetVibration(target, 255f, 2.0f);
-            booingDataBase.PlaySE_Vibration = false;
-            booingPlayCount--;
         }
 
         // □ボタンでSE再生と画面の揺れを実行
-        if (pad.GetButtonDown(booingPlayer, DS4ButtonKey.Square) == true)
+        if (input.Square == true)
         {
-            if (booingDataBase.PlaySE_ShakeCamera == false) { return; }
             PlaySE(0);
             ShakeCameraAction(1.0f, 0.5f);
-            booingDataBase.PlaySE_ShakeCamera = false;
-            booingPlayCount--;
         }
-    }
-
-    /// <summary>
-    /// ブーイングシステムの初期化
-    /// </summary>
-    private void ResetBooingSystem()
-    {
-        booingDataBase.ResetFlag();
-        booingPlayCount = booingDefaultCount;
     }
 
     /// <summary>
@@ -173,7 +137,6 @@ public class BooingControl : MonoBehaviour
     /// <param name="player">ブーイングシステムを使うプレイヤー</param>
     public void SetBooingPlayer(ControllerNum player)
     {
-        ResetBooingSystem();
         booingPlayer = player;
         if (booingFlag == false) { booingFlag = true; }
     }
@@ -184,7 +147,6 @@ public class BooingControl : MonoBehaviour
     public void BooingSystemOff()
     {
         if (booingFlag == false) { return; }
-        ResetBooingSystem();
         booingFlag = false;
     }
 }

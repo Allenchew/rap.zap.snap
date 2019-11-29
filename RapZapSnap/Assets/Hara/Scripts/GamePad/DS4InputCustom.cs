@@ -110,6 +110,7 @@ namespace DS4InputCustom
         private static extern bool EndDS4();
 
         [SerializeField] private bool multithreadUpdate = true;
+        public bool MultithreadUpdate { get { return multithreadUpdate; } }
         private bool isInputUpdate = false;
         private Task task = null;
         private bool isStart = false;
