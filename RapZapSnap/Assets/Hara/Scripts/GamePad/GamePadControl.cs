@@ -84,6 +84,8 @@ public class GamePadControl : MonoBehaviour
 
     public DS4InputKey GetKeyDown_1 { private set; get; } = new DS4InputKey();
     public DS4InputKey GetKeyDown_2 { private set; get; } = new DS4InputKey();
+    public DS4InputKey GetKeyUp_1 { private set; get; } = new DS4InputKey();
+    public DS4InputKey GetKeyUp_2 { private set; get; } = new DS4InputKey();
 
     private struct DS4KeyName
     {
@@ -120,9 +122,14 @@ public class GamePadControl : MonoBehaviour
     /// <summary>
     /// 入力管理用のフラグ
     /// </summary>
-    private struct AxisFlag
+    private struct InputFlag
     {
         public bool Ci, Cr, Tr, Sq, Pu, Pd, Pl, Pr, L1, L2, L3, Lu, Ld, Ll, Lr, R1, R2, R3, Ru, Rd, Rl, Rr, Op, Sh;
+
+        public void SetFlag(ref bool isInput, bool set)
+        {
+            isInput = set;
+        }
 
         public void ResetFlag()
         {
@@ -153,8 +160,10 @@ public class GamePadControl : MonoBehaviour
         }
     }
 
-    private AxisFlag firstAxisFlag;
-    private AxisFlag secondAxisFlag;
+    private InputFlag inputDoen_1;
+    private InputFlag inputDown_2;
+    private InputFlag inputUp_1;
+    private InputFlag inputUp_2;
 
     private enum DS4AxisKey
     {
@@ -175,12 +184,16 @@ public class GamePadControl : MonoBehaviour
         if (Instance == null && Instance != this)
         {
             Instance = this;
-            firstAxisFlag.ResetFlag();
-            secondAxisFlag.ResetFlag();
+            inputDoen_1.ResetFlag();
+            inputDown_2.ResetFlag();
+            inputUp_1.ResetFlag();
+            inputUp_2.ResetFlag();
             joy1KeyName = new DS4KeyName(ControllerNum.P1);
             joy2KeyName = new DS4KeyName(ControllerNum.P2);
             GetKeyDown_1.ResetFlag();
             GetKeyDown_2.ResetFlag();
+            GetKeyUp_1.ResetFlag();
+            GetKeyUp_2.ResetFlag();
             inputModule = GetComponent<UnityEngine.EventSystems.StandaloneInputModule>();
             ds4Input = GetComponent<DS4InputCustom.DS4InputCustom>();
             DontDestroyOnLoad(gameObject);
@@ -200,14 +213,52 @@ public class GamePadControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        for(int i = 0; i < 2; i++) { DS4SingleInput((ControllerNum)i); }
+        DS4SingleInputKeyDown(ControllerNum.P1);
+        DS4SingleInputKeyDown(ControllerNum.P2);
+
+        DS4SingleInputKeyUp(ControllerNum.P1);
+        DS4SingleInputKeyUp(ControllerNum.P2);
+    }
+
+    /// <summary>
+    /// コントローラの入力が終わったタイミングで取得
+    /// </summary>
+    /// <param name="id">コントローラ番号</param>
+    private void DS4SingleInputKeyUp(ControllerNum id)
+    {
+        DS4InputKey input = id == ControllerNum.P1 ? GetKeyUp_1 : GetKeyUp_2;
+        input.Circle = GetButtonUp(id, DS4ButtonType.Circle);
+        input.Cross = GetButtonUp(id, DS4ButtonType.Cross);
+        input.Triangle = GetButtonUp(id, DS4ButtonType.Triangle);
+        input.Square = GetButtonUp(id, DS4ButtonType.Square);
+        input.Up = GetButtonUp(id, DS4ButtonType.Up);
+        input.Down = GetButtonUp(id, DS4ButtonType.Down);
+        input.Left = GetButtonUp(id, DS4ButtonType.Left);
+        input.Right = GetButtonUp(id, DS4ButtonType.Right);
+        input.LeftStick_Up = GetAxisUp(id, DS4AxisKey.LeftStick_Up);
+        input.LeftStick_Down = GetAxisUp(id, DS4AxisKey.LeftStick_Down);
+        input.LeftStick_Left = GetAxisUp(id, DS4AxisKey.LeftStick_Left);
+        input.LeftStick_Right = GetAxisUp(id, DS4AxisKey.LeftStick_Right);
+        input.RightStick_Up = GetAxisUp(id, DS4AxisKey.RightStick_Up);
+        input.RightStick_Down = GetAxisUp(id, DS4AxisKey.RightStick_Down);
+        input.RightStick_Left = GetAxisUp(id, DS4AxisKey.RightStick_Left);
+        input.RightStick_Right = GetAxisUp(id, DS4AxisKey.RightStick_Right);
+        input.L1 = GetButtonUp(id, DS4ButtonType.L1);
+        input.L2 = GetAxisUp(id, DS4AxisKey.L2);
+        input.L3 = GetButtonUp(id, DS4ButtonType.L3);
+        input.R1 = GetButtonUp(id, DS4ButtonType.R1);
+        input.R2 = GetAxisUp(id, DS4AxisKey.R2);
+        input.R3 = GetButtonUp(id, DS4ButtonType.R3);
+        input.OPTION = GetButtonUp(id, DS4ButtonType.OPTION);
+        input.SHARE = GetButtonUp(id, DS4ButtonType.SHARE);
+        _ = id == ControllerNum.P1 ? GetKeyUp_1 = input : GetKeyUp_2 = input;
     }
 
     /// <summary>
     /// コントローラの入力されたタイミングで取得
     /// </summary>
     /// <param name="id">コントローラ番号</param>
-    private void DS4SingleInput(ControllerNum id)
+    private void DS4SingleInputKeyDown(ControllerNum id)
     {
         DS4InputKey input = id == ControllerNum.P1 ? GetKeyDown_1 : GetKeyDown_2;
         input.Circle = GetButtonDown(id, DS4ButtonType.Circle);
@@ -245,12 +296,24 @@ public class GamePadControl : MonoBehaviour
     /// <para>Example :　GetButtonDown(ControllerNum.P1, DS4ButtonKey.Circle)　1Pの〇ボタンの入力を検知する</para>
     /// </param>
     /// <returns></returns>
-    private bool GetButtonDown(ControllerNum id, DS4ButtonType type)
+    private bool GetButtonUp(ControllerNum id, DS4ButtonType type)
     {
         if(usePs4Controller == false) { return false; }
 
         bool buttonFlag;
-        DS4ControllerType inputID = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
+        DS4ControllerType inputID;
+        if (id == ControllerNum.P1)
+        {
+            inputID = DS4ControllerType.P1;
+        }
+        else if (id == ControllerNum.P2)
+        {
+            inputID = DS4ControllerType.P2;
+        }
+        else
+        {
+            return false;
+        }
         bool result;
 
         // コントローラーが接続されているかチェック
@@ -259,56 +322,204 @@ public class GamePadControl : MonoBehaviour
         switch (type)
         {
             case DS4ButtonType.Circle:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Ci : secondAxisFlag.Ci;
-                break;
-            case DS4ButtonType.Cross:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Cr : secondAxisFlag.Cr;
-                break;
-            case DS4ButtonType.Triangle:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Tr : secondAxisFlag.Tr;
-                break;
-            case DS4ButtonType.Square:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Sq : secondAxisFlag.Sq;
-                break;
-            case DS4ButtonType.Up:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Pu : secondAxisFlag.Pu;
-                break;
-            case DS4ButtonType.Down:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Pd : secondAxisFlag.Pd;
-                break;
-            case DS4ButtonType.Left:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Pl : secondAxisFlag.Pl;
-                break;
-            case DS4ButtonType.Right:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Pr : secondAxisFlag.Pr;
-                break;
-            case DS4ButtonType.L1:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.L1 : secondAxisFlag.L1;
-                break;
-            case DS4ButtonType.L3:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.L3 : secondAxisFlag.L3;
-                break;
-            case DS4ButtonType.R1:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.R1 : secondAxisFlag.R1;
-                break;
-            case DS4ButtonType.R3:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.R3 : secondAxisFlag.R3;
-                break;
-            case DS4ButtonType.OPTION:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Op : secondAxisFlag.Op;
-                break;
-            case DS4ButtonType.SHARE:
-                buttonFlag = id == ControllerNum.P1 ? firstAxisFlag.Sh : secondAxisFlag.Sh;
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Ci : inputUp_2.Ci;
+                break;                                               
+            case DS4ButtonType.Cross:                                
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Cr : inputUp_2.Cr;
+                break;                                               
+            case DS4ButtonType.Triangle:                             
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Tr : inputUp_2.Tr;
+                break;                                               
+            case DS4ButtonType.Square:                               
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Sq : inputUp_2.Sq;
+                break;                                               
+            case DS4ButtonType.Up:                                   
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Pu : inputUp_2.Pu;
+                break;                                               
+            case DS4ButtonType.Down:                                 
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Pd : inputUp_2.Pd;
+                break;                                               
+            case DS4ButtonType.Left:                                 
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Pl : inputUp_2.Pl;
+                break;                                               
+            case DS4ButtonType.Right:                                
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Pr : inputUp_2.Pr;
+                break;                                               
+            case DS4ButtonType.L1:                                   
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.L1 : inputUp_2.L1;
+                break;                                               
+            case DS4ButtonType.L3:                                   
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.L3 : inputUp_2.L3;
+                break;                                               
+            case DS4ButtonType.R1:                                   
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.R1 : inputUp_2.R1;
+                break;                                               
+            case DS4ButtonType.R3:                                   
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.R3 : inputUp_2.R3;
+                break;                                               
+            case DS4ButtonType.OPTION:                               
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Op : inputUp_2.Op;
+                break;                                                
+            case DS4ButtonType.SHARE:                                
+                buttonFlag = id == ControllerNum.P1 ? inputUp_1.Sh : inputUp_2.Sh;
                 break;
             default:
                 return false;
         }
 
-        if(ds4Input.MultithreadUpdate == false) { return ds4Input.IsButtonDown(inputID, type); }
+        if(ds4Input.MultithreadUpdate == false) { return ds4Input.IsButtonUp(inputID, type); }
 
         if(ds4Input.IsButton(inputID, type) == true)
         {
-            if(buttonFlag == false)
+            if (buttonFlag == false) { buttonFlag = true; }
+            result = false;
+        }
+        else
+        {
+            if (buttonFlag == true)
+            {
+                buttonFlag = false;
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+        }
+
+        switch (type)
+        {
+            case DS4ButtonType.Circle:
+                _ = id == ControllerNum.P1 ? inputUp_1.Ci = buttonFlag : inputUp_2.Ci = buttonFlag;
+                break;
+            case DS4ButtonType.Cross:
+                _ = id == ControllerNum.P1 ? inputUp_1.Cr = buttonFlag : inputUp_2.Cr = buttonFlag;
+                break;
+            case DS4ButtonType.Triangle:
+                _ = id == ControllerNum.P1 ? inputUp_1.Tr = buttonFlag : inputUp_2.Tr = buttonFlag;
+                break;
+            case DS4ButtonType.Square:
+                _ = id == ControllerNum.P1 ? inputUp_1.Sq = buttonFlag : inputUp_2.Sq = buttonFlag;
+                break;
+            case DS4ButtonType.Up:
+                _ = id == ControllerNum.P1 ? inputUp_1.Pu = buttonFlag : inputUp_2.Pu = buttonFlag;
+                break;
+            case DS4ButtonType.Down:
+                _ = id == ControllerNum.P1 ? inputUp_1.Pd = buttonFlag : inputUp_2.Pd = buttonFlag;
+                break;
+            case DS4ButtonType.Left:
+                _ = id == ControllerNum.P1 ? inputUp_1.Pl = buttonFlag : inputUp_2.Pl = buttonFlag;
+                break;
+            case DS4ButtonType.Right:
+                _ = id == ControllerNum.P1 ? inputUp_1.Pr = buttonFlag : inputUp_2.Pr = buttonFlag;
+                break;
+            case DS4ButtonType.L1:
+                _ = id == ControllerNum.P1 ? inputUp_1.L1 = buttonFlag : inputUp_2.L1 = buttonFlag;
+                break;
+            case DS4ButtonType.L3:
+                _ = id == ControllerNum.P1 ? inputUp_1.L3 = buttonFlag : inputUp_2.L3 = buttonFlag;
+                break;
+            case DS4ButtonType.R1:
+                _ = id == ControllerNum.P1 ? inputUp_1.R1 = buttonFlag : inputUp_2.R1 = buttonFlag;
+                break;
+            case DS4ButtonType.R3:
+                _ = id == ControllerNum.P1 ? inputUp_1.R3 = buttonFlag : inputUp_2.R3 = buttonFlag;
+                break;
+            case DS4ButtonType.OPTION:
+                _ = id == ControllerNum.P1 ? inputUp_1.Op = buttonFlag : inputUp_2.Op = buttonFlag;
+                break;
+            case DS4ButtonType.SHARE:
+                _ = id == ControllerNum.P1 ? inputUp_1.Sh = buttonFlag : inputUp_2.Sh = buttonFlag;
+                break;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// DS4のボタン入力を検知する (複数のUpdate処理で呼び出そうとすると取得できない場合があります)
+    /// </summary>
+    /// <param name="id">コントローラ番号</param>
+    /// <param name="type">入力を検知したいボタンの種類
+    /// <para>Example :　GetButtonDown(ControllerNum.P1, DS4ButtonKey.Circle)　1Pの〇ボタンの入力を検知する</para>
+    /// </param>
+    /// <returns></returns>
+    private bool GetButtonDown(ControllerNum id, DS4ButtonType type)
+    {
+        if (usePs4Controller == false) { return false; }
+
+        bool buttonFlag;
+        DS4ControllerType inputID;
+        if(id == ControllerNum.P1)
+        {
+            inputID = DS4ControllerType.P1;
+        }
+        else if (id == ControllerNum.P2)
+        {
+            inputID = DS4ControllerType.P2;
+        }
+        else
+        {
+            return false;
+        }
+        bool result;
+
+        // コントローラーが接続されているかチェック
+        if (ds4Input.IsController(inputID) == false) { return false; }
+
+        switch (type)
+        {
+            case DS4ButtonType.Circle:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Ci : inputDown_2.Ci;
+                break;
+            case DS4ButtonType.Cross:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Cr : inputDown_2.Cr;
+                break;
+            case DS4ButtonType.Triangle:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Tr : inputDown_2.Tr;
+                break;
+            case DS4ButtonType.Square:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Sq : inputDown_2.Sq;
+                break;
+            case DS4ButtonType.Up:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Pu : inputDown_2.Pu;
+                break;
+            case DS4ButtonType.Down:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Pd : inputDown_2.Pd;
+                break;
+            case DS4ButtonType.Left:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Pl : inputDown_2.Pl;
+                break;
+            case DS4ButtonType.Right:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Pr : inputDown_2.Pr;
+                break;
+            case DS4ButtonType.L1:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.L1 : inputDown_2.L1;
+                break;
+            case DS4ButtonType.L3:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.L3 : inputDown_2.L3;
+                break;
+            case DS4ButtonType.R1:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.R1 : inputDown_2.R1;
+                break;
+            case DS4ButtonType.R3:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.R3 : inputDown_2.R3;
+                break;
+            case DS4ButtonType.OPTION:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Op : inputDown_2.Op;
+                break;
+            case DS4ButtonType.SHARE:
+                buttonFlag = id == ControllerNum.P1 ? inputDoen_1.Sh : inputDown_2.Sh;
+                break;
+            default:
+                return false;
+        }
+
+        if (ds4Input.MultithreadUpdate == false) { return ds4Input.IsButtonDown(inputID, type); }
+
+        if (ds4Input.IsButton(inputID, type) == true)
+        {
+            if (buttonFlag == false)
             {
                 buttonFlag = true;
                 result = true;
@@ -327,46 +538,190 @@ public class GamePadControl : MonoBehaviour
         switch (type)
         {
             case DS4ButtonType.Circle:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Ci = buttonFlag : secondAxisFlag.Ci = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Ci = buttonFlag : inputDown_2.Ci = buttonFlag;
                 break;
             case DS4ButtonType.Cross:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Cr = buttonFlag : secondAxisFlag.Cr = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Cr = buttonFlag : inputDown_2.Cr = buttonFlag;
                 break;
             case DS4ButtonType.Triangle:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Tr = buttonFlag : secondAxisFlag.Tr = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Tr = buttonFlag : inputDown_2.Tr = buttonFlag;
                 break;
             case DS4ButtonType.Square:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Sq = buttonFlag : secondAxisFlag.Sq = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Sq = buttonFlag : inputDown_2.Sq = buttonFlag;
                 break;
             case DS4ButtonType.Up:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Pu = buttonFlag : secondAxisFlag.Pu = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Pu = buttonFlag : inputDown_2.Pu = buttonFlag;
                 break;
             case DS4ButtonType.Down:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Pd = buttonFlag : secondAxisFlag.Pd = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Pd = buttonFlag : inputDown_2.Pd = buttonFlag;
                 break;
             case DS4ButtonType.Left:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Pl = buttonFlag : secondAxisFlag.Pl = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Pl = buttonFlag : inputDown_2.Pl = buttonFlag;
                 break;
             case DS4ButtonType.Right:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Pr = buttonFlag : secondAxisFlag.Pr = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Pr = buttonFlag : inputDown_2.Pr = buttonFlag;
                 break;
             case DS4ButtonType.L1:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.L1 = buttonFlag : secondAxisFlag.L1 = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.L1 = buttonFlag : inputDown_2.L1 = buttonFlag;
                 break;
             case DS4ButtonType.L3:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.L3 = buttonFlag : secondAxisFlag.L3 = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.L3 = buttonFlag : inputDown_2.L3 = buttonFlag;
                 break;
             case DS4ButtonType.R1:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.R1 = buttonFlag : secondAxisFlag.R1 = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.R1 = buttonFlag : inputDown_2.R1 = buttonFlag;
                 break;
             case DS4ButtonType.R3:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.R3 = buttonFlag : secondAxisFlag.R3 = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.R3 = buttonFlag : inputDown_2.R3 = buttonFlag;
                 break;
             case DS4ButtonType.OPTION:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Op = buttonFlag : secondAxisFlag.Op = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Op = buttonFlag : inputDown_2.Op = buttonFlag;
                 break;
             case DS4ButtonType.SHARE:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Sh = buttonFlag : secondAxisFlag.Sh = buttonFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Sh = buttonFlag : inputDown_2.Sh = buttonFlag;
+                break;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// DS4のスティック・L2・R2ボタンの入力を検知する
+    /// </summary>
+    /// <param name="id">コントローラ番号</param>
+    /// <param name="type">入力を検知したいAxisの種類
+    /// <para>Example :　GetAxisDown(ControllerNum.P1, DS4AxisKey.LeftStick_Up)　1PのLスティックの↑方向の入力を検知する</para>
+    /// </param>
+    /// <returns></returns>
+    private bool GetAxisUp(ControllerNum id, DS4AxisKey type)
+    {
+        if (usePs4Controller == false) { return false; }
+
+        bool axisFlag;
+        DS4ControllerType inputID;
+        if (id == ControllerNum.P1)
+        {
+            inputID = DS4ControllerType.P1;
+        }
+        else if (id == ControllerNum.P2)
+        {
+            inputID = DS4ControllerType.P2;
+        }
+        else
+        {
+            return false;
+        }
+        DS4AxisType axisType;
+        bool isPositive;
+        bool result;
+
+        // コントローラーが接続されているかチェック
+        if (ds4Input.IsController(inputID) == false) { return false; }
+
+        switch (type)
+        {
+            case DS4AxisKey.LeftStick_Up:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Lu : inputUp_2.Lu;
+                isPositive = false;
+                axisType = DS4AxisType.LeftStickY;
+                break;
+            case DS4AxisKey.LeftStick_Down:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Ld : inputUp_2.Ld;
+                isPositive = true;
+                axisType = DS4AxisType.LeftStickY;
+                break;
+            case DS4AxisKey.LeftStick_Left:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Ll : inputUp_2.Ll;
+                isPositive = false;
+                axisType = DS4AxisType.LeftStickX;
+                break;
+            case DS4AxisKey.LeftStick_Right:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Lr : inputUp_2.Lr;
+                isPositive = true;
+                axisType = DS4AxisType.LeftStickX;
+                break;
+            case DS4AxisKey.RightStick_Up:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Ru : inputUp_2.Ru;
+                isPositive = false;
+                axisType = DS4AxisType.RightStickY;
+                break;
+            case DS4AxisKey.RightStick_Down:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Rd : inputUp_2.Rd;
+                isPositive = true;
+                axisType = DS4AxisType.RightStickY;
+                break;
+            case DS4AxisKey.RightStick_Left:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Rl : inputUp_2.Rl;
+                isPositive = false;
+                axisType = DS4AxisType.RightStickX;
+                break;
+            case DS4AxisKey.RightStick_Right:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Rr : inputUp_2.Rr;
+                isPositive = true;
+                axisType = DS4AxisType.RightStickX;
+                break;
+            case DS4AxisKey.L2:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.L2 : inputUp_2.L2;
+                isPositive = true;
+                axisType = DS4AxisType.L2;
+                break;
+            case DS4AxisKey.R2:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.R2 : inputUp_2.R2;
+                isPositive = true;
+                axisType = DS4AxisType.R2;
+                break;
+            default:
+                return false;
+        }
+
+        if (_ = isPositive == true ? (ds4Input.IsAxis(inputID, axisType) >= axisValue) : (ds4Input.IsAxis(inputID, axisType) <= -axisValue))
+        {
+            if (axisFlag == false) { axisFlag = true; }
+            result = false;  
+        }
+        else
+        {
+            if (axisFlag == true)
+            {
+                axisFlag = false;
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+        }
+
+        switch (type)
+        {
+            case DS4AxisKey.LeftStick_Up:
+                _ = id == ControllerNum.P1 ? inputUp_1.Lu = axisFlag : inputUp_2.Lu = axisFlag;
+                break;
+            case DS4AxisKey.LeftStick_Down:
+                _ = id == ControllerNum.P1 ? inputUp_1.Ld = axisFlag : inputUp_2.Ld = axisFlag;
+                break;
+            case DS4AxisKey.LeftStick_Left:
+                _ = id == ControllerNum.P1 ? inputUp_1.Ll = axisFlag : inputUp_2.Ll = axisFlag;
+                break;
+            case DS4AxisKey.LeftStick_Right:
+                _ = id == ControllerNum.P1 ? inputUp_1.Lr = axisFlag : inputUp_2.Lr = axisFlag;
+                break;
+            case DS4AxisKey.RightStick_Up:
+                _ = id == ControllerNum.P1 ? inputUp_1.Ru = axisFlag : inputUp_2.Ru = axisFlag;
+                break;
+            case DS4AxisKey.RightStick_Down:
+                _ = id == ControllerNum.P1 ? inputUp_1.Rd = axisFlag : inputUp_2.Rd = axisFlag;
+                break;
+            case DS4AxisKey.RightStick_Left:
+                _ = id == ControllerNum.P1 ? inputUp_1.Rl = axisFlag : inputUp_2.Rl = axisFlag;
+                break;
+            case DS4AxisKey.RightStick_Right:
+                _ = id == ControllerNum.P1 ? inputUp_1.Rr = axisFlag : inputUp_2.Rr = axisFlag;
+                break;
+            case DS4AxisKey.L2:
+                _ = id == ControllerNum.P1 ? inputUp_1.L2 = axisFlag : inputUp_2.L2 = axisFlag;
+                break;
+            case DS4AxisKey.R2:
+                _ = id == ControllerNum.P1 ? inputUp_1.R2 = axisFlag : inputUp_2.R2 = axisFlag;
                 break;
         }
 
@@ -386,7 +741,19 @@ public class GamePadControl : MonoBehaviour
         if (usePs4Controller == false) { return false; }
 
         bool axisFlag;
-        DS4ControllerType inputID = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
+        DS4ControllerType inputID;
+        if (id == ControllerNum.P1)
+        {
+            inputID = DS4ControllerType.P1;
+        }
+        else if (id == ControllerNum.P2)
+        {
+            inputID = DS4ControllerType.P2;
+        }
+        else
+        {
+            return false;
+        }
         DS4AxisType axisType;
         bool isPositive;
         bool result;
@@ -397,52 +764,52 @@ public class GamePadControl : MonoBehaviour
         switch (type)
         {
             case DS4AxisKey.LeftStick_Up:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.Lu : secondAxisFlag.Lu;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.Lu : inputDown_2.Lu;
                 isPositive = false;
                 axisType = DS4AxisType.LeftStickY;
                 break;
             case DS4AxisKey.LeftStick_Down:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.Ld : secondAxisFlag.Ld;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.Ld : inputDown_2.Ld;
                 isPositive = true;
                 axisType = DS4AxisType.LeftStickY;
                 break;
             case DS4AxisKey.LeftStick_Left:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.Ll : secondAxisFlag.Ll;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.Ll : inputDown_2.Ll;
                 isPositive = false;
                 axisType = DS4AxisType.LeftStickX;
                 break;
             case DS4AxisKey.LeftStick_Right:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.Lr : secondAxisFlag.Lr;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.Lr : inputDown_2.Lr;
                 isPositive = true;
                 axisType = DS4AxisType.LeftStickX;
                 break;
             case DS4AxisKey.RightStick_Up:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.Ru : secondAxisFlag.Ru;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.Ru : inputDown_2.Ru;
                 isPositive = false;
                 axisType = DS4AxisType.RightStickY;
                 break;
             case DS4AxisKey.RightStick_Down:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.Rd : secondAxisFlag.Rd;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.Rd : inputDown_2.Rd;
                 isPositive = true;
                 axisType = DS4AxisType.RightStickY;
                 break;
             case DS4AxisKey.RightStick_Left:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.Rl : secondAxisFlag.Rl;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.Rl : inputDown_2.Rl;
                 isPositive = false;
                 axisType = DS4AxisType.RightStickX;
                 break;
             case DS4AxisKey.RightStick_Right:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.Rr : secondAxisFlag.Rr;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.Rr : inputDown_2.Rr;
                 isPositive = true;
                 axisType = DS4AxisType.RightStickX;
                 break;
             case DS4AxisKey.L2:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.L2 : secondAxisFlag.L2;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.L2 : inputDown_2.L2;
                 isPositive = true;
                 axisType = DS4AxisType.L2;
                 break;
             case DS4AxisKey.R2:
-                axisFlag = id == ControllerNum.P1 ? firstAxisFlag.R2 : secondAxisFlag.R2;
+                axisFlag = id == ControllerNum.P1 ? inputDoen_1.R2 : inputDown_2.R2;
                 isPositive = true;
                 axisType = DS4AxisType.R2;
                 break;
@@ -471,34 +838,34 @@ public class GamePadControl : MonoBehaviour
         switch (type)
         {
             case DS4AxisKey.LeftStick_Up:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Lu = axisFlag : secondAxisFlag.Lu = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Lu = axisFlag : inputDown_2.Lu = axisFlag;
                 break;
             case DS4AxisKey.LeftStick_Down:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Ld = axisFlag : secondAxisFlag.Ld = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Ld = axisFlag : inputDown_2.Ld = axisFlag;
                 break;
             case DS4AxisKey.LeftStick_Left:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Ll = axisFlag : secondAxisFlag.Ll = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Ll = axisFlag : inputDown_2.Ll = axisFlag;
                 break;
             case DS4AxisKey.LeftStick_Right:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Lr = axisFlag : secondAxisFlag.Lr = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Lr = axisFlag : inputDown_2.Lr = axisFlag;
                 break;
             case DS4AxisKey.RightStick_Up:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Ru = axisFlag : secondAxisFlag.Ru = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Ru = axisFlag : inputDown_2.Ru = axisFlag;
                 break;
             case DS4AxisKey.RightStick_Down:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Rd = axisFlag : secondAxisFlag.Rd = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Rd = axisFlag : inputDown_2.Rd = axisFlag;
                 break;
             case DS4AxisKey.RightStick_Left:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Rl = axisFlag : secondAxisFlag.Rl = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Rl = axisFlag : inputDown_2.Rl = axisFlag;
                 break;
             case DS4AxisKey.RightStick_Right:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.Rr = axisFlag : secondAxisFlag.Rr = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.Rr = axisFlag : inputDown_2.Rr = axisFlag;
                 break;
             case DS4AxisKey.L2:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.L2 = axisFlag : secondAxisFlag.L2 = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.L2 = axisFlag : inputDown_2.L2 = axisFlag;
                 break;
             case DS4AxisKey.R2:
-                _ = id == ControllerNum.P1 ? firstAxisFlag.R2 = axisFlag : secondAxisFlag.R2 = axisFlag;
+                _ = id == ControllerNum.P1 ? inputDoen_1.R2 = axisFlag : inputDown_2.R2 = axisFlag;
                 break;
         }
 

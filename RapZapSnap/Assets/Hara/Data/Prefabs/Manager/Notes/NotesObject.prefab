@@ -55,6 +55,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: f0805b8bfa2b14143a2bf61c17aaf65b, type: 3}
   notesSize: 0.35
   notesSpriteAlpha: 0.25
-  perfectLength: 0.0225
-  goodLength: 0.04125
-  badLength: 0.01125
+  perfectLength: 0.015
+  goodLength: 0.03
+  badLength: 0.03

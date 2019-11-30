@@ -250,12 +250,12 @@ public class NotesControl : MonoBehaviour
             if(rate >= view.MinPerfect && rate <= view.MaxPerfect)
             {
                 result = 2;
-                score = 200;
+                score = 800;
             }
             else if((rate >= view.MinGood && rate < view.MinPerfect) || (rate <= view.MaxGood && rate > view.MaxPerfect))
             {
                 result = 1;
-                score = 100;
+                score = 400;
             }
             else
             {
