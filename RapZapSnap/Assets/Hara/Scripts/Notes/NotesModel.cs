@@ -7,20 +7,16 @@ using UnityEngine;
 /// </summary>
 public enum NotesType
 {
-    CircleKey,      // PS4コントローラー[○ボタン]
-    CrossKey,       // PS4コントローラー[×ボタン]
-    TriangleKey,    // PS4コントローラー[△ボタン]
-    UpArrow,        // PS4コントローラー[↑ボタン]
-    DownArrow,      // PS4コントローラー[↓ボタン]
-    LeftArrow,      // PS4コントローラー[←ボタン]
+    CircleKey = 0,      // PS4コントローラー[○ボタン]
+    CrossKey = 1,       // PS4コントローラー[×ボタン]
+    TriangleKey = 2,    // PS4コントローラー[△ボタン]
+    UpArrow = 3,        // PS4コントローラー[↑ボタン]
+    DownArrow = 4,      // PS4コントローラー[↓ボタン]
+    LeftArrow = 5,      // PS4コントローラー[←ボタン]
 }
 
 public class NotesModel : MonoBehaviour
 {
-    public NotesType NotesTypes { set; get; }
-
-    // ノーツのスプライト画像リスト
-    [SerializeField, Tooltip("ノーツの画像リスト")]
-    private List<Sprite> notesSprites = new List<Sprite>();
-    public List<Sprite> NotesSprites { get { return notesSprites; } }
+    // ノーツのタイプ
+    public NotesType NotesTypes { set; get; } = NotesType.CircleKey;
 }
