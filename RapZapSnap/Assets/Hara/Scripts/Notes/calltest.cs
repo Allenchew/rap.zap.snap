@@ -29,29 +29,41 @@ public class calltest : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
-            NotesControl.Instance.ResetResult(InputController.PlayerOne);
+            NotesControl.Instance.ResetResult(ControllerNum.P1);
         }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            NotesControl.Instance.ResetResult(InputController.PlayerTwo);
+            NotesControl.Instance.ResetResult(ControllerNum.P2);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            NotesControl.Instance.PlayNotesOneShot(NotesType.CircleKey, new Vector3(-5, -5, 0), new Vector3(-5, 3, 0), duration: 0.75f);
-            NotesControl.Instance.PlayNotesOneShot(NotesType.CrossKey, new Vector3(5, -5, 0), new Vector3(5, 3, 0), InputController.PlayerTwo, 0.75f);
+            NotesControl.Instance.PlayNotesOneShot(NotesType.CircleKey, new Vector3(-5, -5, 0), new Vector3(-5, 3, 0), ControllerNum.P1,0.75f);
+            NotesControl.Instance.PlayNotesOneShot(NotesType.CrossKey, new Vector3(5, -5, 0), new Vector3(5, 3, 0), ControllerNum.P2, 0.75f);
         }
 
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
-            Debug.Log("ユーザー1  Perfect : " + NotesControl.Instance.GetResult(2, InputController.PlayerOne) + "  Good : " + NotesControl.Instance.GetResult(1, InputController.PlayerOne) + "  Bad : " + NotesControl.Instance.GetResult(0, InputController.PlayerOne));
-            Debug.Log("ユーザー2  Perfect : " + NotesControl.Instance.GetResult(2, InputController.PlayerTwo) + "  Good : " + NotesControl.Instance.GetResult(1, InputController.PlayerTwo) + "  Bad : " + NotesControl.Instance.GetResult(0, InputController.PlayerTwo));
+            BooingControl.Instance.SetBooingPlayer(ControllerNum.P1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            BooingControl.Instance.SetBooingPlayer(ControllerNum.P2);
         }
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            //SceneManager.LoadScene(1);
+            BooingControl.Instance.BooingSystemOff();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            Debug.Log("ユーザー1  Perfect : " + NotesControl.Instance.GetResult(2, ControllerNum.P1) + "  Good : " + NotesControl.Instance.GetResult(1, ControllerNum.P1) + "  Bad : " + NotesControl.Instance.GetResult(0, ControllerNum.P1));
+            Debug.Log("ユーザー2  Perfect : " + NotesControl.Instance.GetResult(2, ControllerNum.P2) + "  Good : " + NotesControl.Instance.GetResult(1, ControllerNum.P2) + "  Bad : " + NotesControl.Instance.GetResult(0, ControllerNum.P2));
+            Debug.Log("ユーザー1  Total : " + NotesControl.Instance.GetResult(3, ControllerNum.P1));
+            Debug.Log("ユーザー2  Total : " + NotesControl.Instance.GetResult(3, ControllerNum.P2));
         }
     }
 }
