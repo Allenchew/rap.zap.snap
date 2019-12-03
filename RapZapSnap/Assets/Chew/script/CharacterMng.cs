@@ -13,6 +13,7 @@ public class CharacterMng : MonoBehaviour
         if(Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }else if(Instance != null && Instance != this)
         {
             Destroy(gameObject);

@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class CharSelectionKari : MonoBehaviour
 {
     public GameObject[] P1CharBimg = new GameObject[3];
     public GameObject[] P2CharBimg = new GameObject[3];
-    public GameObject[] Selectedbg;
+    public GameObject[] Selectedbg1;
+    public GameObject[] Selectedbg2;
+    public GameObject[] Vsbgp1;
+    public GameObject[] Vsbgp2;
+    public GameObject Fadein;
     public GameObject p2cover;
     public float Centerpoint;
     public float Movedist;
@@ -15,7 +19,7 @@ public class CharSelectionKari : MonoBehaviour
         
     private List<int> currentChar = new List<int>();
     private string currentplayer;
-    private int selectedp1 =-1;
+    //private int selectedp1 =-1;
     private bool shiftingflag = false;
     private bool selectedp1_flag = false;
     
@@ -49,7 +53,7 @@ public class CharSelectionKari : MonoBehaviour
                     shiftingflag = true;
                     CharacterMng.Instance.SelectedCharacter.Add(currentChar[0]);
                     StartCoroutine(showplayer2(p2cover));
-                    StartCoroutine(showselected(Selectedbg));
+                    StartCoroutine(showselected(Selectedbg1,true));
                 }
             }
             else if (selectedp1_flag)
@@ -65,6 +69,10 @@ public class CharSelectionKari : MonoBehaviour
                     shiftingflag = true;
                     shufflelist(false);
                     StartCoroutine(graphshifting(P2CharBimg, false));
+                }else if (Input.GetKeyDown(KeyCode.P)) {
+                    shiftingflag = true;
+                    CharacterMng.Instance.SelectedCharacter.Add(currentChar[0]);
+                    StartCoroutine(showselected(Selectedbg2, true));
                 }
             }
 
@@ -140,8 +148,16 @@ public class CharSelectionKari : MonoBehaviour
         selectedp1_flag = true;
         shiftingflag = false;
     }
-    IEnumerator showselected(GameObject[] target)
+
+    IEnumerator showselected(GameObject[] target, bool p1)
     {
+        bool tmpflag = new bool();
+        tmpflag = selectedp1_flag;
+        Vector3 tmppos = new Vector3(0,0,0);
+        if (tmpflag)
+        {
+            tmppos = P2CharBimg[currentChar[0]].transform.localPosition;
+        }
         List<Vector3> tmpos = new List<Vector3>();
 
         foreach (GameObject tmp in target)
@@ -152,10 +168,49 @@ public class CharSelectionKari : MonoBehaviour
             {
                 target[j].transform.localPosition = Vector3.Lerp(tmpos[j], new Vector3(tmpos[j].x, 0, tmpos[j].z), i);
             }
+            if(tmpflag) P2CharBimg[currentChar[0]].transform.localPosition = Vector3.Lerp(tmppos, tmppos + new Vector3(Movedist, 0, 0), i);
             target[2 + currentChar[0]].transform.localPosition = Vector3.Lerp(tmpos[2 + currentChar[0]], new Vector3(tmpos[2 + currentChar[0]].x + 80f, 0, tmpos[2 + currentChar[0]].z), i);
             target[2 + currentChar[0]].GetComponent<Image>().color = Color.Lerp(Color.clear, Color.white, i);
             yield return new WaitForSeconds(0.01f);
         }
+        currentChar.Remove(currentChar[0]);
+        currentChar.Sort();
+        if (tmpflag) StartCoroutine(showVsbg());
+    }
+    IEnumerator showVsbg()
+    {
+        List<int> tmplist = new List<int>();
+        tmplist.AddRange(CharacterMng.Instance.SelectedCharacter);
+        for (float i = 0; i < 1.1f; i += 0.1f)
+        {
+            Selectedbg1[0].GetComponent<Image>().color = Color.Lerp(Color.white, Color.clear, i);
+            Selectedbg1[1].GetComponent<Image>().color = Color.Lerp(Color.white, Color.clear, i);
+            Selectedbg2[0].GetComponent<Image>().color = Color.Lerp(Color.white, Color.clear, i);
+            Selectedbg2[1].GetComponent<Image>().color = Color.Lerp(Color.white, Color.clear, i);
+            Vsbgp1[tmplist[0]].transform.localPosition = Vector3.Lerp(Vsbgp1[tmplist[0]].transform.localPosition, new Vector3(0, 0, 0), i);
+            Vsbgp2[tmplist[1]].transform.localPosition = Vector3.Lerp(Vsbgp2[tmplist[1]].transform.localPosition, new Vector3(0, 0, 0), i);
+            yield return new WaitForSeconds(0.01f);
+        }
+        StartCoroutine(loadnewscene());
+    }
+    IEnumerator loadnewscene()
+    {
+        AsyncOperation loadmain = SceneManager.LoadSceneAsync("maintest");
+        loadmain.allowSceneActivation = false;
+        while (!loadmain.isDone)
+        {
+            yield return new WaitForSeconds(0.01f);
+            if (loadmain.progress >= 0.9f)
+            {
+                for (float i = 0f; i < 1.1f; i += 0.01f)
+                {
+                    Fadein.GetComponent<Image>().color = Color.Lerp(Color.clear, Color.white, i);
+                    yield return new WaitForSeconds(0.01f);
+                }
+                loadmain.allowSceneActivation = true;
+            }
+        }
+
     }
     void shufflelist(bool shuftLeft)
     {
@@ -167,10 +222,9 @@ public class CharSelectionKari : MonoBehaviour
         }
         else
         {
-            int tmp = currentChar[2];
+            int tmp = currentChar[currentChar.Count-1];
             currentChar.Remove(tmp);
             currentChar.Insert(0, tmp);
         }
-
     }
 }

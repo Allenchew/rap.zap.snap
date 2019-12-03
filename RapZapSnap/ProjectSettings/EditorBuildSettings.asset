@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Chew/scene/test.unity
+    guid: 19ab2d513fc4a064aa3fe882e7f5187b
+  - enabled: 1
+    path: Assets/Chew/scene/maintest.unity
+    guid: 488653a8e2c1a694983905ae24e6aed0
   m_configObjects: {}
