@@ -65,5 +65,10 @@ public class calltest : MonoBehaviour
             Debug.Log("ユーザー1  Total : " + NotesControl.Instance.GetResult(3, ControllerNum.P1));
             Debug.Log("ユーザー2  Total : " + NotesControl.Instance.GetResult(3, ControllerNum.P2));
         }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            NotesControl.Instance.StopNotes();
+        }
     }
 }

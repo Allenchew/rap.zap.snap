@@ -157,6 +157,29 @@ public class NotesControl : MonoBehaviour
     }
 
     /// <summary>
+    /// 全てのノーツの再生を止める
+    /// </summary>
+    public void StopNotes()
+    {
+        for(int i = 0; i < maxNotes; i++)
+        {
+            if(dataBase1.NotesObjects[i].gameObject.activeSelf == true)
+            {
+                dataBase1.NotesObjects[i].ResetNotes();
+            }
+
+            if(dataBase2.NotesObjects[i].gameObject.activeSelf == true)
+            {
+                dataBase2.NotesObjects[i].ResetNotes();
+            }
+        }
+        dataBase1.NotesCallCount = 0;
+        dataBase1.NotesCheckCount = 0;
+        dataBase2.NotesCallCount = 0;
+        dataBase2.NotesCheckCount = 0;
+    }
+
+    /// <summary>
     /// ノーツの入力処理
     /// </summary>
     /// <param name="id">コントローラ番号</param>
