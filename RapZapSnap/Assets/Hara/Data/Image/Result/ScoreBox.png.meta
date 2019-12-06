@@ -1,7 +1,8 @@
 fileFormatVersion: 2
 guid: 3cc34a26c194e544190778dede170ed0
 TextureImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    21300000: ScoreBox_0
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -126,7 +127,27 @@ TextureImporter:
     androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: ScoreBox_0
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 144
+        width: 832
+        height: 600
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7efa83302bf3e1418da9bde69cca000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []

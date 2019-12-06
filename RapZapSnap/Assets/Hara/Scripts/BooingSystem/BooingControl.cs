@@ -21,6 +21,11 @@ public class BooingControl : MonoBehaviour
     private GameObject shakeObject = null;
     public GameObject ShakeObject { set { shakeObject = value; } }
 
+    private int booingPlayCount = 3;
+    private bool playVibration = true;
+    private bool playShake = true;
+    private bool playPaint = true;
+
     private bool isRunning = false;
 
     private void Awake()
@@ -116,28 +121,40 @@ public class BooingControl : MonoBehaviour
         ControllerNum target = booingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1;
         DS4InputKey input = booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1 : GamePadControl.Instance.GetKeyDown_2;
 
-        // 〇ボタンでSEのみ再生
-        if (input.Circle == true)
+        // 〇ボタンでSE再生とバイブレーションを実行
+        if(input.Circle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.J) == true : Input.GetKeyDown(KeyCode.A) == true))
         {
-            PlaySE(0);
-            Debug.Log("SE再生");
-        }
-
-        // ×ボタンでSE再生とバイブレーションを実行
-        if (input.Cross == true)
-        {
+            if(playVibration == false) { return; }
             PlaySE(0);
             GamePadControl.Instance.SetVibration(target, 255f, 2.0f);
+            booingPlayCount--;
+            playVibration = false;
             Debug.Log("バイブレーション実行");
         }
 
-        // □ボタンでSE再生と画面の揺れを実行
-        if (input.Square == true)
+        // △ボタンでSE再生と画面の揺れを実行
+        if(input.Triangle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.L) == true : Input.GetKeyDown(KeyCode.D) == true))
         {
+            if(playShake == false) { return; }
             PlaySE(0);
             ShakeAction(2.0f, 0.5f);
+            booingPlayCount--;
+            playShake = false;
             Debug.Log("画面揺れ実行");
         }
+
+        // □ボタンで画面の邪魔を表示
+        if (input.Square == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.I) == true : Input.GetKeyDown(KeyCode.W) == true))
+        {
+            if(playPaint == false) { return; }
+            PlaySE(0);
+
+            booingPlayCount--;
+            playPaint = false;
+            Debug.Log("画面の汚し実行");
+        }
+
+        if(booingPlayCount <= 0) { booingFlag = false; }
     }
 
     /// <summary>
@@ -147,6 +164,10 @@ public class BooingControl : MonoBehaviour
     public void SetBooingPlayer(ControllerNum player)
     {
         booingPlayer = player;
+        booingPlayCount = 3;
+        playVibration = true;
+        playShake = true;
+        playPaint = true;
         if (booingFlag == false) { booingFlag = true; }
     }
 

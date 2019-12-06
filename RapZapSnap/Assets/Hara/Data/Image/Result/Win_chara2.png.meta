@@ -1,7 +1,8 @@
 fileFormatVersion: 2
 guid: e194a05d24959404294ad1abea1930e5
 TextureImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    21300000: Win_chara2_0
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -126,7 +127,27 @@ TextureImporter:
     androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Win_chara2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 40
+        width: 1088
+        height: 976
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 356f7e169317da74ea0853a17e9e7028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []

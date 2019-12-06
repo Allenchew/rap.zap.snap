@@ -95,7 +95,8 @@ public class NotesControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        for(int i = 0; i < 2; i++) { InputNotesAction((ControllerNum)i); }
+        InputNotesAction(ControllerNum.P1);
+        InputNotesAction(ControllerNum.P2);
     }
 
     /// <summary>
