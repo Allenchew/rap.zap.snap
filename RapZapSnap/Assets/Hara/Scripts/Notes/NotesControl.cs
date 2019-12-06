@@ -33,23 +33,11 @@ public class NotesControl : MonoBehaviour
         private int notesCheckCount;
         public int NotesCheckCount { set { notesCheckCount = value; if (notesCheckCount >= NotesObjects.Length || notesCheckCount < 0) notesCheckCount = 0; } get { return notesCheckCount; } }
 
-        // Perfect, Good, Badそれぞれの総数
-        public int Perfect, Good, Bad, TotalScore;
-
         // 初期化
         public void ResetDataBase()
         {
             notesCallCount = 0;
             notesCheckCount = 0;
-            ResetScore();
-        }
-
-        public void ResetScore()
-        {
-            Perfect = 0;
-            Good = 0;
-            Bad = 0;
-            TotalScore = 0;
         }
     }
     private NotesDataBase dataBase1;
@@ -310,65 +298,24 @@ public class NotesControl : MonoBehaviour
         switch (result)
         {
             case 0:
-                Debug.Log(id + " : BAD");
-                notesData.Bad++;
+                GameData.Instance.PlusNotesResult(id, 0);
                 break;
             case 1:
-                Debug.Log(id + " : GOOD");
-                notesData.Good++;
+                GameData.Instance.PlusNotesResult(id, 1);
                 break;
             case 2:
-                Debug.Log(id + " : PERFECT");
-                notesData.Perfect++;
+                GameData.Instance.PlusNotesResult(id, 2);
                 break;
             default:
                 return;
         }
 
         notesData.NotesCheckCount++;
-        notesData.TotalScore += score;
+        GameData.Instance.PlusTotalScore(id, score);
 
         _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
 
         // 歌詞を流す処理（予定）
 
-    }
-
-    /// <summary>
-    /// ノーツの結果を取得する
-    /// </summary>
-    /// <param name="resultNum">0:Badの数 1:Goodの数 2:Perfectの数 3:トータルスコア 0～3以外:返り値0</param>
-    /// <param name="id">結果を取得する対象プレイヤー</param>
-    /// <returns></returns>
-    public int GetResult(int resultNum, ControllerNum id = ControllerNum.P1)
-    {
-        if (resultNum < 0 || resultNum > 3) { return 0; }
-
-        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
-        
-        switch (resultNum)
-        {
-            case 0:
-                return notesData.Bad;
-            case 1:
-                return notesData.Good;
-            case 2:
-                return notesData.Perfect;
-            case 3:
-                return notesData.TotalScore;
-            default:
-                return 0;
-        }
-    }
-
-    /// <summary>
-    /// ノーツのリザルトを初期化する
-    /// </summary>
-    /// <param name="id">プレイヤー番号</param>
-    public void ResetResult(ControllerNum id = ControllerNum.P1)
-    {
-        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
-        notesData.ResetScore();
-        _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
     }
 }

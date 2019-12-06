@@ -122,7 +122,7 @@ public class BooingControl : MonoBehaviour
         DS4InputKey input = booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1 : GamePadControl.Instance.GetKeyDown_2;
 
         // 〇ボタンでSE再生とバイブレーションを実行
-        if(input.Circle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.J) == true : Input.GetKeyDown(KeyCode.A) == true))
+        if(input.Circle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true))
         {
             if(playVibration == false) { return; }
             PlaySE(0);
@@ -133,7 +133,7 @@ public class BooingControl : MonoBehaviour
         }
 
         // △ボタンでSE再生と画面の揺れを実行
-        if(input.Triangle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.L) == true : Input.GetKeyDown(KeyCode.D) == true))
+        if(input.Triangle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.D) == true : Input.GetKeyDown(KeyCode.L) == true))
         {
             if(playShake == false) { return; }
             PlaySE(0);
@@ -144,7 +144,7 @@ public class BooingControl : MonoBehaviour
         }
 
         // □ボタンで画面の邪魔を表示
-        if (input.Square == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.I) == true : Input.GetKeyDown(KeyCode.W) == true))
+        if (input.Square == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.W) == true : Input.GetKeyDown(KeyCode.I) == true))
         {
             if(playPaint == false) { return; }
             PlaySE(0);
