@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -224,6 +224,7 @@ MonoBehaviour:
   endObjs:
   - {fileID: 0}
   - {fileID: 0}
+  sceneNumber: 0
 --- !u!4 &165365257
 Transform:
   m_ObjectHideFlags: 0
@@ -387,6 +388,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3029406474872757766, guid: 20660e901e1374a4dbb2889b1d739fb2,
+        type: 3}
+      propertyPath: data_P1.SelectCharacter
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3029406474872757766, guid: 20660e901e1374a4dbb2889b1d739fb2,
+        type: 3}
+      propertyPath: data_P2.SelectCharacter
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20660e901e1374a4dbb2889b1d739fb2, type: 3}
 --- !u!1001 &2031980434
@@ -400,11 +411,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: GamePad
-      objectReference: {fileID: 0}
-    - target: {fileID: 4352616483920289885, guid: d8ca744b702ac6d44beb0e30d97b0e8d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 839157463927812804, guid: d8ca744b702ac6d44beb0e30d97b0e8d,
         type: 3}
@@ -462,11 +468,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8368470366465722212, guid: d8ca744b702ac6d44beb0e30d97b0e8d,
-        type: 3}
-      propertyPath: usePs4Controller
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6207044091517602901, guid: d8ca744b702ac6d44beb0e30d97b0e8d,
         type: 3}
       propertyPath: multithreadUpdate
       value: 1
@@ -617,7 +618,7 @@ PrefabInstance:
     - target: {fileID: 1048972796834214839, guid: 30d34751b7b12e5478935863688cf8fc,
         type: 3}
       propertyPath: booingFlag
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d34751b7b12e5478935863688cf8fc, type: 3}

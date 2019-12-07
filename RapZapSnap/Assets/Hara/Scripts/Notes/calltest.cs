@@ -17,6 +17,7 @@ public class calltest : MonoBehaviour
     private GameObject[] staroObjs = null;
     [SerializeField]
     private GameObject[] endObjs = null;
+    [SerializeField] private int sceneNumber = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -60,7 +61,7 @@ public class calltest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            
+            SceneManager.LoadScene(sceneNumber);
         }
 
         if (Input.GetKeyDown(KeyCode.W))

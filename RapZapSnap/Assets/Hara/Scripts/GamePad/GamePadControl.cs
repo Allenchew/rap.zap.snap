@@ -68,6 +68,7 @@ public struct DS4InputKey
 public class GamePadControl : MonoBehaviour
 {
     public static GamePadControl Instance { private set; get; } = null;
+    private  DS4InputCustom.DS4InputCustom ds4InputCustom = null;
 
     [SerializeField, Tooltip("DS4を使う")]
     private bool usePs4Controller = true;
@@ -75,7 +76,10 @@ public class GamePadControl : MonoBehaviour
     [SerializeField, Tooltip("DS4のスティック系の有効入力感度"), Range(0.01f, 1.0f)]
     private float axisValue = 0.8f;
 
-    private DS4InputCustom.DS4InputCustom ds4Input = null;
+    [SerializeField]
+    private bool multithreadUpdate = true;
+
+    //private DS4InputCustom.DS4InputCustom ds4Input = null;
 
     private UnityEngine.EventSystems.StandaloneInputModule inputModule;
 
@@ -195,7 +199,9 @@ public class GamePadControl : MonoBehaviour
             GetKeyUp_1.ResetFlag();
             GetKeyUp_2.ResetFlag();
             inputModule = GetComponent<UnityEngine.EventSystems.StandaloneInputModule>();
-            ds4Input = GetComponent<DS4InputCustom.DS4InputCustom>();
+            ds4InputCustom = gameObject.AddComponent<DS4InputCustom.DS4InputCustom>();
+            ds4InputCustom.MultithreadUpdate = multithreadUpdate;
+            ds4InputCustom.Init();
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -317,7 +323,7 @@ public class GamePadControl : MonoBehaviour
         bool result;
 
         // コントローラーが接続されているかチェック
-        if (ds4Input.IsController(inputID) == false) { return false; }
+        if (ds4InputCustom.IsController(inputID) == false) { return false; }
 
         switch (type)
         {
@@ -367,9 +373,9 @@ public class GamePadControl : MonoBehaviour
                 return false;
         }
 
-        if(ds4Input.MultithreadUpdate == false) { return ds4Input.IsButtonUp(inputID, type); }
+        if(ds4InputCustom.MultithreadUpdate == false) { return ds4InputCustom.IsButtonUp(inputID, type); }
 
-        if(ds4Input.IsButton(inputID, type) == true)
+        if(ds4InputCustom.IsButton(inputID, type) == true)
         {
             if (buttonFlag == false) { buttonFlag = true; }
             result = false;
@@ -465,7 +471,7 @@ public class GamePadControl : MonoBehaviour
         bool result;
 
         // コントローラーが接続されているかチェック
-        if (ds4Input.IsController(inputID) == false) { return false; }
+        if (ds4InputCustom.IsController(inputID) == false) { return false; }
 
         switch (type)
         {
@@ -515,9 +521,9 @@ public class GamePadControl : MonoBehaviour
                 return false;
         }
 
-        if (ds4Input.MultithreadUpdate == false) { return ds4Input.IsButtonDown(inputID, type); }
+        if (ds4InputCustom.MultithreadUpdate == false) { return ds4InputCustom.IsButtonDown(inputID, type); }
 
-        if (ds4Input.IsButton(inputID, type) == true)
+        if (ds4InputCustom.IsButton(inputID, type) == true)
         {
             if (buttonFlag == false)
             {
@@ -615,7 +621,7 @@ public class GamePadControl : MonoBehaviour
         bool result;
 
         // コントローラーが接続されているかチェック
-        if (ds4Input.IsController(inputID) == false) { return false; }
+        if (ds4InputCustom.IsController(inputID) == false) { return false; }
 
         switch (type)
         {
@@ -673,7 +679,7 @@ public class GamePadControl : MonoBehaviour
                 return false;
         }
 
-        if (_ = isPositive == true ? (ds4Input.IsAxis(inputID, axisType) >= axisValue) : (ds4Input.IsAxis(inputID, axisType) <= -axisValue))
+        if (_ = isPositive == true ? (ds4InputCustom.IsAxis(inputID, axisType) >= axisValue) : (ds4InputCustom.IsAxis(inputID, axisType) <= -axisValue))
         {
             if (axisFlag == false) { axisFlag = true; }
             result = false;  
@@ -759,7 +765,7 @@ public class GamePadControl : MonoBehaviour
         bool result;
 
         // コントローラーが接続されているかチェック
-        if (ds4Input.IsController(inputID) == false) { return false; }
+        if (ds4InputCustom.IsController(inputID) == false) { return false; }
 
         switch (type)
         {
@@ -817,7 +823,7 @@ public class GamePadControl : MonoBehaviour
                 return false;
         }
 
-        if(_ = isPositive == true ? (ds4Input.IsAxis(inputID, axisType) >= axisValue) : (ds4Input.IsAxis(inputID, axisType) <= -axisValue))
+        if(_ = isPositive == true ? (ds4InputCustom.IsAxis(inputID, axisType) >= axisValue) : (ds4InputCustom.IsAxis(inputID, axisType) <= -axisValue))
         {
             if (axisFlag == false)
             {
@@ -881,7 +887,7 @@ public class GamePadControl : MonoBehaviour
         // StandaloneInputModuleが無ければ処理を終了
         if (inputModule == null) { return; }
 
-        if (ds4Input.IsController(DS4ControllerType.P2) == false)
+        if (ds4InputCustom.IsController(DS4ControllerType.P2) == false)
         {
             inputModule.submitButton = joy2KeyName.Submit;
             inputModule.cancelButton = joy2KeyName.Cancel;
@@ -905,7 +911,7 @@ public class GamePadControl : MonoBehaviour
     /// <param name="duration">振動時間</param>
     public void SetVibration(ControllerNum id, float vibration, float duration)
     {
-        if(vibration <= 0f || duration <= 0f || ds4Input.IsController((DS4ControllerType)id) == false || isRunning == true) { return; }
+        if(vibration <= 0f || duration <= 0f || ds4InputCustom.IsController((DS4ControllerType)id) == false || isRunning == true) { return; }
         StartCoroutine(DoVibration((DS4ControllerType)id, vibration, duration));
     }
 
@@ -916,7 +922,7 @@ public class GamePadControl : MonoBehaviour
         var time = 0f;
 
         // 振動開始
-        ds4Input.SetVibration(id, new DS4Vibration((byte)vibration, (byte)vibration));
+        ds4InputCustom.SetVibration(id, new DS4Vibration((byte)vibration, (byte)vibration));
 
         while (time <= duration)
         {
@@ -925,7 +931,7 @@ public class GamePadControl : MonoBehaviour
         }
 
         // 振動停止
-        ds4Input.SetVibration(id, DS4Vibration.Min);
+        ds4InputCustom.SetVibration(id, DS4Vibration.Min);
 
         isRunning = false;
     }

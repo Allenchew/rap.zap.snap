@@ -109,16 +109,10 @@ namespace DS4InputCustom
         [DllImport("DS4Input")]
         private static extern bool EndDS4();
 
-        [SerializeField] private bool multithreadUpdate = true;
-        public bool MultithreadUpdate { get { return multithreadUpdate; } }
+        public bool MultithreadUpdate { set; get; } = true;
         private bool isInputUpdate = false;
         private Task task = null;
         private bool isStart = false;
-
-        private void Awake()
-        {
-            Init();
-        }
 
         private void Update()
         {
@@ -126,7 +120,7 @@ namespace DS4InputCustom
             {
                 GetController();
             }
-            if (multithreadUpdate) { return; }
+            if (MultithreadUpdate) { return; }
             if (isInputUpdate == false) { return; }
             UpdateInputReport();
         }
@@ -144,7 +138,7 @@ namespace DS4InputCustom
             isStart = StartDS4();
             GetController();
             isInputUpdate = true;
-            if (multithreadUpdate)
+            if (MultithreadUpdate)
             {
                 task = new Task(InputUpdate);
                 task.Start();
