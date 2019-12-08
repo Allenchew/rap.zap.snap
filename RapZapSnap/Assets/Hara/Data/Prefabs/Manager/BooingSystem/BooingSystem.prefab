@@ -46,9 +46,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   booingPlayer: 1
   booingFlag: 0
-  booingPlayCount: 3
   audioClips:
   - {fileID: 8300000, guid: 62ddb5b6f293fe140be579ad285b65a3, type: 3}
+  shakeObject: {fileID: 0}
+  particleCameraObject: {fileID: 5692923855610798694, guid: 20867f9afa0ebf34987a87078868f4bc,
+    type: 3}
+  particleMode: 0
 --- !u!82 &1361749972680301589
 AudioSource:
   m_ObjectHideFlags: 0

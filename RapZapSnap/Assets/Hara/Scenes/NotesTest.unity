@@ -612,13 +612,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1048972796834214839, guid: 30d34751b7b12e5478935863688cf8fc,
         type: 3}
-      propertyPath: shakeObject
-      value: 
+      propertyPath: particleMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1048972796834214839, guid: 30d34751b7b12e5478935863688cf8fc,
         type: 3}
       propertyPath: booingFlag
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d34751b7b12e5478935863688cf8fc, type: 3}

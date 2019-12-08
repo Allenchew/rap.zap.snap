@@ -21,12 +21,19 @@ public class BooingControl : MonoBehaviour
     private GameObject shakeObject = null;
     public GameObject ShakeObject { set { shakeObject = value; } }
 
+    [SerializeField, Tooltip("インクパーティクルオブジェクト")]
+    private GameObject particleCameraObject = null;
+    private ParticleSystem particleType1 = null;    // 1回だけインクを表示するパーティクル
+    private ParticleSystem particleType2 = null;    // 指定した秒数の間何度でもインクを表示するパーティクル
+    [SerializeField, Tooltip("パーティクルモード")] private bool particleMode = false;
+
     private int booingPlayCount = 3;
     private bool playVibration = true;
     private bool playShake = true;
     private bool playPaint = true;
 
-    private bool isRunning = false;
+    private bool isRunningShake = false;
+    private bool isRunningParticle = false;
 
     private void Awake()
     {
@@ -34,6 +41,13 @@ public class BooingControl : MonoBehaviour
         {
             Instance = this;
             audioSource = GetComponent<AudioSource>();
+            if(particleCameraObject != null)
+            {
+                var particleCamera = Instantiate(particleCameraObject, gameObject.transform, false);
+                particleCamera.transform.position = Camera.main.transform.position + Vector3.back * 10;
+                particleType1 = particleCamera.transform.GetChild(0).GetComponent<ParticleSystem>();
+                particleType2 = particleCamera.transform.GetChild(1).GetComponent<ParticleSystem>();
+            }
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -75,7 +89,7 @@ public class BooingControl : MonoBehaviour
     /// <param name="magnitude">揺れの強さ</param>
     private void ShakeAction(float duration, float magnitude)
     {
-        if(duration <= 0f || magnitude <= 0f || isRunning == true) { return; }
+        if(duration <= 0f || magnitude <= 0f || isRunningShake == true) { return; }
         StartCoroutine(DoShake(duration, magnitude));
     }
 
@@ -87,7 +101,7 @@ public class BooingControl : MonoBehaviour
     /// <returns></returns>
     private IEnumerator DoShake(float duration, float magnitude)
     {
-        isRunning = true;
+        isRunningShake = true;
 
         // 設定されていないならMainCameraを使う
         if(shakeObject == null) { shakeObject = Camera.main.gameObject; }
@@ -108,7 +122,69 @@ public class BooingControl : MonoBehaviour
         
         shakeObject.transform.localPosition = pos;
 
-        isRunning = false;
+        isRunningShake = false;
+    }
+
+    /// <summary>
+    /// パーティクルの再生
+    /// </summary>
+    /// <param name="duration">再生時間</param>
+    private void PlayParticle(float duration)
+    {
+        if(particleMode == true)
+        {
+            StartCoroutine(DoParticle(duration, false));
+        }
+        else
+        {
+            StartCoroutine(DoParticle(duration, true));
+        }
+    }
+
+    /// <summary>
+    /// パーティクルの再生用コルーチン
+    /// </summary>
+    /// <param name="duration">再生時間</param>
+    /// <param name="mode">再生モード</param>
+    /// <returns></returns>
+    private IEnumerator DoParticle(float duration, bool mode)
+    {
+        isRunningParticle = true;
+
+        float time = 0;
+
+        ParticleSystem particle = mode == true ? particleType1 : particleType2;
+
+        particle.Play();
+        
+        if(mode == true)
+        {
+            while (time < 1.8f)
+            {
+                time += Time.deltaTime;
+                yield return null;
+            }
+            particle.Pause();
+
+            time = 0;
+        }
+
+        while(time < duration)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        if(mode == true)
+        {
+            particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+        else
+        {
+            particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+
+        isRunningParticle = false;
     }
 
     /// <summary>
@@ -129,7 +205,6 @@ public class BooingControl : MonoBehaviour
             GamePadControl.Instance.SetVibration(target, 255f, 2.0f);
             booingPlayCount--;
             playVibration = false;
-            Debug.Log("バイブレーション実行");
         }
 
         // △ボタンでSE再生と画面の揺れを実行
@@ -140,7 +215,6 @@ public class BooingControl : MonoBehaviour
             ShakeAction(2.0f, 0.5f);
             booingPlayCount--;
             playShake = false;
-            Debug.Log("画面揺れ実行");
         }
 
         // □ボタンで画面の邪魔を表示
@@ -148,10 +222,9 @@ public class BooingControl : MonoBehaviour
         {
             if(playPaint == false) { return; }
             PlaySE(0);
-
+            PlayParticle(5.0f);
             booingPlayCount--;
             playPaint = false;
-            Debug.Log("画面の汚し実行");
         }
 
         if(booingPlayCount <= 0) { booingFlag = false; }
