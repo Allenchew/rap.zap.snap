@@ -222,7 +222,7 @@ public class BooingControl : MonoBehaviour
         {
             if(playPaint == false) { return; }
             PlaySE(0);
-            PlayParticle(5.0f);
+            PlayParticle(2.0f);
             booingPlayCount--;
             playPaint = false;
         }

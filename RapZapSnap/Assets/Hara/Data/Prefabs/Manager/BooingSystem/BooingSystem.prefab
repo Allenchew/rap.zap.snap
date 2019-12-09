@@ -51,7 +51,7 @@ MonoBehaviour:
   shakeObject: {fileID: 0}
   particleCameraObject: {fileID: 5692923855610798694, guid: 20867f9afa0ebf34987a87078868f4bc,
     type: 3}
-  particleMode: 0
+  particleMode: 1
 --- !u!82 &1361749972680301589
 AudioSource:
   m_ObjectHideFlags: 0
