@@ -6,34 +6,46 @@ public class BooingControl : MonoBehaviour
 {
     public static BooingControl Instance { private set; get; } = null;
 
-    [SerializeField, Tooltip("ブーイングができるプレイヤー")]
-    private ControllerNum booingPlayer = ControllerNum.P2;
-
     [SerializeField, Tooltip("ブーイングシステムを使うか")]
     private bool booingFlag = false;
 
+    [SerializeField, Tooltip("ブーイングができるプレイヤー")]
+    private ControllerNum booingPlayer = ControllerNum.P2;
+
     private AudioSource audioSource;
 
-    [SerializeField, Tooltip("ノーツ入力を邪魔する用のSE音源リスト")]
+    [SerializeField, Tooltip("SE音源リスト"), Header("お邪魔用のサウンド")]
     private List<AudioClip> audioClips = null;
 
-    [SerializeField, Tooltip("揺らしたいオブジェクト")]
-    private GameObject shakeObject = null;
-    public GameObject ShakeObject { set { shakeObject = value; } }
+    [SerializeField, Tooltip("振動の強さ"), Header("コントローラーを振動させるお邪魔システム")]
+    private byte vibrationPower = 255;
+    [SerializeField, Tooltip("再生時間"), Range(0, 5.0f)] private float vibDuration = 2.0f;
+    private bool isRunningVibration = false;
+    private Coroutine vibrationCoroutine = null;
 
-    [SerializeField, Tooltip("インクパーティクルオブジェクト")]
+    [SerializeField, Tooltip("揺れの強さ"), Range(0f, 2.0f), Header("画面を揺らすお邪魔システム")]
+    private float shakeMagnitude = 0.5f;
+    [SerializeField, Tooltip("再生時間"), Range(0f, 5.0f)]
+    private float shakeDuration = 1.0f;
+    private GameObject mainCamera = null;
+    private Vector3 mainCameraPos;
+    private bool isRunningShake = false;
+    private Coroutine shakeCoroutine = null;
+
+    [SerializeField, Tooltip("インクパーティクルオブジェクト"), Header("画面を汚すお邪魔システム")]
     private GameObject particleCameraObject = null;
-    private ParticleSystem particleType1 = null;    // 1回だけインクを表示するパーティクル
-    private ParticleSystem particleType2 = null;    // 指定した秒数の間何度でもインクを表示するパーティクル
-    [SerializeField, Tooltip("パーティクルモード")] private bool particleMode = false;
+    private ParticleSystem particle = null;
+    private UnityEngine.UI.RawImage particleRawImage = null;
+    [SerializeField, Tooltip("再生回数"), Range(0, 5)] private int particleCallTime = 1;
+    [SerializeField, Tooltip("再生間隔"), Range(0f, 2.0f)] private float particleCallSpan = 1.0f;
+    [SerializeField, Tooltip("パーティクルカラー")] private Color particleColor;
+    private bool isRunningParticle = false;
+    private Coroutine particleCoroutine = null;
 
     private int booingPlayCount = 3;
     private bool playVibration = true;
     private bool playShake = true;
     private bool playPaint = true;
-
-    private bool isRunningShake = false;
-    private bool isRunningParticle = false;
 
     private void Awake()
     {
@@ -45,8 +57,8 @@ public class BooingControl : MonoBehaviour
             {
                 var particleCamera = Instantiate(particleCameraObject, gameObject.transform, false);
                 particleCamera.transform.position = Camera.main.transform.position + Vector3.back * 10;
-                particleType1 = particleCamera.transform.GetChild(0).GetComponent<ParticleSystem>();
-                particleType2 = particleCamera.transform.GetChild(1).GetComponent<ParticleSystem>();
+                particle = particleCamera.transform.GetChild(0).GetComponent<ParticleSystem>();
+                particleRawImage = particleCamera.transform.GetChild(2).transform.GetChild(0).GetComponent<UnityEngine.UI.RawImage>();
             }
             DontDestroyOnLoad(gameObject);
         }
@@ -83,6 +95,46 @@ public class BooingControl : MonoBehaviour
     }
 
     /// <summary>
+    /// コントローラーの振動
+    /// </summary>
+    /// <param name="id">コントローラ番号</param>
+    /// <param name="vibration">振動値</param>
+    /// <param name="duration">振動時間</param>
+    private void StartVibration(ControllerNum id, byte vibration, float duration)
+    {
+        if (isRunningVibration == true) { return; }
+        vibrationCoroutine = StartCoroutine(DoVibration(id, vibration, duration));
+    }
+
+    /// <summary>
+    /// コントローラーの振動コルーチン
+    /// </summary>
+    /// <param name="id">コントローラー番号</param>
+    /// <param name="vibration">振動値</param>
+    /// <param name="duration">振動時間</param>
+    /// <returns></returns>
+    private IEnumerator DoVibration(ControllerNum id, byte vibration, float duration)
+    {
+        isRunningVibration = true;
+
+        float time = 0f;
+
+        // 振動開始
+        GamePadControl.Instance.SetVibration(id, vibration);
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // 振動停止
+        GamePadControl.Instance.StopVibration(id);
+
+        isRunningVibration = false;
+    }
+
+    /// <summary>
     /// カメラを揺らす（画面を揺らす）処理
     /// </summary>
     /// <param name="duration">揺らす時間</param>
@@ -90,7 +142,7 @@ public class BooingControl : MonoBehaviour
     private void ShakeAction(float duration, float magnitude)
     {
         if(duration <= 0f || magnitude <= 0f || isRunningShake == true) { return; }
-        StartCoroutine(DoShake(duration, magnitude));
+        shakeCoroutine = StartCoroutine(DoShake(duration, magnitude));
     }
 
     /// <summary>
@@ -103,85 +155,69 @@ public class BooingControl : MonoBehaviour
     {
         isRunningShake = true;
 
-        // 設定されていないならMainCameraを使う
-        if(shakeObject == null) { shakeObject = Camera.main.gameObject; }
-
-        var pos = shakeObject.transform.localPosition;
+        // MainCameraを取得
+        if (mainCamera == null) { mainCamera = Camera.main.gameObject; }
+        
+        mainCameraPos = mainCamera.transform.localPosition;
         var time = 0f;
         
         while(time < duration)
         {
-            var x = pos.x + Random.Range(-1f, 1f) * magnitude;
-            var y = pos.y + Random.Range(-1f, 1f) * magnitude;
+            var x = mainCameraPos.x + Random.Range(-1f, 1f) * magnitude;
+            var y = mainCameraPos.y + Random.Range(-1f, 1f) * magnitude;
 
-            shakeObject.transform.localPosition = new Vector3(x, y, pos.z);
+            mainCamera.transform.localPosition = new Vector3(x, y, mainCameraPos.z);
             time += Time.deltaTime;
 
             yield return null;
         }
         
-        shakeObject.transform.localPosition = pos;
+        mainCamera.transform.localPosition = mainCameraPos;
 
         isRunningShake = false;
     }
 
     /// <summary>
-    /// パーティクルの再生
+    /// パーティクル再生
     /// </summary>
-    /// <param name="duration">再生時間</param>
-    private void PlayParticle(float duration)
+    /// <param name="time">再生回数</param>
+    /// <param name="span">再生間隔</param>
+    private void PlayParticle(int time, float span)
     {
-        if(particleMode == true)
-        {
-            StartCoroutine(DoParticle(duration, false));
-        }
-        else
-        {
-            StartCoroutine(DoParticle(duration, true));
-        }
+        if(isRunningParticle == true) { return; }
+
+        particleCoroutine = StartCoroutine(DoParticle(time, span));
     }
 
     /// <summary>
-    /// パーティクルの再生用コルーチン
+    /// パーティクル再生用のコルーチン
     /// </summary>
-    /// <param name="duration">再生時間</param>
-    /// <param name="mode">再生モード</param>
+    /// <param name="time">再生回数</param>
+    /// <param name="span">再生間隔</param>
     /// <returns></returns>
-    private IEnumerator DoParticle(float duration, bool mode)
+    private IEnumerator DoParticle(int time, float span)
     {
         isRunningParticle = true;
 
-        float time = 0;
+        // パーティクルの色(RawImageの色)を設定
+        particleRawImage.color = particleColor;
 
-        ParticleSystem particle = mode == true ? particleType1 : particleType2;
+        float deltaTime;
 
-        particle.Play();
-        
-        if(mode == true)
+        for (int i = 0; i < time; i++)
         {
-            while (time < 1.8f)
+            // 時間の初期化
+            deltaTime = 0f;
+
+            // パーティクルの再生
+            particle.Emit(1);
+
+            // 待機
+            while(deltaTime < span)
             {
-                time += Time.deltaTime;
+                deltaTime += Time.deltaTime;
                 yield return null;
             }
-            particle.Pause();
-
-            time = 0;
-        }
-
-        while(time < duration)
-        {
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        if(mode == true)
-        {
-            particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        }
-        else
-        {
-            particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }
 
         isRunningParticle = false;
@@ -202,7 +238,7 @@ public class BooingControl : MonoBehaviour
         {
             if(playVibration == false) { return; }
             PlaySE(0);
-            GamePadControl.Instance.SetVibration(target, 255f, 2.0f);
+            StartVibration(target, vibrationPower, vibDuration);
             booingPlayCount--;
             playVibration = false;
         }
@@ -212,7 +248,7 @@ public class BooingControl : MonoBehaviour
         {
             if(playShake == false) { return; }
             PlaySE(0);
-            ShakeAction(2.0f, 0.5f);
+            ShakeAction(shakeDuration, shakeMagnitude);
             booingPlayCount--;
             playShake = false;
         }
@@ -222,7 +258,7 @@ public class BooingControl : MonoBehaviour
         {
             if(playPaint == false) { return; }
             PlaySE(0);
-            PlayParticle(2.0f);
+            PlayParticle(particleCallTime, particleCallSpan);
             booingPlayCount--;
             playPaint = false;
         }
@@ -250,6 +286,33 @@ public class BooingControl : MonoBehaviour
     public void BooingSystemOff()
     {
         if (booingFlag == false) { return; }
+
+        if(isRunningVibration == true)
+        {
+            StopCoroutine(vibrationCoroutine);
+            GamePadControl.Instance.StopVibration(_ = booingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
+            isRunningVibration = false;
+        }
+
+        if(isRunningShake == true)
+        {
+            StopCoroutine(shakeCoroutine);
+            mainCamera.transform.localPosition = mainCameraPos;
+            isRunningShake = false;
+        }
+
+        if(isRunningParticle == true)
+        {
+            StopCoroutine(particleCoroutine);
+
+            if(particle.IsAlive(true) == true)
+            {
+                particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            }
+
+            isRunningParticle = false;
+        }
+
         booingFlag = false;
     }
 }

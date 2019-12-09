@@ -49,7 +49,7 @@ public class NotesControl : MonoBehaviour
     [SerializeField, Tooltip("判定ノーツの透明度"), Range(0, 1.0f)]
     private float notesSpriteAlpha = 0.5f;
 
-    [SerializeField, Tooltip("ノーツ判定距離:Perfect"), Range(0.0001f, 0.05f)]
+    [SerializeField, Tooltip("ノーツ判定距離:Perfect"), Range(0.0001f, 0.05f), Header("ノーツの判定域")]
     private float perfectLength = 0.05f;
 
     [SerializeField, Tooltip("ノーツの判定距離:Good"), Range(0.0001f, 0.05f)]

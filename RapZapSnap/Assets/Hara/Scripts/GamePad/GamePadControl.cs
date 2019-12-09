@@ -79,12 +79,7 @@ public class GamePadControl : MonoBehaviour
     [SerializeField]
     private bool multithreadUpdate = true;
 
-    //private DS4InputCustom.DS4InputCustom ds4Input = null;
-
     private UnityEngine.EventSystems.StandaloneInputModule inputModule;
-
-    // コルーチン用のフラグ
-    private bool isRunning = false;
 
     public DS4InputKey GetKeyDown_1 { private set; get; } = new DS4InputKey();
     public DS4InputKey GetKeyDown_2 { private set; get; } = new DS4InputKey();
@@ -904,35 +899,29 @@ public class GamePadControl : MonoBehaviour
     }
 
     /// <summary>
-    /// PS4コントローラーを振動させる
+    /// DS4を振動させる
     /// </summary>
     /// <param name="id">コントローラ番号</param>
     /// <param name="vibration">振動値</param>
-    /// <param name="duration">振動時間</param>
-    public void SetVibration(ControllerNum id, float vibration, float duration)
+    public void SetVibration(ControllerNum id, byte vibration)
     {
-        if(vibration <= 0f || duration <= 0f || ds4InputCustom.IsController((DS4ControllerType)id) == false || isRunning == true) { return; }
-        StartCoroutine(DoVibration((DS4ControllerType)id, vibration, duration));
+        DS4ControllerType type = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
+
+        if(ds4InputCustom.IsController(type) == false) { return; }
+
+        ds4InputCustom.SetVibration(type, new DS4Vibration(vibration, vibration));
     }
 
-    private IEnumerator DoVibration(DS4ControllerType id, float vibration, float duration)
+    /// <summary>
+    /// DS4の振動を停止させる
+    /// </summary>
+    /// <param name="id">コントローラ番号</param>
+    public void StopVibration(ControllerNum id)
     {
-        isRunning = true;
+        DS4ControllerType type = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
 
-        var time = 0f;
+        if (ds4InputCustom.IsController(type) == false) { return; }
 
-        // 振動開始
-        ds4InputCustom.SetVibration(id, new DS4Vibration((byte)vibration, (byte)vibration));
-
-        while (time <= duration)
-        {
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        // 振動停止
-        ds4InputCustom.SetVibration(id, DS4Vibration.Min);
-
-        isRunning = false;
+        ds4InputCustom.SetVibration(type, DS4Vibration.Min);
     }
 }

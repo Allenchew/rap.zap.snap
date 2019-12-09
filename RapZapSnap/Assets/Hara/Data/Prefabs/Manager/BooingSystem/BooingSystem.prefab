@@ -44,14 +44,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91f72354ceb090b4c992a270067fc98e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  booingPlayer: 1
   booingFlag: 0
+  booingPlayer: 1
   audioClips:
   - {fileID: 8300000, guid: 62ddb5b6f293fe140be579ad285b65a3, type: 3}
-  shakeObject: {fileID: 0}
+  vibrationPower: 255
+  vibDuration: 1.5
+  shakeMagnitude: 0.5
+  shakeDuration: 1.5
   particleCameraObject: {fileID: 5692923855610798694, guid: 20867f9afa0ebf34987a87078868f4bc,
     type: 3}
-  particleMode: 1
+  particleCallTime: 3
+  particleCallSpan: 0.75
+  particleColor: {r: 1, g: 0.1893975, b: 0.027450979, a: 0.78431374}
 --- !u!82 &1361749972680301589
 AudioSource:
   m_ObjectHideFlags: 0
