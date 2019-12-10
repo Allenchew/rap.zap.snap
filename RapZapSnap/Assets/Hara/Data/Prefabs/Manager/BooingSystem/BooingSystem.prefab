@@ -56,7 +56,8 @@ MonoBehaviour:
     type: 3}
   particleCallTime: 3
   particleCallSpan: 0.75
-  particleColor: {r: 1, g: 0.1893975, b: 0.027450979, a: 0.78431374}
+  particleColor: {r: 1, g: 0.1893975, b: 0.027450979, a: 0.6862745}
+  particleSize: 1.5
 --- !u!82 &1361749972680301589
 AudioSource:
   m_ObjectHideFlags: 0
