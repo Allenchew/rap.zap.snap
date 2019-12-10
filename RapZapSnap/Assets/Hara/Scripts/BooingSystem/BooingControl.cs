@@ -38,7 +38,8 @@ public class BooingControl : MonoBehaviour
     private UnityEngine.UI.RawImage particleRawImage = null;
     [SerializeField, Tooltip("再生回数"), Range(0, 5)] private int particleCallTime = 1;
     [SerializeField, Tooltip("再生間隔"), Range(0f, 2.0f)] private float particleCallSpan = 1.0f;
-    [SerializeField, Tooltip("パーティクルカラー")] private Color particleColor;
+    [SerializeField, Tooltip("パーティクルのカラー")] private Color particleColor;
+    [SerializeField, Tooltip("パーティクルのサイズ"), Range(0f, 3.0f)] private float particleSize = 1.0f;
     private bool isRunningParticle = false;
     private Coroutine particleCoroutine = null;
 
@@ -202,12 +203,18 @@ public class BooingControl : MonoBehaviour
         // パーティクルの色(RawImageの色)を設定
         particleRawImage.color = particleColor;
 
+        // パーティクルのMainModuleを取得
+        ParticleSystem.MainModule mainModule = particle.main;
+
         float deltaTime;
 
         for (int i = 0; i < time; i++)
         {
             // 時間の初期化
             deltaTime = 0f;
+
+            // パーティクルの大きさの設定
+            mainModule.startSize = particleSize;
 
             // パーティクルの再生
             particle.Emit(1);
