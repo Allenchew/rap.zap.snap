@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   usePs4Controller: 1
   axisValue: 0.8
+  multithreadUpdate: 1
 --- !u!114 &1414191105
 MonoBehaviour:
   m_ObjectHideFlags: 0

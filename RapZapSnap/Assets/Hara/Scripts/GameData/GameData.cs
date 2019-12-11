@@ -12,7 +12,7 @@ public enum Character
     Hajime
 }
 
-public class GameData : MonoBehaviour
+public class GameData : SingletonMonoBehaviour<GameData>
 {
     [System.Serializable]
     private struct Data
@@ -30,21 +30,19 @@ public class GameData : MonoBehaviour
     [SerializeField, Tooltip("1Pのデータ")] private Data data_P1;
     [SerializeField, Tooltip("2Pのデータ")] private Data data_P2;
 
-    public static GameData Instance { private set; get; } = null;
-
-    private void Awake()
+    protected override void Awake()
     {
-        if(Instance == null && Instance != this)
-        {
-            Instance = this;
-            ResetScore(ControllerNum.P1);
-            ResetScore(ControllerNum.P2);
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
+        Init();
+    }
+
+    /// <summary>
+    /// GameDataの初期化
+    /// </summary>
+    private void Init()
+    {
+        ResetScore(ControllerNum.P1);
+        ResetScore(ControllerNum.P2);
     }
 
     /// <summary>

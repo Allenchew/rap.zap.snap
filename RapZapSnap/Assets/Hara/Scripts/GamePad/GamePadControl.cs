@@ -65,9 +65,8 @@ public struct DS4InputKey
     }
 }
 
-public class GamePadControl : MonoBehaviour
+public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
 {
-    public static GamePadControl Instance { private set; get; } = null;
     private  DS4InputCustom.DS4InputCustom ds4InputCustom = null;
 
     [SerializeField, Tooltip("DS4を使う")]
@@ -178,31 +177,10 @@ public class GamePadControl : MonoBehaviour
         R2
     }
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (Instance == null && Instance != this)
-        {
-            Instance = this;
-            inputDown_1.ResetFlag();
-            inputDown_2.ResetFlag();
-            inputUp_1.ResetFlag();
-            inputUp_2.ResetFlag();
-            joy1KeyName = new DS4KeyName(ControllerNum.P1);
-            joy2KeyName = new DS4KeyName(ControllerNum.P2);
-            GetKeyDown_1.ResetFlag();
-            GetKeyDown_2.ResetFlag();
-            GetKeyUp_1.ResetFlag();
-            GetKeyUp_2.ResetFlag();
-            inputModule = GetComponent<UnityEngine.EventSystems.StandaloneInputModule>();
-            ds4InputCustom = gameObject.AddComponent<DS4InputCustom.DS4InputCustom>();
-            ds4InputCustom.MultithreadUpdate = multithreadUpdate;
-            ds4InputCustom.Init();
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
+        Init();
     }
 
     // Start is called before the first frame update
@@ -219,6 +197,30 @@ public class GamePadControl : MonoBehaviour
 
         DS4SingleInputKeyUp(ControllerNum.P1);
         DS4SingleInputKeyUp(ControllerNum.P2);
+    }
+
+    /// <summary>
+    /// GamePadControlの初期化
+    /// </summary>
+    private void Init()
+    {
+        inputDown_1.ResetFlag();
+        inputDown_2.ResetFlag();
+        inputUp_1.ResetFlag();
+        inputUp_2.ResetFlag();
+        joy1KeyName = new DS4KeyName(ControllerNum.P1);
+        joy2KeyName = new DS4KeyName(ControllerNum.P2);
+        GetKeyDown_1.ResetFlag();
+        GetKeyDown_2.ResetFlag();
+        GetKeyUp_1.ResetFlag();
+        GetKeyUp_2.ResetFlag();
+        inputModule = GetComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+        if(ds4InputCustom == null && Instance == this)
+        {
+            ds4InputCustom = gameObject.AddComponent<DS4InputCustom.DS4InputCustom>();
+            ds4InputCustom.MultithreadUpdate = multithreadUpdate;
+            ds4InputCustom.Init();
+        }
     }
 
     /// <summary>
@@ -299,7 +301,7 @@ public class GamePadControl : MonoBehaviour
     /// <returns></returns>
     private bool GetButtonUp(ControllerNum id, DS4ButtonType type)
     {
-        if(usePs4Controller == false) { return false; }
+        if(usePs4Controller == false || ds4InputCustom == null) { return false; }
 
         bool buttonFlag;
         DS4ControllerType inputID;
@@ -447,7 +449,7 @@ public class GamePadControl : MonoBehaviour
     /// <returns></returns>
     private bool GetButtonDown(ControllerNum id, DS4ButtonType type)
     {
-        if (usePs4Controller == false) { return false; }
+        if (usePs4Controller == false || ds4InputCustom == null) { return false; }
 
         bool buttonFlag;
         DS4ControllerType inputID;
@@ -595,7 +597,7 @@ public class GamePadControl : MonoBehaviour
     /// <returns></returns>
     private bool GetAxisUp(ControllerNum id, DS4AxisKey type)
     {
-        if (usePs4Controller == false) { return false; }
+        if (usePs4Controller == false || ds4InputCustom == null) { return false; }
 
         bool axisFlag;
         DS4ControllerType inputID;
@@ -739,7 +741,7 @@ public class GamePadControl : MonoBehaviour
     /// <returns></returns>
     private bool GetAxisDown(ControllerNum id, DS4AxisKey type)
     {
-        if (usePs4Controller == false) { return false; }
+        if (usePs4Controller == false || ds4InputCustom == null) { return false; }
 
         bool axisFlag;
         DS4ControllerType inputID;
@@ -907,7 +909,7 @@ public class GamePadControl : MonoBehaviour
     {
         DS4ControllerType type = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
 
-        if(ds4InputCustom.IsController(type) == false) { return; }
+        if(ds4InputCustom.IsController(type) == false || ds4InputCustom == null) { return; }
 
         ds4InputCustom.SetVibration(type, new DS4Vibration(vibration, vibration));
     }
@@ -920,7 +922,7 @@ public class GamePadControl : MonoBehaviour
     {
         DS4ControllerType type = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
 
-        if (ds4InputCustom.IsController(type) == false) { return; }
+        if (ds4InputCustom.IsController(type) == false || ds4InputCustom == null) { return; }
 
         ds4InputCustom.SetVibration(type, DS4Vibration.Min);
     }

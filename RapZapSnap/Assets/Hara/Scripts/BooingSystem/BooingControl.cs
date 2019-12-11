@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BooingControl : MonoBehaviour
+public class BooingControl : SingletonMonoBehaviour<BooingControl>
 {
-    public static BooingControl Instance { private set; get; } = null;
-
     [SerializeField, Tooltip("ブーイングシステムを使うか")]
     private bool booingFlag = false;
 
@@ -38,7 +36,7 @@ public class BooingControl : MonoBehaviour
     private UnityEngine.UI.RawImage particleRawImage = null;
     [SerializeField, Tooltip("再生回数"), Range(0, 5)] private int particleCallTime = 1;
     [SerializeField, Tooltip("再生間隔"), Range(0f, 2.0f)] private float particleCallSpan = 1.0f;
-    [SerializeField, Tooltip("パーティクルのカラー")] private Color particleColor;
+    [SerializeField, Tooltip("パーティクルのカラー")] private Color particleColor = Color.black;
     [SerializeField, Tooltip("パーティクルのサイズ"), Range(0f, 3.0f)] private float particleSize = 1.0f;
     private bool isRunningParticle = false;
     private Coroutine particleCoroutine = null;
@@ -48,25 +46,10 @@ public class BooingControl : MonoBehaviour
     private bool playShake = true;
     private bool playPaint = true;
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (Instance == null && Instance != this)
-        {
-            Instance = this;
-            audioSource = GetComponent<AudioSource>();
-            if(particleCameraObject != null)
-            {
-                var particleCamera = Instantiate(particleCameraObject, gameObject.transform, false);
-                particleCamera.transform.position = Camera.main.transform.position + Vector3.back * 10;
-                particle = particleCamera.transform.GetChild(0).GetComponent<ParticleSystem>();
-                particleRawImage = particleCamera.transform.GetChild(2).transform.GetChild(0).GetComponent<UnityEngine.UI.RawImage>();
-            }
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
+        Init();
     }
 
     // Start is called before the first frame update
@@ -79,6 +62,22 @@ public class BooingControl : MonoBehaviour
     void Update()
     {
         PlayBooing();
+    }
+
+    /// <summary>
+    /// BooingControlの初期化
+    /// </summary>
+    private void Init()
+    {
+        audioSource = GetComponent<AudioSource>();
+
+        if (particleCameraObject != null)
+        {
+            var particleCamera = Instantiate(particleCameraObject, gameObject.transform, false);
+            particleCamera.transform.position = Camera.main.transform.position + Vector3.back * 10;
+            particle = particleCamera.transform.GetChild(0).GetComponent<ParticleSystem>();
+            particleRawImage = particleCamera.transform.GetChild(2).transform.GetChild(0).GetComponent<UnityEngine.UI.RawImage>();
+        }
     }
 
     /// <summary>

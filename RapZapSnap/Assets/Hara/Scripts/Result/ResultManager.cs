@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ResultManager : MonoBehaviour
 {
@@ -49,13 +50,13 @@ public class ResultManager : MonoBehaviour
     private float span = 0;
     private int step = 0;
     private bool stepEndFlag = false;
-    [SerializeField] private bool startFlag = false;
-
+    private bool actionFlag = false;
+    [SerializeField, Tooltip("シーン番号"), Header("タイトルシーン")] private int sceneNum = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        SetScoreObject();
+        ResultInit();
     }
 
     // Update is called once per frame
@@ -67,7 +68,7 @@ public class ResultManager : MonoBehaviour
     /// <summary>
     /// 必要なコンポーネントの取得と座標の初期化を行う
     /// </summary>
-    private void SetScoreObject()
+    private void ResultInit()
     {
         // Winnerオブジェクトの初期化
         winnerObjMove.EndPos = winnerObj.transform.localPosition;
@@ -87,7 +88,7 @@ public class ResultManager : MonoBehaviour
         scoreBoardMove.EndPos = notesScoreBoard.transform.localPosition;
         scoreBoardMove.StartPos = Vector3.up * 1200 + scoreBoardMove.EndPos;
 
-        startFlag = true;
+        actionFlag = true;
     }
 
     /// <summary>
@@ -95,7 +96,7 @@ public class ResultManager : MonoBehaviour
     /// </summary>
     private  void ResultAction()
     {
-        if(startFlag == false) { return; }
+        if(actionFlag == false) { return; }
 
         switch (step)
         {
@@ -220,8 +221,12 @@ public class ResultManager : MonoBehaviour
                 }
                 break;
             default:
-                startFlag = false;
-                step = 0;
+                if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.A) == true || Input.GetKeyDown(KeyCode.J) == true) && actionFlag == true)
+                {
+                    step = 0;
+                    actionFlag = false;
+                    SceneManager.LoadSceneAsync(sceneNum);
+                }
                 return;
         }
 
@@ -233,10 +238,9 @@ public class ResultManager : MonoBehaviour
         }
 
         // どちらかのプレイヤーが決定キーを入力したらアニメーションをスキップ
-        if((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.A) == true || Input.GetKeyDown(KeyCode.J) == true) && startFlag == true)
+        if((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.A) == true || Input.GetKeyDown(KeyCode.J) == true) && actionFlag == true)
         {
-            startFlag = false;
-            step = 0;
+            step = 8;
             stepEndFlag = false;
             time = 0;
 

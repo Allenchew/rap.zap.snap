@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NotesControl : MonoBehaviour
+public class NotesControl : SingletonMonoBehaviour<NotesControl>
 {
-    public static NotesControl Instance { get; private set; } = null;
-
     // ノーツの最大生成数
     [SerializeField, Tooltip("ノーツの最大生成数"), Range(1, 20)]
     private int maxNotes = 5;
@@ -58,20 +56,10 @@ public class NotesControl : MonoBehaviour
     [SerializeField, Tooltip("ノーツの判定距離:Bad"), Range(0.0001f, 0.05f)]
     private float badLength = 0.05f;
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (Instance == null && Instance != this)
-        {
-            Instance = this;
-            dataBase1.ResetDataBase();
-            dataBase2.ResetDataBase();
-            for (int i = 0; i < 2; i++) { CreateNotes((ControllerNum)i); }
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
+        Init();
     }
 
     // Start is called before the first frame update
@@ -85,6 +73,17 @@ public class NotesControl : MonoBehaviour
     {
         InputNotesAction(ControllerNum.P1);
         InputNotesAction(ControllerNum.P2);
+    }
+
+    /// <summary>
+    /// NotesControlの初期化
+    /// </summary>
+    private void Init()
+    {
+        dataBase1.ResetDataBase();
+        dataBase2.ResetDataBase();
+        CreateNotes(ControllerNum.P1);
+        CreateNotes(ControllerNum.P2);
     }
 
     /// <summary>
