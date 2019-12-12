@@ -5,7 +5,7 @@ using UnityEngine;
 public class NotesControl : SingletonMonoBehaviour<NotesControl>
 {
     // ノーツの最大生成数
-    [SerializeField, Tooltip("ノーツの最大生成数"), Range(1, 20)]
+    [SerializeField, Tooltip("ノーツの最大生成数"), Range(1, 20), Header("ノーツの基本設定")]
     private int maxNotes = 5;
 
     // ノーツのプレファブオブジェクト
@@ -121,9 +121,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
     /// <summary>
     /// ノーツを1回再生する処理
     /// </summary>
-    /// <param name="type">再生するノーツのタイプ 
-    /// <para>Example: NotesType.CircleKey → 〇ボタンノーツ</para>
-    /// </param>
+    /// <param name="type">再生するノーツのタイプ</param>
     /// <param name="startPos">ノーツの再生開始座標</param>
     /// <param name="endPos">ノーツの判定座標</param>
     /// <param name="id">入力対象のコントローラ番号</param>
@@ -313,8 +311,5 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         GameData.Instance.PlusTotalScore(id, score);
 
         _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
-
-        // 歌詞を流す処理（予定）
-
     }
 }

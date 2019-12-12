@@ -6,12 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class TitleManager : MonoBehaviour
 {
-    [SerializeField, Tooltip("1PのタイトルImage"), Header("タイトルのメインオブジェクト")] private Image titleImage_P1 = null;
+    [SerializeField, Tooltip("タイトルロゴ"), Header("タイトルのメインオブジェクト")] private Image titleLogo = null;
+    private Animator titleLogoAnime = null;    // タイトルロゴ用のアニメーター
+    [SerializeField, Tooltip("1PのタイトルImage")] private Image titleImage_P1 = null;
     [SerializeField, Tooltip("2PのタイトルImage")] private Image titleImage_P2 = null;
     private GameObject radyText_P1 = null;
     private GameObject radyText_P2 = null;
 
-    [SerializeField, Tooltip("NowLoading用のSlider"), Header("Loading画面用のオブジェクト")] private Slider nowLoadingSlider = null;
+    [SerializeField, Tooltip("NowLoading用のSlider"), Header("ロード画面用のオブジェクト")] private Slider nowLoadingSlider = null;
     [SerializeField, Tooltip("NowLoadingのText")] private Text nowLoadingText = null;
 
     // コントローラの入力チェックフラグ
@@ -31,6 +33,7 @@ public class TitleManager : MonoBehaviour
     private float deltaTime = 0f;
     private bool actionFlag = false;
     private AsyncOperation async = null;
+    private Vector3 titleLogoScale;
 
     [SerializeField, Tooltip("シーン番号"), Header("キャラクター選択のシーン")] private int sceneNum = 0;
 
@@ -51,7 +54,7 @@ public class TitleManager : MonoBehaviour
     /// </summary>
     private void TitleInit()
     {
-        if(titleImage_P1 == null || titleImage_P2 == null)
+        if(titleLogo == null || titleImage_P1 == null || titleImage_P2 == null)
         {
             Debug.LogError("メインオブジェクトが割り当てられていません");
             return;
@@ -60,7 +63,12 @@ public class TitleManager : MonoBehaviour
         if (nowLoadingSlider == null || nowLoadingText == null)
         {
             Debug.LogError("Loadingオブジェクトが割り当てられていません");
+            return;
         }
+
+        titleLogo.gameObject.SetActive(true);
+        titleLogoScale = titleLogo.transform.localScale;
+        titleLogoAnime = titleLogo.gameObject.GetComponent<Animator>();
 
         titleImage_P1.gameObject.SetActive(true);
         titleImage_P2.gameObject.SetActive(true);
@@ -107,6 +115,8 @@ public class TitleManager : MonoBehaviour
                 if(radyController1 == true && radyController2 == true)
                 {
                     stepEndFlag = true;
+                    titleLogoAnime.speed = 0;
+                    titleLogo.transform.localScale = titleLogoScale;
                 }
                 break;
             case 1:
@@ -119,6 +129,7 @@ public class TitleManager : MonoBehaviour
                 break;
             case 2:
                 // タイトルロゴなどを非表示
+                titleLogo.gameObject.SetActive(false);
                 radyText_P1.SetActive(false);
                 radyText_P2.SetActive(false);
                 stepEndFlag = true;

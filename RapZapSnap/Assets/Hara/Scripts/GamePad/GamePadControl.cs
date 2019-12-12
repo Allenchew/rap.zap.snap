@@ -70,7 +70,7 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     private  DS4InputCustom.DS4InputCustom ds4InputCustom = null;
 
     [SerializeField, Tooltip("DS4を使う")]
-    private bool usePs4Controller = true;
+    private bool useDS4 = true;
 
     [SerializeField, Tooltip("DS4のスティック系の有効入力感度"), Range(0.01f, 1.0f)]
     private float axisValue = 0.8f;
@@ -301,7 +301,7 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     /// <returns></returns>
     private bool GetButtonUp(ControllerNum id, DS4ButtonType type)
     {
-        if(usePs4Controller == false || ds4InputCustom == null) { return false; }
+        if(useDS4 == false || ds4InputCustom == null) { return false; }
 
         bool buttonFlag;
         DS4ControllerType inputID;
@@ -449,7 +449,7 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     /// <returns></returns>
     private bool GetButtonDown(ControllerNum id, DS4ButtonType type)
     {
-        if (usePs4Controller == false || ds4InputCustom == null) { return false; }
+        if (useDS4 == false || ds4InputCustom == null) { return false; }
 
         bool buttonFlag;
         DS4ControllerType inputID;
@@ -597,7 +597,7 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     /// <returns></returns>
     private bool GetAxisUp(ControllerNum id, DS4AxisKey type)
     {
-        if (usePs4Controller == false || ds4InputCustom == null) { return false; }
+        if (useDS4 == false || ds4InputCustom == null) { return false; }
 
         bool axisFlag;
         DS4ControllerType inputID;
@@ -741,7 +741,7 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     /// <returns></returns>
     private bool GetAxisDown(ControllerNum id, DS4AxisKey type)
     {
-        if (usePs4Controller == false || ds4InputCustom == null) { return false; }
+        if (useDS4 == false || ds4InputCustom == null) { return false; }
 
         bool axisFlag;
         DS4ControllerType inputID;

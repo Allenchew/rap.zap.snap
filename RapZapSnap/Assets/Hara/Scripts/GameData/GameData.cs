@@ -63,6 +63,23 @@ public class GameData : SingletonMonoBehaviour<GameData>
     }
 
     /// <summary>
+    /// 各プレイヤーが選択したキャラクターの情報を取得
+    /// </summary>
+    /// <param name="id">キャラ情報を取得したいプレイヤー番号</param>
+    /// <returns></returns>
+    public Character GetCharacterData(ControllerNum id)
+    {
+        if(id == ControllerNum.P1)
+        {
+            return data_P1.SelectCharacter;
+        }
+        else
+        {
+            return data_P2.SelectCharacter;
+        }
+    }
+
+    /// <summary>
     /// キャラクター情報の取得
     /// </summary>
     /// <param name="isWinner">true: 勝利プレイヤーのキャラクター情報, false: 敗北プレイヤーのキャラクター情報</param>
