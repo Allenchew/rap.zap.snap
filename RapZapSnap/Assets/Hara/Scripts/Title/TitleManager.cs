@@ -187,7 +187,7 @@ public class TitleManager : MonoBehaviour
 
         while(nowLoadingSlider.value < 1.0f || async.progress < 0.9f)
         {
-            float increase = Random.Range(0.0001f, 0.005f);
+            float increase = Random.Range(0.001f, 0.01f);
             nowLoadingSlider.value = nowLoadingSlider.value + increase >= 1.0f ? 1.0f : nowLoadingSlider.value += increase;
             yield return null;
         }

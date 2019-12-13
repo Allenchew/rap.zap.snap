@@ -182,11 +182,12 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// </summary>
     /// <param name="time">再生回数</param>
     /// <param name="span">再生間隔</param>
-    private void PlayParticle(int time, float span)
+    /// <param name="id">プレイヤー番号</param>
+    private void PlayParticle(int time, float span, ControllerNum id)
     {
         if(isRunningParticle == true) { return; }
 
-        particleCoroutine = StartCoroutine(DoParticle(time, span));
+        particleCoroutine = StartCoroutine(DoParticle(time, span, id));
     }
 
     /// <summary>
@@ -194,12 +195,26 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// </summary>
     /// <param name="time">再生回数</param>
     /// <param name="span">再生間隔</param>
+    /// /// <param name="id">プレイヤー番号</param>
     /// <returns></returns>
-    private IEnumerator DoParticle(int time, float span)
+    private IEnumerator DoParticle(int time, float span, ControllerNum id)
     {
         isRunningParticle = true;
+        Character character = GameData.Instance.GetCharacterData(id);
 
         // パーティクルの色(RawImageの色)を設定
+        switch(character)
+        {
+            case Character.Mari:
+                particleColor = new Color(255f / 255f, 213f / 255f, 79f / 255f, particleColor.a);    // 黄色
+                break;
+            case Character.Tokiwa:
+                particleColor = new Color(244f / 255f, 67f / 255f, 54f / 255f, particleColor.a);    // 赤色
+                break;
+            case Character.Hajime:
+                particleColor = new Color(92f / 255f, 107f / 255f, 192f / 255f, particleColor.a);    // 青色
+                break;
+        }
         particleRawImage.color = particleColor;
 
         // パーティクルのMainModuleを取得
@@ -264,7 +279,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         {
             if(playPaint == false) { return; }
             PlaySE(0);
-            PlayParticle(particleCallTime, particleCallSpan);
+            PlayParticle(particleCallTime, particleCallSpan, booingPlayer);
             booingPlayCount--;
             playPaint = false;
         }

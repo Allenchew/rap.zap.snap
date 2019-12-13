@@ -219,7 +219,7 @@ MonoBehaviour:
   endObjs:
   - {fileID: 0}
   - {fileID: 0}
-  sceneNumber: 0
+  sceneNumber: 1
 --- !u!4 &165365257
 Transform:
   m_ObjectHideFlags: 0
@@ -604,6 +604,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1048972796834214839, guid: 30d34751b7b12e5478935863688cf8fc,
+        type: 3}
+      propertyPath: particleColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1048972796834214839, guid: 30d34751b7b12e5478935863688cf8fc,
+        type: 3}
+      propertyPath: particleColor.g
+      value: 0.8352941
+      objectReference: {fileID: 0}
+    - target: {fileID: 1048972796834214839, guid: 30d34751b7b12e5478935863688cf8fc,
+        type: 3}
+      propertyPath: particleColor.b
+      value: 0.30980393
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d34751b7b12e5478935863688cf8fc, type: 3}
