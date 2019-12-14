@@ -1,0 +1,409 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9d21444d42be940a2d9e696451a0dc, type: 3}
+  m_Name: NotesData
+  m_EditorClassIdentifier: 
+  Phrase1:
+  - id: 1
+    startposX: 11.3
+    startposY: 1.2
+    endposX: -8.4
+    endposY: 4.4
+    delaytime: 0
+    speed: 1
+    ntype: 1
+  - id: 2
+    startposX: -6.5
+    startposY: -6.5
+    endposX: -3.6
+    endposY: 4.4
+    delaytime: 1.5
+    speed: 1.5
+    ntype: 0
+  - id: 3
+    startposX: -12
+    startposY: 1
+    endposX: -1.35
+    endposY: 4.4
+    delaytime: 1
+    speed: 1.5
+    ntype: 4
+  - id: 4
+    startposX: 2.6
+    startposY: -7.6
+    endposX: 7.8
+    endposY: 4.4
+    delaytime: 1
+    speed: 1.5
+    ntype: 3
+  - id: 5
+    startposX: -8.4
+    startposY: 7
+    endposX: 6
+    endposY: 3
+    delaytime: 2
+    speed: 1.5
+    ntype: 2
+  - id: 6
+    startposX: -7.4
+    startposY: 7
+    endposX: 6
+    endposY: -1
+    delaytime: 1
+    speed: 1.5
+    ntype: 5
+  - id: 7
+    startposX: 1.5
+    startposY: -7
+    endposX: -8.4
+    endposY: 3
+    delaytime: 1
+    speed: 1.5
+    ntype: 4
+  - id: 8
+    startposX: 7.8
+    startposY: 6.5
+    endposX: -4.2
+    endposY: 2.7
+    delaytime: 1
+    speed: 1.5
+    ntype: 3
+  - id: 9
+    startposX: 3.5
+    startposY: -7
+    endposX: -8.4
+    endposY: 1
+    delaytime: 1
+    speed: 1.5
+    ntype: 1
+  - id: 10
+    startposX: -7.3
+    startposY: 7
+    endposX: -7.3
+    endposY: -1
+    delaytime: 1
+    speed: 1.5
+    ntype: 2
+  - id: 11
+    startposX: -11.5
+    startposY: 4.4
+    endposX: -7.3
+    endposY: -4.5
+    delaytime: 2
+    speed: 1.5
+    ntype: 4
+  - id: 12
+    startposX: 11.3
+    startposY: 4.4
+    endposX: 4.8
+    endposY: -4.5
+    delaytime: 1
+    speed: 1.5
+    ntype: 2
+  - id: 13
+    startposX: -11.5
+    startposY: 0
+    endposX: 3.75
+    endposY: 3.4
+    delaytime: 1
+    speed: 1.5
+    ntype: 0
+  - id: 14
+    startposX: 11.3
+    startposY: 4.4
+    endposX: 4.25
+    endposY: -1
+    delaytime: 1
+    speed: 1.5
+    ntype: 3
+  - id: 15
+    startposX: 2
+    startposY: -6.5
+    endposX: -5.3
+    endposY: 1
+    delaytime: 1
+    speed: 1.5
+    ntype: 4
+  - id: 16
+    startposX: -11.3
+    startposY: 4.4
+    endposX: -5.3
+    endposY: -3.3
+    delaytime: 1
+    speed: 1.5
+    ntype: 2
+  - id: 17
+    startposX: 2
+    startposY: 7
+    endposX: -4.4
+    endposY: -1
+    delaytime: 2
+    speed: 1.5
+    ntype: 1
+  Phrase2:
+  - id: 1
+    startposX: 7
+    startposY: -7
+    endposX: -8.3
+    endposY: 4.4
+    delaytime: 0.5
+    speed: 1.5
+    ntype: 0
+  - id: 2
+    startposX: 11
+    startposY: -0.7
+    endposX: -8.3
+    endposY: -0.7
+    delaytime: 2.5
+    speed: 1
+    ntype: 1
+  - id: 3
+    startposX: 11
+    startposY: -2.7
+    endposX: -6.8
+    endposY: -2.7
+    delaytime: 2
+    speed: 1
+    ntype: 4
+  - id: 4
+    startposX: 1.2
+    startposY: 7
+    endposX: 1.2
+    endposY: -4.2
+    delaytime: 1
+    speed: 1
+    ntype: 2
+  - id: 5
+    startposX: -7
+    startposY: -7
+    endposX: -7
+    endposY: 4.5
+    delaytime: 1
+    speed: 1
+    ntype: 3
+  - id: 6
+    startposX: 0
+    startposY: 0
+    endposX: 0
+    endposY: 0
+    delaytime: 1
+    speed: 1
+    ntype: 0
+  - id: 7
+    startposX: -4.4
+    startposY: -7
+    endposX: -4.4
+    endposY: 2.75
+    delaytime: 1
+    speed: 1
+    ntype: 5
+  - id: 8
+    startposX: 11
+    startposY: 0.9
+    endposX: -4.4
+    endposY: 0.9
+    delaytime: 2
+    speed: 1
+    ntype: 0
+  - id: 9
+    startposX: 0
+    startposY: 0
+    endposX: -7
+    endposY: -0.3
+    delaytime: 1
+    speed: 1
+    ntype: 1
+  - id: 10
+    startposX: 11
+    startposY: -0.9
+    endposX: -2
+    endposY: -0.9
+    delaytime: 2
+    speed: 1
+    ntype: 1
+  - id: 11
+    startposX: -11
+    startposY: -4.4
+    endposX: 8.6
+    endposY: 4.5
+    delaytime: 1
+    speed: 1
+    ntype: 4
+  - id: 12
+    startposX: -11
+    startposY: 4.4
+    endposX: 8.6
+    endposY: -4.5
+    delaytime: 2
+    speed: 1
+    ntype: 2
+  - id: 13
+    startposX: -11
+    startposY: 2
+    endposX: 7.5
+    endposY: 2
+    delaytime: 1
+    speed: 1
+    ntype: 3
+  - id: 14
+    startposX: 0
+    startposY: 0
+    endposX: 0
+    endposY: 0
+    delaytime: 2
+    speed: 1
+    ntype: 3
+  - id: 15
+    startposX: -2.2
+    startposY: -7
+    endposX: -2.2
+    endposY: 4.4
+    delaytime: 1
+    speed: 1
+    ntype: 4
+  - id: 16
+    startposX: -11
+    startposY: 1.2
+    endposX: -0.8
+    endposY: 1.2
+    delaytime: 2
+    speed: 1
+    ntype: 5
+  Phrase3:
+  - id: 1
+    startposX: 7.8
+    startposY: -7
+    endposX: -8.3
+    endposY: 4.4
+    delaytime: 0.5
+    speed: 1.5
+    ntype: 0
+  - id: 2
+    startposX: 3.7
+    startposY: -7
+    endposX: 3.7
+    endposY: 4.25
+    delaytime: 2.5
+    speed: 1
+    ntype: 1
+  - id: 3
+    startposX: 11
+    startposY: 2.9
+    endposX: -8.3
+    endposY: 2.9
+    delaytime: 2
+    speed: 1
+    ntype: 2
+  - id: 4
+    startposX: 2.9
+    startposY: -7
+    endposX: 0.1
+    endposY: 2.9
+    delaytime: 1
+    speed: 1
+    ntype: 3
+  - id: 5
+    startposX: -11
+    startposY: 3.1
+    endposX: 7.2
+    endposY: 3.1
+    delaytime: 1
+    speed: 1
+    ntype: 3
+  - id: 6
+    startposX: 0
+    startposY: 0
+    endposX: 0
+    endposY: 0
+    delaytime: 1.5
+    speed: 1
+    ntype: 0
+  - id: 7
+    startposX: 11
+    startposY: -2.4
+    endposX: -8.1
+    endposY: -2.4
+    delaytime: 1
+    speed: 1
+    ntype: 4
+  - id: 8
+    startposX: 1.8
+    startposY: 7
+    endposX: 1.8
+    endposY: -4
+    delaytime: 2
+    speed: 1
+    ntype: 2
+  - id: 9
+    startposX: -11
+    startposY: 3.1
+    endposX: 6.2
+    endposY: 3.1
+    delaytime: 1
+    speed: 1
+    ntype: 1
+  - id: 10
+    startposX: 6.2
+    startposY: 7
+    endposX: 6.2
+    endposY: -3.45
+    delaytime: 2
+    speed: 1
+    ntype: 3
+  - id: 11
+    startposX: -11
+    startposY: 0.4
+    endposX: 0.75
+    endposY: 0.4
+    delaytime: 1
+    speed: 1
+    ntype: 1
+  - id: 12
+    startposX: -4
+    startposY: 7
+    endposX: 3.4
+    endposY: -2.3
+    delaytime: 2
+    speed: 1
+    ntype: 0
+  - id: 13
+    startposX: 11
+    startposY: 0.25
+    endposX: -8
+    endposY: 0.25
+    delaytime: 1
+    speed: 1
+    ntype: 2
+  - id: 14
+    startposX: 0
+    startposY: 0
+    endposX: 0
+    endposY: 0
+    delaytime: 2
+    speed: 1
+    ntype: 3
+  - id: 15
+    startposX: 11
+    startposY: 1.6
+    endposX: -8.3
+    endposY: 1.6
+    delaytime: 1
+    speed: 1
+    ntype: 2
+  - id: 16
+    startposX: -11
+    startposY: 2.3
+    endposX: 2.85
+    endposY: 2.3
+    delaytime: 2
+    speed: 1
+    ntype: 3
