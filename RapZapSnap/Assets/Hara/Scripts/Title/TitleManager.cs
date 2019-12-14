@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class TitleManager : MonoBehaviour
 {
@@ -181,7 +180,7 @@ public class TitleManager : MonoBehaviour
     private IEnumerator SceneLoad()
     {
         // シーンの読み込み
-        async = SceneManager.LoadSceneAsync(sceneNum);
+        async = SceneControl.Instance.LoadScene();
 
         async.allowSceneActivation = false;
 

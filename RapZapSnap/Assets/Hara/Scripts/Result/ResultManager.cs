@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class ResultManager : MonoBehaviour
 {
@@ -66,7 +65,7 @@ public class ResultManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 必要なコンポーネントの取得と座標の初期化を行う
+    /// リザルトシーンの初期化を行う
     /// </summary>
     private void ResultInit()
     {
@@ -227,7 +226,7 @@ public class ResultManager : MonoBehaviour
                     actionFlag = false;
                     GameData.Instance.ResetScore(ControllerNum.P1);
                     GameData.Instance.ResetScore(ControllerNum.P2);
-                    SceneManager.LoadSceneAsync(sceneNum);
+                    SceneControl.Instance.LoadScene();
                 }
                 return;
         }

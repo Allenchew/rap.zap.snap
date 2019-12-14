@@ -24,13 +24,11 @@ GameData.Instance.PlusTotalScore(プレイヤー番号, 増加量)
 	GameData.Instance.PlusTotalScore(ControllerNum.P1, 1000) => 1Pのトータルスコアを1000加算
 
 
-GameData.Instance.GetTotalScore(プレイヤー番号)
-    => 各プレイヤーのトータルスコアを取得
+GameData.Instance.GetTotalScore(プレイヤー番号) => 各プレイヤーのトータルスコアを取得
 
-	GetTotalScore(ControllerNum.P1) => 1Pのトータルスコアを取得
+	GameData.Instance.GetTotalScore(ControllerNum.P1) => 1Pのトータルスコアを取得
 
 
-GameData.Instance.ResetScore(プレイヤー番号)
-    => 各プレイヤーのスコア情報を初期化する処理
+GameData.Instance.ResetScore(プレイヤー番号) => 各プレイヤーのスコア情報を初期化する処理
 
 	GameData.Instance.ResetScore(ControllerNum.P1) => 1Pのスコア情報を初期化
