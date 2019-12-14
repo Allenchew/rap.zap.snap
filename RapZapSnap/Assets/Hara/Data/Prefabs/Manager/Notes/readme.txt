@@ -1,51 +1,24 @@
----NotesObject“±“ü•û–@---
+---NotesObjectã®å°Žå…¥æ–¹æ³•---
 
-1. ƒV[ƒ“ã‚ÉNotesObject‚ð”z’u‚·‚é
-
-2. ƒCƒ“ƒXƒyƒNƒ^[‚ÅÝ’è‰Â”\‚È€–Ú
-    
-	MaxNotes              1“x‚É‰æ–Êã‚É•\Ž¦‚Å‚«‚éƒm[ƒc‚ÌÅ‘å”
-
-    NotesSize    @       ¶¬‚³‚ê‚éƒm[ƒc‚ÌScale
-
-	NotesSpriteAlpha      ”»’èƒm[ƒc‚Ì“§–¾“x
-
-	PerfectLength         ƒm[ƒc‚ÌPerfect”»’èˆæi’l‚ª¬‚³‚¢‚Ù‚Ç”»’è‚ªƒVƒrƒA‚É‚È‚è‚Ü‚·j
-
-	GoodLength            ƒm[ƒc‚ÌGood”»’èˆæi’l‚ª¬‚³‚¢‚Ù‚Ç”»’è‚ªƒVƒrƒA‚É‚È‚è‚Ü‚·j
-
-	BadLength             ƒm[ƒc‚ÌBad”»’èˆæi’l‚ª¬‚³‚¢‚Ù‚Ç”»’è‚ªƒVƒrƒA‚É‚È‚è‚Ü‚·j
+ã‚·ãƒ¼ãƒ³ä¸Šã«NotesObjectã‚’é…ç½®ã—ã¦ãã ã•ã„
+â€»åŒã˜ãã‚·ãƒ¼ãƒ³ä¸Šã«GameDataObjectã‚‚é…ç½®ã—ã¦ãã ã•ã„ã€‚
 
 
----Žg‚¢•û---
-1. ƒXƒNƒŠƒvƒg‚©‚çŒÄ‚Ño‚·ê‡ANotesControl.Instance.ŒÄ‚Ño‚µ‚½‚¢ŠÖ”–¼ ‚ÅŒÄ‚Ño‚¹‚Ü‚·
+---ä¸»ãªæ©Ÿèƒ½---
 
-2. ŒÄ‚Ño‚¹‚éŠÖ”ˆê——
-    
-	PlayNotesOneShot()        ƒm[ƒc‚ðŽw’è‚µ‚½À•W‚É‚P‰ñÄ¶‚·‚é
-	@@@@@@@@@@@@@¦ NotesControl.Instance.PlayNotesOneShot(ƒm[ƒc‚ÌŠJŽnÀ•W, ƒm[ƒc‚Ì”»’èÀ•W, 1P‚©2P‚©, ”»’èˆÊ’u‚Ü‚ÅˆÚ“®‚É—v‚·‚éŽžŠÔ)
+NotesControl.Instance.PlayNotesOneShot(å†ç”Ÿã™ã‚‹ãƒŽãƒ¼ãƒ„ã®ç¨®é¡ž, ãƒŽãƒ¼ãƒ„ã®ç§»å‹•é–‹å§‹åº§æ¨™, ãƒŽãƒ¼ãƒ„ã®åˆ¤å®šåº§æ¨™, ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç•ªå·, ç§»å‹•ã®æ‰€è¦æ™‚é–“)
+
+å‘¼ã³å‡ºã›ã‚‹ãƒŽãƒ¼ãƒ„ã®ç¨®é¡ž
+
+NotesType.CircleKey      ã€‡ãƒœã‚¿ãƒ³ãƒŽãƒ¼ãƒ„
+NotesType.CrossKey       Ã—ãƒœã‚¿ãƒ³ãƒŽãƒ¼ãƒ„
+NotesType.TriangleKey    â–³ãƒœã‚¿ãƒ³ãƒŽãƒ¼ãƒ„
+NotesType.UpArrow        â†‘ãƒœã‚¿ãƒ³ãƒŽãƒ¼ãƒ„
+NotesType.DownArrow      â†“ãƒœã‚¿ãƒ³ãƒŽãƒ¼ãƒ„
+NotesType.LeftArrow      â†ãƒœã‚¿ãƒ³ãƒŽãƒ¼ãƒ„
+
+NotesControl.Instance.PlayNotesOneShot(NotesType.CircleKey, new Vector3(0, 0, 0), new Vector3(3, 3, 0), ControllerNum.P1, 2.0f)
+    => åº§æ¨™(0, 0, 0)ã‹ã‚‰åº§æ¨™(3, 3, 0)ã‚’2ç§’é–“ã‹ã‘ã¦ã€‡ãƒœã‚¿ãƒ³ãƒŽãƒ¼ãƒ„ãŒç§»å‹•ã™ã‚‹å‡¦ç†
 
 
-    GetResult()              ƒm[ƒc‚Ì”»’èŒ‹‰Ê‚ðŽæ“¾‚Å‚«‚é
-	                         ¦ GetResult(0, InputController.PlayerOne) 1P‚ÌBad‚Ì”‚ðŽæ“¾‚·‚é
-
-
-	ResetResult()            ƒm[ƒc‚Ì”»’èŒ‹‰Ê‚ðƒŠƒZƒbƒg‚·‚é
-	                         ¦ ResetResult(InputController.PlayerTwo) 2P‚Ì”»’èŒ‹‰Ê‚ðƒŠƒZƒbƒg‚·‚é
-
-
-
----ƒm[ƒc‚Ì“ü—ÍiƒeƒXƒgƒvƒŒƒC—pj---
-
-1P‘€ì
-    Zƒ{ƒ^ƒ“ == AƒL[
-    ~ƒ{ƒ^ƒ“ == SƒL[
-    ¢ƒ{ƒ^ƒ“ == DƒL[
-    \ŽšƒL[ == –îˆóƒL[
-
-2P‘€ì
-    Zƒ{ƒ^ƒ“ == JƒL[
-    ~ƒ{ƒ^ƒ“ == KƒL[
-    ¢ƒ{ƒ^ƒ“ == LƒL[
-    \ŽšƒL[ == ƒeƒ“ƒL[‚Ì–îˆóƒL[
-							  @ 
+NotesControl.Instance.StopNotes() => ãƒŽãƒ¼ãƒ„ã®å†ç”Ÿã‚’å…¨ã¦çµ‚äº†ã•ã›ã‚‹å‡¦ç†

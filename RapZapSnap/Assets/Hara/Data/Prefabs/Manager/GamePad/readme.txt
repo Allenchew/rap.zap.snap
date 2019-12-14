@@ -1,68 +1,46 @@
----GamePad‚Ì“±“ü•û–@---
+---GamePadã®å°Žå…¥æ–¹æ³•---
 
-1. ƒV[ƒ“ã‚ÉGamePadƒIƒuƒWƒFƒNƒg‚ð”z’u‚µ‚Ü‚·B
-¦ƒV[ƒ“ã‚ÉEventSystemƒIƒuƒWƒFƒNƒg‚ª‘¶Ý‚·‚é‚ÆƒGƒ‰[‚ªo‚é‰Â”\«‚ª‚ ‚éˆ×AActive‚ðfalse‚É‚·‚é‚©íœ‚µ‚Ä‚­‚¾‚³‚¢B
-
-2. GamePad‚ÌƒCƒ“ƒXƒyƒNƒ^[‚©‚çGamePadControl‚ÌUsePs4Controller‚ðtrue‚É‚·‚é‚ÆPS4‚ÌƒRƒ“ƒgƒ[ƒ‰[“ü—Í‚ðŒŸ’m‚Å‚«‚é‚æ‚¤‚É‚È‚è‚Ü‚·BiƒfƒtƒHƒ‹ƒg‚Åtruej
-
-3. AxisValue‚Ì’l‚ð•Ï‚¦‚é‚ÆAƒRƒ“ƒgƒ[ƒ‰[‚ÌƒXƒeƒBƒbƒN‚Ì—LŒø“ü—ÍŠ´“x‚ð’²ß‚Å‚«‚Ü‚·B 
+ã‚·ãƒ¼ãƒ³ä¸Šã«GamePadã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’é…ç½®ã—ã¦ãã ã•ã„
+â€»ã‚·ãƒ¼ãƒ³ä¸Šã«EventSystemã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ(StandaloneInputModuleç­‰)ãŒå­˜åœ¨ã™ã‚‹ã¨ã‚¨ãƒ©ãƒ¼ãŒå‡ºã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ç‚ºã€Activeã‚’falseã«ã™ã‚‹ã‹å‰Šé™¤ã—ã¦ãã ã•ã„ã€‚
 
 
----Žg‚¢•û---
+---ä¸»ãªæ©Ÿèƒ½---
 
-1. ƒRƒ“ƒgƒ[ƒ‰[‚Ìƒ{ƒ^ƒ““ü—Í‚ðŒŸ’m‚·‚éB
+GamePadControl.Instance.GetKeyDown_1 => 1Pã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼å…¥åŠ›ã‚’å–å¾— (å…¥åŠ›ã—ãŸã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‚’å–å¾—)
+GamePadControl.Instance.GetKeyDown_2 => 2Pã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼å…¥åŠ›ã‚’å–å¾— (å…¥åŠ›ã—ãŸã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‚’å–å¾—)
 
-@@@@GamePadControl.Instance.GetButtonDown(ControllerNum.P1, DS4ButtonKey.Circle)    1PƒRƒ“ƒgƒ[ƒ‰[‚ÌZƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚±‚Æ‚ðboolŒ^‚ÅŽæ“¾‚·‚éi‰Ÿ‚³‚ê‚½ê‡‚Ítruej
+GamePadControl.Instance.GetKayUp_1 => 1Pã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼å…¥åŠ›ã‚’å–å¾— (å…¥åŠ›ã—çµ‚ãˆãŸã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‚’å–å¾—)
+GamePadControl.Instance.GetKayUp_2 => 2Pã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼å…¥åŠ›ã‚’å–å¾— (å…¥åŠ›ã—çµ‚ãˆãŸã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‚’å–å¾—)
 
-        ---DS4ButtonKeyˆê——---
-		Circle      Zƒ{ƒ^ƒ“
-		Cross       ~ƒ{ƒ^ƒ“
-		Triangle    ¢ƒ{ƒ^ƒ“
-        Square       ƒ{ƒ^ƒ“
-        Up          \ŽšƒL[ ª
-        Down        \ŽšƒL[ «
-        Left        \ŽšƒL[ ©
-        Right       \ŽšƒL[ ¨
-        L1@@@@@L1ƒ{ƒ^ƒ“
-        L3@@@@@LƒXƒeƒBƒbƒN‰Ÿ‚µž‚Ý
-        R1          R1ƒ{ƒ^ƒ“
-        R3          RƒXƒeƒBƒbƒN‰Ÿ‚µž‚Ý
-        OPTION      Optionƒ{ƒ^ƒ“
-        SHARE       Shareƒ{ƒ^ƒ“
+if(GamePadControl.Instance.GetKeyDown_1.Circle)
+{
+    // 1Pã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®ã€‡ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸã‚‰å‡¦ç†ã‚’å®Ÿè¡Œ
+}
 
+å–å¾—å¯èƒ½ã‚­ãƒ¼ã®ä¸€è¦§
 
-		Žg—p—á :
+Circle      ã€‡ãƒœã‚¿ãƒ³
+Cross       Ã—ãƒœã‚¿ãƒ³
+Triangle    â–³ãƒœã‚¿ãƒ³
+Square      â–¡ãƒœã‚¿ãƒ³
+Up          åå­—ã‚­ãƒ¼ â†‘
+Down        åå­—ã‚­ãƒ¼ â†“
+Left        åå­—ã‚­ãƒ¼ â†
+Right       åå­—ã‚­ãƒ¼ â†’
+L1ã€€ã€€ã€€ã€€ã€€L1ãƒœã‚¿ãƒ³
+L3ã€€ã€€ã€€ã€€ã€€Lã‚¹ãƒ†ã‚£ãƒƒã‚¯æŠ¼ã—è¾¼ã¿
+R1          R1ãƒœã‚¿ãƒ³
+R3          Rã‚¹ãƒ†ã‚£ãƒƒã‚¯æŠ¼ã—è¾¼ã¿
+OPTION      Optionãƒœã‚¿ãƒ³
+SHARE       Shareãƒœã‚¿ãƒ³
 
-		if(GamePadControl.Instance.GetButtonDown(ControllerNum.P1, DS4ButtonKey.Up) == true)
-		{
-		    // 1PƒRƒ“ƒgƒ[ƒ‰[‚Ì\ŽšƒL[ª‚ª‰Ÿ‚³‚ê‚½‚çŽÀs‚µ‚½‚¢ˆ—
-
-		}
-
-
-
-2. ƒRƒ“ƒgƒ[ƒ‰[‚ÌƒXƒeƒBƒbƒN“ü—Í‚ðŒŸ’m‚·‚éB
-
-@@@@GamePadControl.Instance.GetAxisDown(ControllerNum.P1, DS4AxisKey.L2)    1PƒRƒ“ƒgƒ[ƒ‰[‚ÌL2ƒ{ƒ^ƒ“‚ª“ü—Í‚³‚ê‚½‚±‚Æ‚ðboolŒ^‚ÅŽæ“¾‚·‚éi‰Ÿ‚³‚ê‚½ê‡‚Ítruej
-        
-		“ü—ÍŠ´“x‚ÍAxisValue‚Å’²ß‰Â”\
-
-        ---DS4AxisKeyˆê——---
-		LeftStick_Up        ¶ƒXƒeƒBƒbƒN ª
-		LeftStick_Down      ¶ƒXƒeƒBƒbƒN «
-		LeftStick_Left      ¶ƒXƒeƒBƒbƒN ©
-        LeftStick_Right     ¶ƒXƒeƒBƒbƒN ¨
-        RightStick_Up       ‰EƒXƒeƒBƒbƒN ª
-        RightStick_Down     ‰EƒXƒeƒBƒbƒN «
-        RightStick_Left     ‰EƒXƒeƒBƒbƒN ©
-        RightStick_Right    ‰EƒXƒeƒBƒbƒN ¨
-        L2@@@@@        L2ƒ{ƒ^ƒ“
-        R2@@@@@        R2ƒ{ƒ^ƒ“
-
-
-
-3. StandaloneInputModule(UI‘€ì—p‚Ìƒ‚ƒWƒ…[ƒ‹)‚ðŽg‚¤B
-        
-		StandaloneInputModule‚ðŽg‚¤ê‡AƒRƒ“ƒgƒ[ƒ‰‚ð—\‚ß—LüÚ‘±‚µ‚Ä‚¨‚­•K—v‚ª‚ ‚é‚Ì‚Å’ˆÓB
-
-		GamePadControl.Instance.SetInputModule(ControllerNum.P1)    1P‚ÌƒRƒ“ƒgƒ[ƒ‰[‚ÅuGI‚Ìƒ{ƒ^ƒ““ü—Í“™‚Ì‘€ì‚ª‰Â”\‚É‚È‚è‚Ü‚·B
+LeftStick_Up        å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ â†‘
+LeftStick_Down      å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ â†“
+LeftStick_Left      å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ â†
+LeftStick_Right     å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ â†’
+RightStick_Up       å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ â†‘
+RightStick_Down     å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ â†“
+RightStick_Left     å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ â†
+RightStick_Right    å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ â†’
+L2ã€€ã€€ã€€ã€€ã€€        L2ãƒœã‚¿ãƒ³
+R2ã€€ã€€ã€€ã€€ã€€        R2ãƒœã‚¿ãƒ³

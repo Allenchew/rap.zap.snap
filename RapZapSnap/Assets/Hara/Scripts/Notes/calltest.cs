@@ -17,6 +17,7 @@ public class calltest : MonoBehaviour
     private GameObject[] staroObjs = null;
     [SerializeField]
     private GameObject[] endObjs = null;
+    [SerializeField] private int sceneNumber = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -29,12 +30,12 @@ public class calltest : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
-            NotesControl.Instance.ResetResult(ControllerNum.P1);
+            
         }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            NotesControl.Instance.ResetResult(ControllerNum.P2);
+            
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -60,10 +61,12 @@ public class calltest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            Debug.Log("ユーザー1  Perfect : " + NotesControl.Instance.GetResult(2, ControllerNum.P1) + "  Good : " + NotesControl.Instance.GetResult(1, ControllerNum.P1) + "  Bad : " + NotesControl.Instance.GetResult(0, ControllerNum.P1));
-            Debug.Log("ユーザー2  Perfect : " + NotesControl.Instance.GetResult(2, ControllerNum.P2) + "  Good : " + NotesControl.Instance.GetResult(1, ControllerNum.P2) + "  Bad : " + NotesControl.Instance.GetResult(0, ControllerNum.P2));
-            Debug.Log("ユーザー1  Total : " + NotesControl.Instance.GetResult(3, ControllerNum.P1));
-            Debug.Log("ユーザー2  Total : " + NotesControl.Instance.GetResult(3, ControllerNum.P2));
+            SceneManager.LoadScene(sceneNumber);
+        }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            NotesControl.Instance.StopNotes();
         }
     }
 }

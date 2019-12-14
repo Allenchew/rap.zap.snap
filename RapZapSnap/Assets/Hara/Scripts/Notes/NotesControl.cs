@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NotesControl : MonoBehaviour
+public class NotesControl : SingletonMonoBehaviour<NotesControl>
 {
-    public static NotesControl Instance { get; private set; } = null;
-
     // ノーツの最大生成数
-    [SerializeField, Tooltip("ノーツの最大生成数"), Range(1, 20)]
+    [SerializeField, Tooltip("ノーツの最大生成数"), Range(1, 20), Header("ノーツの基本設定")]
     private int maxNotes = 5;
 
     // ノーツのプレファブオブジェクト
@@ -33,23 +31,11 @@ public class NotesControl : MonoBehaviour
         private int notesCheckCount;
         public int NotesCheckCount { set { notesCheckCount = value; if (notesCheckCount >= NotesObjects.Length || notesCheckCount < 0) notesCheckCount = 0; } get { return notesCheckCount; } }
 
-        // Perfect, Good, Badそれぞれの総数
-        public int Perfect, Good, Bad, TotalScore;
-
         // 初期化
         public void ResetDataBase()
         {
             notesCallCount = 0;
             notesCheckCount = 0;
-            ResetScore();
-        }
-
-        public void ResetScore()
-        {
-            Perfect = 0;
-            Good = 0;
-            Bad = 0;
-            TotalScore = 0;
         }
     }
     private NotesDataBase dataBase1;
@@ -61,7 +47,7 @@ public class NotesControl : MonoBehaviour
     [SerializeField, Tooltip("判定ノーツの透明度"), Range(0, 1.0f)]
     private float notesSpriteAlpha = 0.5f;
 
-    [SerializeField, Tooltip("ノーツ判定距離:Perfect"), Range(0.0001f, 0.05f)]
+    [SerializeField, Tooltip("ノーツ判定距離:Perfect"), Range(0.0001f, 0.05f), Header("ノーツの判定域")]
     private float perfectLength = 0.05f;
 
     [SerializeField, Tooltip("ノーツの判定距離:Good"), Range(0.0001f, 0.05f)]
@@ -70,20 +56,10 @@ public class NotesControl : MonoBehaviour
     [SerializeField, Tooltip("ノーツの判定距離:Bad"), Range(0.0001f, 0.05f)]
     private float badLength = 0.05f;
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (Instance == null && Instance != this)
-        {
-            Instance = this;
-            dataBase1.ResetDataBase();
-            dataBase2.ResetDataBase();
-            for (int i = 0; i < 2; i++) { CreateNotes((ControllerNum)i); }
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
+        Init();
     }
 
     // Start is called before the first frame update
@@ -95,7 +71,19 @@ public class NotesControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        for(int i = 0; i < 2; i++) { InputNotesAction((ControllerNum)i); }
+        InputNotesAction(ControllerNum.P1);
+        InputNotesAction(ControllerNum.P2);
+    }
+
+    /// <summary>
+    /// NotesControlの初期化
+    /// </summary>
+    private void Init()
+    {
+        dataBase1.ResetDataBase();
+        dataBase2.ResetDataBase();
+        CreateNotes(ControllerNum.P1);
+        CreateNotes(ControllerNum.P2);
     }
 
     /// <summary>
@@ -133,9 +121,7 @@ public class NotesControl : MonoBehaviour
     /// <summary>
     /// ノーツを1回再生する処理
     /// </summary>
-    /// <param name="type">再生するノーツのタイプ 
-    /// <para>Example: NotesType.CircleKey → 〇ボタンノーツ</para>
-    /// </param>
+    /// <param name="type">再生するノーツのタイプ</param>
     /// <param name="startPos">ノーツの再生開始座標</param>
     /// <param name="endPos">ノーツの判定座標</param>
     /// <param name="id">入力対象のコントローラ番号</param>
@@ -154,6 +140,29 @@ public class NotesControl : MonoBehaviour
         notesData.NotesCallCount++;
 
         _ = id == ControllerNum.P1 ? dataBase1.NotesCallCount = notesData.NotesCallCount : dataBase2.NotesCallCount = notesData.NotesCallCount;
+    }
+
+    /// <summary>
+    /// 全てのノーツの再生を止める
+    /// </summary>
+    public void StopNotes()
+    {
+        for(int i = 0; i < maxNotes; i++)
+        {
+            if(dataBase1.NotesObjects[i].gameObject.activeSelf == true)
+            {
+                dataBase1.NotesObjects[i].ResetNotes();
+            }
+
+            if(dataBase2.NotesObjects[i].gameObject.activeSelf == true)
+            {
+                dataBase2.NotesObjects[i].ResetNotes();
+            }
+        }
+        dataBase1.NotesCallCount = 0;
+        dataBase1.NotesCheckCount = 0;
+        dataBase2.NotesCallCount = 0;
+        dataBase2.NotesCheckCount = 0;
     }
 
     /// <summary>
@@ -286,65 +295,21 @@ public class NotesControl : MonoBehaviour
         switch (result)
         {
             case 0:
-                Debug.Log(id + " : BAD");
-                notesData.Bad++;
+                GameData.Instance.PlusNotesResult(id, 0);
                 break;
             case 1:
-                Debug.Log(id + " : GOOD");
-                notesData.Good++;
+                GameData.Instance.PlusNotesResult(id, 1);
                 break;
             case 2:
-                Debug.Log(id + " : PERFECT");
-                notesData.Perfect++;
+                GameData.Instance.PlusNotesResult(id, 2);
                 break;
             default:
                 return;
         }
 
         notesData.NotesCheckCount++;
-        notesData.TotalScore += score;
+        GameData.Instance.PlusTotalScore(id, score);
 
-        _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
-
-        // 歌詞を流す処理（予定）
-
-    }
-
-    /// <summary>
-    /// ノーツの結果を取得する
-    /// </summary>
-    /// <param name="resultNum">0:Badの数 1:Goodの数 2:Perfectの数 3:トータルスコア 0～3以外:返り値0</param>
-    /// <param name="id">結果を取得する対象プレイヤー</param>
-    /// <returns></returns>
-    public int GetResult(int resultNum, ControllerNum id = ControllerNum.P1)
-    {
-        if (resultNum < 0 || resultNum > 3) { return 0; }
-
-        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
-        
-        switch (resultNum)
-        {
-            case 0:
-                return notesData.Bad;
-            case 1:
-                return notesData.Good;
-            case 2:
-                return notesData.Perfect;
-            case 3:
-                return notesData.TotalScore;
-            default:
-                return 0;
-        }
-    }
-
-    /// <summary>
-    /// ノーツのリザルトを初期化する
-    /// </summary>
-    /// <param name="id">プレイヤー番号</param>
-    public void ResetResult(ControllerNum id = ControllerNum.P1)
-    {
-        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
-        notesData.ResetScore();
         _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
     }
 }
