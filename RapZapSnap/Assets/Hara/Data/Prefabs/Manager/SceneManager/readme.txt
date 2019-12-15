@@ -1,7 +1,6 @@
 ---SceneManagerの導入方法---
 
 シーン上にSceneManagerオブジェクトを配置してください
-※インスペクター上の「現在のシーン情報」のシーン名を配置したシーン名に変更してください。
 
 シーンのビルドインデックスの並び順を
 
@@ -15,6 +14,8 @@
 
 ---主な機能---
 
-SceneControl.Instance.LoadScene() => シーンの遷移を行う処理
+SceneControl.Instance.LoadScene(遷移先のシーン) => シーンの遷移を行う処理
     
-	インスペクターの設定を忘れずに行ってください。
+	SceneControl.Instance.LoadScene(SceneList.Title) => タイトルシーンに遷移
+
+	※シーン遷移はビルドインデックスの順番を参照するので、シーンの並び順を注意してください。

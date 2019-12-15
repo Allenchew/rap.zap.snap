@@ -14,8 +14,6 @@ public enum SceneList
 
 public class SceneControl : SingletonMonoBehaviour<SceneControl>
 {
-    [SerializeField, Tooltip("シーン名"), Header("現在のシーン情報")] private SceneList scene = SceneList.Title;
-
     private int[] sceneNumbers = null;
 
     private int sceneListCount = 0;    // 登録されているシーン数
@@ -43,29 +41,18 @@ public class SceneControl : SingletonMonoBehaviour<SceneControl>
     /// <summary>
     /// シーンの遷移
     /// </summary>
-    public AsyncOperation LoadScene()
+    /// <param name="scene">遷移先のシーン</param>
+    /// <returns></returns>
+    public AsyncOperation LoadScene(SceneList scene)
     {
-        int sceneNumber;
+        int sceneNumber = (int)scene;
 
-        switch (scene)
+        if(sceneNumber >= sceneListCount)
         {
-            case SceneList.Title:
-                sceneNumber = sceneNumbers[(int)SceneList.CharacterSelect];
-                break;
-            case SceneList.CharacterSelect:
-                sceneNumber = sceneNumbers[(int)SceneList.GameMain];
-                break;
-            case SceneList.GameMain:
-                sceneNumber = sceneNumbers[(int)SceneList.Result];
-                break;
-            case SceneList.Result:
-                sceneNumber = sceneNumbers[(int)SceneList.Title];
-                break;
-            default:
-                return null;
+            Debug.LogError("指定された「シーン番号：" + sceneNumber + "(" + scene + ")」のシーンは存在しなかった為、代わりのシーンを読み込みました。");
         }
 
         // シーンの読み込み
-        return SceneManager.LoadSceneAsync(sceneNumber);
+        return SceneManager.LoadSceneAsync(sceneNumbers[sceneNumber]);
     }
 }

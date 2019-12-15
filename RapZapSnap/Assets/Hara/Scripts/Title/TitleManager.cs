@@ -68,6 +68,7 @@ public class TitleManager : MonoBehaviour
         titleLogo.gameObject.SetActive(true);
         titleLogoScale = titleLogo.transform.localScale;
         titleLogoAnime = titleLogo.gameObject.GetComponent<Animator>();
+        titleLogoAnime.enabled = true;
 
         titleImage_P1.gameObject.SetActive(true);
         titleImage_P2.gameObject.SetActive(true);
@@ -84,8 +85,8 @@ public class TitleManager : MonoBehaviour
         // 座標の初期化
         objP1.Start = titleImage_P1.transform.localPosition;
         objP2.Start = titleImage_P2.transform.localPosition;
-        objP1.End = (Vector3.left * Screen.width + Vector3.down * Screen.height) + objP1.Start;
-        objP2.End = (Vector3.right * Screen.width + Vector3.up * Screen.height) + objP2.Start;
+        objP1.End = Vector3.left * titleImage_P1.rectTransform.rect.width + objP1.Start;
+        objP2.End = Vector3.right * titleImage_P2.rectTransform.rect.width + objP2.Start;
 
         actionFlag = true;
     }
@@ -114,7 +115,7 @@ public class TitleManager : MonoBehaviour
                 if(radyController1 == true && radyController2 == true)
                 {
                     stepEndFlag = true;
-                    titleLogoAnime.speed = 0;
+                    titleLogoAnime.enabled = false;
                     titleLogo.transform.localScale = titleLogoScale;
                 }
                 break;
@@ -180,7 +181,7 @@ public class TitleManager : MonoBehaviour
     private IEnumerator SceneLoad()
     {
         // シーンの読み込み
-        async = SceneControl.Instance.LoadScene();
+        async = SceneControl.Instance.LoadScene(SceneList.CharacterSelect);
 
         async.allowSceneActivation = false;
 

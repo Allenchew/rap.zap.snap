@@ -226,7 +226,7 @@ public class ResultManager : MonoBehaviour
                     actionFlag = false;
                     GameData.Instance.ResetScore(ControllerNum.P1);
                     GameData.Instance.ResetScore(ControllerNum.P2);
-                    SceneControl.Instance.LoadScene();
+                    SceneControl.Instance.LoadScene(SceneList.Title);
                 }
                 return;
         }
