@@ -10,10 +10,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     [SerializeField, Tooltip("ブーイングができるプレイヤー")]
     private ControllerNum booingPlayer = ControllerNum.P2;
 
-    private AudioSource audioSource;
-
-    [SerializeField, Tooltip("SE音源リスト"), Header("お邪魔用のサウンド")]
-    private List<AudioClip> audioClips = null;
+    private AudioSource[] audioSources = null;
 
     [SerializeField, Tooltip("振動の強さ"), Header("コントローラーを振動させるお邪魔システム")]
     private byte vibrationPower = 255;
@@ -69,7 +66,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// </summary>
     private void Init()
     {
-        audioSource = GetComponent<AudioSource>();
+        audioSources = GetComponents<AudioSource>();
 
         if (particleCameraObject != null)
         {
@@ -84,14 +81,43 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// お邪魔SEを再生する
     /// </summary>
     /// <param name="seNumber">再生するSE番号</param>
-    private void PlaySE(int seNumber)
+    /// <param name="playOneShot">再生モード</param>
+    private void PlaySE(int seNumber, bool playOneShot)
     {
-        if (seNumber < 0 || seNumber >= audioClips.Count || audioClips[seNumber] == null)
+        if (seNumber < 0 || seNumber >= audioSources.Length || (seNumber < audioSources.Length && audioSources[seNumber].clip == null))
         {
             Debug.LogError("指定した番号にSEが登録されていません");
             return;
         }
-        audioSource.PlayOneShot(audioClips[seNumber]);
+
+        // SEの再生
+        if(playOneShot == true)
+        {
+            audioSources[seNumber].PlayOneShot(audioSources[seNumber].clip);
+        }
+        else
+        {
+            audioSources[seNumber].Play();
+        }
+    }
+
+    /// <summary>
+    /// お邪魔のSEを停止する
+    /// </summary>
+    /// <param name="seNumber">停止するSE番号</param>
+    private void StopSE(int seNumber)
+    {
+        if (seNumber < 0 || seNumber >= audioSources.Length || (seNumber < audioSources.Length && audioSources[seNumber].clip == null))
+        {
+            Debug.LogError("指定した番号にSEが登録されていません");
+            return;
+        }
+
+        // SEの停止
+        if(audioSources[seNumber].isPlaying == true)
+        {
+            audioSources[seNumber].Stop();
+        }
     }
 
     /// <summary>
@@ -116,6 +142,10 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     private IEnumerator DoVibration(ControllerNum id, byte vibration, float duration)
     {
         isRunningVibration = true;
+
+        // SEの再生
+        int seNum = 0;
+        PlaySE(seNum, true);
 
         float time = 0f;
 
@@ -155,6 +185,10 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     {
         isRunningShake = true;
 
+        // SEの再生
+        int seNum = 1;
+        PlaySE(seNum, false);
+
         // MainCameraを取得
         if (mainCamera == null) { mainCamera = Camera.main.gameObject; }
         
@@ -173,6 +207,9 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         }
         
         mainCamera.transform.localPosition = mainCameraPos;
+
+        // SEの停止
+        StopSE(seNum);
 
         isRunningShake = false;
     }
@@ -233,6 +270,10 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
             // パーティクルの再生
             particle.Emit(1);
 
+            // SEの再生
+            int seNum = 2;
+            PlaySE(seNum, true);
+
             // 待機
             while(deltaTime < span)
             {
@@ -258,7 +299,6 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         if(input.Circle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true))
         {
             if(playVibration == false) { return; }
-            PlaySE(0);
             StartVibration(target, vibrationPower, vibDuration);
             booingPlayCount--;
             playVibration = false;
@@ -268,7 +308,6 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         if(input.Triangle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.D) == true : Input.GetKeyDown(KeyCode.L) == true))
         {
             if(playShake == false) { return; }
-            PlaySE(0);
             ShakeAction(shakeDuration, shakeMagnitude);
             booingPlayCount--;
             playShake = false;
@@ -278,7 +317,6 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         if (input.Square == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.W) == true : Input.GetKeyDown(KeyCode.I) == true))
         {
             if(playPaint == false) { return; }
-            PlaySE(0);
             PlayParticle(particleCallTime, particleCallSpan, booingPlayer);
             booingPlayCount--;
             playPaint = false;
