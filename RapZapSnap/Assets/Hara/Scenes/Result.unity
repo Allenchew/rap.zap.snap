@@ -2003,7 +2003,7 @@ GameObject:
   - component: {fileID: 1294155947}
   - component: {fileID: 1294155946}
   m_Layer: 0
-  m_Name: Manager
+  m_Name: ResultManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

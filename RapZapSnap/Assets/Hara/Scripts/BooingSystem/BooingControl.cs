@@ -27,7 +27,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     private bool isRunningShake = false;
     private Coroutine shakeCoroutine = null;
 
-    [SerializeField, Tooltip("インクパーティクルオブジェクト"), Header("画面を汚すお邪魔システム")]
+    [SerializeField, Tooltip("パーティクル用のカメラ"), Header("画面を汚すお邪魔システム")]
     private GameObject particleCameraObject = null;
     private ParticleSystem particle = null;
     private UnityEngine.UI.RawImage particleRawImage = null;
