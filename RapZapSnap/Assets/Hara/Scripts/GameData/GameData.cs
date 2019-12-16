@@ -269,6 +269,57 @@ public class GameData : SingletonMonoBehaviour<GameData>
     }
 
     /// <summary>
+    /// 指定したプレイヤーのRap(「良」判定)スコアを取得
+    /// </summary>
+    /// <param name="id">プレイヤー番号</param>
+    /// <returns></returns>
+    public int GetRapScore(ControllerNum id)
+    {
+        if(id == ControllerNum.P1)
+        {
+            return data_P1.Rap;
+        }
+        else
+        {
+            return data_P2.Rap;
+        }
+    }
+
+    /// <summary>
+    /// 指定したプレイヤーのZap(「可」判定)スコアを取得
+    /// </summary>
+    /// <param name="id">プレイヤー番号</param>
+    /// <returns></returns>
+    public int GetZapScore(ControllerNum id)
+    {
+        if (id == ControllerNum.P1)
+        {
+            return data_P1.Zap;
+        }
+        else
+        {
+            return data_P2.Zap;
+        }
+    }
+
+    /// <summary>
+    /// 指定したプレイヤーのSnap(「不可」判定)スコアを取得
+    /// </summary>
+    /// <param name="id">プレイヤー番号</param>
+    /// <returns></returns>
+    public int GetSnapScore(ControllerNum id)
+    {
+        if (id == ControllerNum.P1)
+        {
+            return data_P1.Snap;
+        }
+        else
+        {
+            return data_P2.Snap;
+        }
+    }
+
+    /// <summary>
     /// スコアのリセット
     /// </summary>
     /// <param name="id">プレイヤー番号</param>
