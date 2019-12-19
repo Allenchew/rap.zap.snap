@@ -1276,7 +1276,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2143314584857199495}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2143314583629256144
 SpriteRenderer:
@@ -3147,7 +3147,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2143314584857199495}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2143314583954923895
 SpriteRenderer:
@@ -3384,7 +3384,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2143314584857199495}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2143314583968539059
 SpriteRenderer:
@@ -4583,7 +4583,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2143314584857199495}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2143314584198561615
 SpriteRenderer:
@@ -5038,9 +5038,11 @@ MonoBehaviour:
   - "\u52DD\u8005"
   - "\u738B\u5B50"
   - "\u5984\u60F3"
-  - "\u89E3\u9664"
   - "\u611B\u8B77"
+  - "\u89E3\u9664"
   - "\u7206\u7834"
+  OptionScore: e8030000580200009cffffff58020000e80300009cffffff
+  PlayerControl: 0
 --- !u!1 &2143314584275980376
 GameObject:
   m_ObjectHideFlags: 0
@@ -8731,10 +8733,10 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2143314583968539058}
-  - {fileID: 2143314583629256147}
   - {fileID: 2143314584198561614}
   - {fileID: 2143314583954923894}
+  - {fileID: 2143314583968539058}
+  - {fileID: 2143314583629256147}
   - {fileID: 2143314583698784076}
   - {fileID: 2143314583958454193}
   m_Father: {fileID: 2143314584260236576}

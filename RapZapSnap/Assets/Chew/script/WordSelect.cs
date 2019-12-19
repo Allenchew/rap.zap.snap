@@ -8,14 +8,20 @@ public class WordSelect : MonoBehaviour
     public int index = 0;
     public GameObject[] showselect;
     public Text[] SelectionText;
+
+    private DS4InputKey controllingplayer = new DS4InputKey();
     // Update is called once per frame
     void Start()
     {
         
     }
+    void OnEnable()
+    {
+        controllingplayer = Getinput(MainGameManager.instance.currentplayer);
+    }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (controllingplayer.Down)
         {
             if (index < 2)
             {
@@ -23,7 +29,8 @@ public class WordSelect : MonoBehaviour
                 setSelectMark();
             }
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow)){
+        else if (controllingplayer.Up)
+        {
             if (index > 0)
             {
                 index--;
@@ -49,6 +56,19 @@ public class WordSelect : MonoBehaviour
                 showselect[i].SetActive(true);
             else
                 showselect[i].SetActive(false);
+        }
+    }
+    private DS4InputKey Getinput(ControllerNum currentplayer)
+    {
+        switch (currentplayer)
+        {
+            case ControllerNum.P1:
+                return GamePadControl.Instance.GetKeyDown_1;
+            case ControllerNum.P2:
+                return GamePadControl.Instance.GetKeyDown_2;
+            default:
+                Debug.Log("Word Select Get input error");
+                return GamePadControl.Instance.GetKeyDown_1;
         }
     }
 }

@@ -2,65 +2,71 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct MaskData
+{
+    public float[] delayshowtime;
+    public bool OnceEffect;
+    public bool StartEffect;
+    public bool EndEffect;
+    public bool IsOption;
+    public bool ShowOption;
+    public int EffectIndex;
+    public int OptionCount;
+    public float EffectDelay;
+    public void Set(float[] tmpdelay, bool SE, bool EE, bool isop, int Eindex, int opcount, bool ShowOp, bool onceEf, float effectdelay)
+    {
+        delayshowtime = tmpdelay;
+        StartEffect = SE;
+        EndEffect = EE;
+        IsOption = isop;
+        EffectIndex = Eindex;
+        OptionCount = opcount;
+        ShowOption = ShowOp;
+        OnceEffect = onceEf;
+        EffectDelay = effectdelay;
+    }
+}
+
+
 public class SpawnNotes : MonoBehaviour
-{ 
+{
+    public static SpawnNotes Instance;
+    
+    public GameObject[] LyricsPrefabs;
+
     [SerializeField] NotesData notesdata;
     [SerializeField] NotesData2 notesdata2;
 
-    public int testplay = 0;
+    private bool runningnotes = false;
+    private ControllerNum currentplayer;
+    private Character currentcharacter;
+    int[] character_sequal = new int[2];
 
-    private bool playeroneturn = true;
+    void Awake()
+    {
+        if(Instance == null)
+        {
+            Instance = this;
+        }
+    }
 
-    int character_one_sequal = 0;
-    int character_two_sequal = 0;
-    // Start is called before the first frame update
     void Start()
     {
-        testcall(testplay);
-        //StartCoroutine(spawnout());
+        character_sequal[0] = 0;
+        character_sequal[1] = 0;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void testcall(int index)
-    {
-        switch (index)
-        {
-            case 0:
-                character_one_sequal = 0;
-                playeroneturn = true;
-                break;
-            case 1:
-                character_one_sequal = 1;
-                playeroneturn = true;
-                break;
-            case 2:
-                character_one_sequal = 2;
-                playeroneturn = true;
-                break;
-            case 3:
-                character_two_sequal = 0;
-                playeroneturn = false;
-                break;
-            case 4:
-                character_two_sequal = 1;
-                playeroneturn = false;
-                break;
-            case 5:
-                character_two_sequal = 2;
-                playeroneturn = false;
-                break;
-        }
-        CallSpawnNotes();
-    }
-
     public void CallSpawnNotes()
     {
-        StartCoroutine(spawnout());
+        if (!runningnotes)
+        {
+            runningnotes = true;
+            currentplayer = MainGameManager.instance.currentplayer;
+            currentcharacter = GameData.Instance.GetCharacterData(currentplayer);
+            int tmpbgmIndex = ((int)(GameData.Instance.GetCharacterData(currentplayer))-1)*3;
+            BgmManager.Instance.StartPlay(tmpbgmIndex+character_sequal[(int)currentplayer]);
+            Instantiate(LyricsPrefabs[tmpbgmIndex + character_sequal[(int)currentplayer]]);
+            StartCoroutine(spawnout());
+        }
     }
     IEnumerator spawnout()
     {
@@ -76,16 +82,17 @@ public class SpawnNotes : MonoBehaviour
             Vector3 tmpstart = new Vector3(tmpdata.startposX, tmpdata.startposY, 0);
             Vector3 tmpend = new Vector3(tmpdata.endposX, tmpdata.endposY, 0);
             yield return new WaitForSeconds(tmpdata.delaytime);
-            NotesControl.Instance.PlayNotesOneShot(tmpdata.ntype,tmpstart, tmpend, ControllerNum.P1,tmpdata.speed);
+            NotesControl.Instance.PlayNotesOneShot(tmpdata.ntype,tmpstart, tmpend, currentplayer,tmpdata.speed);
         }
-        if (playeroneturn) character_one_sequal++;
-        else character_two_sequal++;
+        character_sequal[(int)currentplayer]++;
+        BgmManager.Instance.StopPlay();
+        runningnotes = false;
     }
     public MstNotesEntity GetDatabyId(int id)
     {
-        if (playeroneturn)
+        if (currentcharacter == Character.Tokiwa)
         {
-            switch (character_one_sequal)
+            switch (character_sequal[(int)currentplayer])
             {
                 case 0:
                     return notesdata.Phrase1.Find(entity => entity.id == id);
@@ -97,9 +104,9 @@ public class SpawnNotes : MonoBehaviour
                     return null;
             }
         }
-        else
+        else if(currentcharacter == Character.Hajime)
         {
-            switch (character_two_sequal)
+            switch (character_sequal[(int)currentplayer])
             {
                 case 0:
                     return notesdata2.Phrase1.Find(entity => entity.id == id);
@@ -111,5 +118,10 @@ public class SpawnNotes : MonoBehaviour
                     return null;
             }
         }
+        else
+        {
+            return null;
+        }
     }
+   
 }

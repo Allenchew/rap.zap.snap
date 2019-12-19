@@ -286,6 +286,22 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 3
+  - id: 17
+    startposX: 11
+    startposY: -2.4
+    endposX: -2
+    endposY: -2.4
+    delaytime: 1
+    speed: 1
+    ntype: 2
+  - id: 18
+    startposX: -11
+    startposY: -2.7
+    endposX: 5.15
+    endposY: -2.7
+    delaytime: 2
+    speed: 1
+    ntype: 3
   Phrase3:
   - id: 1
     startposX: -11
@@ -412,6 +428,22 @@ MonoBehaviour:
     startposY: 0
     endposX: 0
     endposY: 0
+    delaytime: 2
+    speed: 1
+    ntype: 3
+  - id: 17
+    startposX: 11
+    startposY: 0
+    endposX: -3.7
+    endposY: 0
+    delaytime: 1
+    speed: 1
+    ntype: 2
+  - id: 18
+    startposX: 3.55
+    startposY: 7
+    endposX: 3.55
+    endposY: -0.5
     delaytime: 2
     speed: 1
     ntype: 3

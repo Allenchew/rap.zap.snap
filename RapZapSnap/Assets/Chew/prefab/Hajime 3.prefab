@@ -1077,7 +1077,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8763794995760371870}
-  m_RootOrder: 1
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794995019669996
 SpriteRenderer:
@@ -1235,7 +1235,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8763794995658200506}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794995043659101
 SpriteRenderer:
@@ -2057,12 +2057,14 @@ MonoBehaviour:
   Slideeffect: {fileID: 0}
   showWords: {fileID: 0}
   OptionText:
-  - "\u52DD\u3061\u76EE"
   - "\u76F8\u624B"
   - "\u3054\u306F\u3093"
-  - "\u64AE\u5F71"
-  - "\u60AA\u7656"
+  - "\u52DD\u3061\u76EE"
   - "\u4F5C\u5BB6"
+  - "\u60AA\u7656"
+  - "\u64AE\u5F71"
+  OptionScore: 580200009cffffffe80300009cffffff58020000e8030000
+  PlayerControl: 0
 --- !u!1 &8763794995169468275
 GameObject:
   m_ObjectHideFlags: 0
@@ -2724,7 +2726,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8763794995760371870}
-  m_RootOrder: 0
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794995230493352
 SpriteRenderer:
@@ -4226,7 +4228,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8763794995658200506}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794995622620638
 SpriteRenderer:
@@ -4609,12 +4611,12 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 8763794996986455008}
-  - {fileID: 8763794995723381151}
   - {fileID: 8763794995043659100}
   - {fileID: 8763794995622620637}
   - {fileID: 8763794996290646854}
   - {fileID: 8763794996329259663}
+  - {fileID: 8763794996986455008}
+  - {fileID: 8763794995723381151}
   m_Father: {fileID: 8763794995167688715}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5066,7 +5068,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8763794995658200506}
-  m_RootOrder: 1
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794995723381144
 SpriteRenderer:
@@ -5460,12 +5462,12 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 8763794995230493359}
-  - {fileID: 8763794995019670003}
-  - {fileID: 8763794995217122042}
-  - {fileID: 8763794995295475786}
   - {fileID: 8763794996448046193}
   - {fileID: 8763794995988011736}
+  - {fileID: 8763794995217122042}
+  - {fileID: 8763794995295475786}
+  - {fileID: 8763794995230493359}
+  - {fileID: 8763794995019670003}
   m_Father: {fileID: 8763794995167688715}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6319,7 +6321,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8763794995760371870}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794995988011737
 SpriteRenderer:
@@ -7656,7 +7658,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8763794995658200506}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794996290646855
 SpriteRenderer:
@@ -7899,7 +7901,7 @@ Transform:
   m_Children:
   - {fileID: 8763794995208384678}
   m_Father: {fileID: 8763794995658200506}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794996329259656
 SpriteRenderer:
@@ -8294,7 +8296,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8763794995760371870}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794996448046194
 SpriteRenderer:
@@ -9751,7 +9753,7 @@ Transform:
   m_Children:
   - {fileID: 8763794995756064017}
   m_Father: {fileID: 8763794995658200506}
-  m_RootOrder: 0
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8763794996986455009
 SpriteRenderer:

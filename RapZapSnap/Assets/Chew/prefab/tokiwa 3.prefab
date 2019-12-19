@@ -2923,6 +2923,8 @@ MonoBehaviour:
   - "\u30D1\u30F3\u30C4"
   - "\u5965\u79D8"
   - "\u52DD\u5229"
+  OptionScore: e80300009cffffff580200009cffffff58020000e8030000
+  PlayerControl: 0
 --- !u!1 &3609902551757457220
 GameObject:
   m_ObjectHideFlags: 0

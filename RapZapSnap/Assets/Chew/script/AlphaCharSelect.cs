@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class AlphaCharSelect : MonoBehaviour
 {
     public GameObject[] images;
     public GameObject Playertwo;
     public GameObject p1bg;
+    public GameObject Coverimage;
     private bool p1picked = false;
     private bool movingflag = false;
     private Vector3 centerpoint = new Vector3(-250f,0,0);
@@ -61,6 +63,7 @@ public class AlphaCharSelect : MonoBehaviour
                 movingflag = true;
                 tmpregister.Add(currentChar[0]);
                 currentChar.Remove(currentChar[0]);
+                StartCoroutine(fadeout());
                 //selected animation and scene moving
             }
         }
@@ -137,5 +140,14 @@ public class AlphaCharSelect : MonoBehaviour
             currentChar.Remove(tmp);
             currentChar.Insert(0, tmp);
         }
+    }
+    IEnumerator fadeout()
+    {
+        for (float i = 0; i < 1.1f; i += 0.05f)
+        {
+            Coverimage.GetComponent<Image>().color = Color.Lerp(Color.clear,Color.white , i);
+            yield return new WaitForSeconds(0.01f);
+        }
+        SceneManager.LoadScene(2);
     }
 }
