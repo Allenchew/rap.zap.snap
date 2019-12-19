@@ -1,7 +1,7 @@
 ---GamePadの導入方法---
 
 シーン上にGamePadオブジェクトを配置してください
-※シーン上にEventSystemオブジェクト(StandaloneInputModule等)が存在するとエラーが出る可能性がある為、Activeをfalseにするか削除してください。
+※シーン上にEventSystemオブジェクト(StandaloneInputModule等)が存在するとエラーが出る可能性がある為、必ずActiveをfalseにするか削除してください。
 
 
 ---主な機能---

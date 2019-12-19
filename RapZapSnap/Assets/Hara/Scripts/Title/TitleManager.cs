@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class TitleManager : MonoBehaviour
 {
@@ -15,6 +14,9 @@ public class TitleManager : MonoBehaviour
 
     [SerializeField, Tooltip("NowLoading用のSlider"), Header("ロード画面用のオブジェクト")] private Slider nowLoadingSlider = null;
     [SerializeField, Tooltip("NowLoadingのText")] private Text nowLoadingText = null;
+
+    [SerializeField, Header("決定キー入力時のSE")] private AudioClip titleSE = null;
+    private AudioSource titleAudio = null;
 
     // コントローラの入力チェックフラグ
     private bool radyController1 = false;
@@ -69,6 +71,7 @@ public class TitleManager : MonoBehaviour
         titleLogo.gameObject.SetActive(true);
         titleLogoScale = titleLogo.transform.localScale;
         titleLogoAnime = titleLogo.gameObject.GetComponent<Animator>();
+        titleLogoAnime.enabled = true;
 
         titleImage_P1.gameObject.SetActive(true);
         titleImage_P2.gameObject.SetActive(true);
@@ -82,11 +85,13 @@ public class TitleManager : MonoBehaviour
         nowLoadingSlider.gameObject.SetActive(false);
         nowLoadingText.gameObject.SetActive(false);
 
+        titleAudio = GetComponent<AudioSource>();
+
         // 座標の初期化
         objP1.Start = titleImage_P1.transform.localPosition;
         objP2.Start = titleImage_P2.transform.localPosition;
-        objP1.End = (Vector3.left * Screen.width + Vector3.down * Screen.height) + objP1.Start;
-        objP2.End = (Vector3.right * Screen.width + Vector3.up * Screen.height) + objP2.Start;
+        objP1.End = Vector3.left * titleImage_P1.rectTransform.rect.width + objP1.Start;
+        objP2.End = Vector3.right * titleImage_P2.rectTransform.rect.width + objP2.Start;
 
         actionFlag = true;
     }
@@ -105,17 +110,19 @@ public class TitleManager : MonoBehaviour
                 if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || Input.GetKeyDown(KeyCode.A) == true) && radyController1 == false)
                 {
                     radyController1 = true;
+                    titleAudio.PlayOneShot(titleSE);
                     radyText_P1.SetActive(true);
                 }
                 if ((GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.J) == true) && radyController2 == false)
                 {
                     radyController2 = true;
+                    titleAudio.PlayOneShot(titleSE);
                     radyText_P2.SetActive(true);
                 }
                 if(radyController1 == true && radyController2 == true)
                 {
                     stepEndFlag = true;
-                    titleLogoAnime.speed = 0;
+                    titleLogoAnime.enabled = false;
                     titleLogo.transform.localScale = titleLogoScale;
                 }
                 break;
@@ -181,7 +188,7 @@ public class TitleManager : MonoBehaviour
     private IEnumerator SceneLoad()
     {
         // シーンの読み込み
-        async = SceneManager.LoadSceneAsync(sceneNum);
+        async = SceneControl.Instance.LoadScene(sceneNum);
 
         async.allowSceneActivation = false;
 

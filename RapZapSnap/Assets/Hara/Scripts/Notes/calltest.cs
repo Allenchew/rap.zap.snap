@@ -1,24 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class calltest : MonoBehaviour
 {
-    [SerializeField]
-    private float duration;
-
-    [SerializeField]
-    private GameObject startObj = null;
-    [SerializeField]
-    private GameObject endObj = null;
-
-    [SerializeField]
-    private GameObject[] staroObjs = null;
-    [SerializeField]
-    private GameObject[] endObjs = null;
-    [SerializeField] private int sceneNumber = 0;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -61,7 +46,7 @@ public class calltest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            SceneManager.LoadScene(sceneNumber);
+            SceneControl.Instance.LoadScene("Result");
         }
 
         if (Input.GetKeyDown(KeyCode.W))

@@ -17,6 +17,8 @@ public class SingletonMonoBehaviour <T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
+    [SerializeField, Tooltip("シングルトンにするか")] protected bool singletonMode = true;
+
     protected virtual void Awake()
     {
         if (instance != null && instance != this)
@@ -25,6 +27,6 @@ public class SingletonMonoBehaviour <T> : MonoBehaviour where T : MonoBehaviour
             return;
         }
         instance = GetComponent<T>();
-        DontDestroyOnLoad(gameObject);
+        if(singletonMode == true) { DontDestroyOnLoad(gameObject); }
     }
 }

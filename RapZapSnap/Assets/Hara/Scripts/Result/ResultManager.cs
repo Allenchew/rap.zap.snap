@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class ResultManager : MonoBehaviour
 {
@@ -28,6 +27,9 @@ public class ResultManager : MonoBehaviour
     [SerializeField, Tooltip("敗北プレイヤー用のzapのスコアテキスト")] private Text zapScore_Lose = null;
     [SerializeField, Tooltip("勝利プレイヤー用のsnapのスコアテキスト")] private Text snapScore_Win = null;
     [SerializeField, Tooltip("敗北プレイヤー用のsnapのスコアテキスト")] private Text snapScore_Lose = null;
+
+    [SerializeField, Header("リザルトシーン用のSE")] private AudioClip[] resultSE = null;
+    private AudioSource resultAudio = null;
 
     private struct MoveObjPos
     {
@@ -66,7 +68,7 @@ public class ResultManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 必要なコンポーネントの取得と座標の初期化を行う
+    /// リザルトシーンの初期化を行う
     /// </summary>
     private void ResultInit()
     {
@@ -87,6 +89,8 @@ public class ResultManager : MonoBehaviour
         // ScoreBoardの初期化
         scoreBoardMove.EndPos = notesScoreBoard.transform.localPosition;
         scoreBoardMove.StartPos = Vector3.up * 1200 + scoreBoardMove.EndPos;
+
+        resultAudio = GetComponent<AudioSource>();
 
         actionFlag = true;
     }
@@ -227,7 +231,11 @@ public class ResultManager : MonoBehaviour
                     actionFlag = false;
                     GameData.Instance.ResetScore(ControllerNum.P1);
                     GameData.Instance.ResetScore(ControllerNum.P2);
-                    SceneManager.LoadSceneAsync(sceneNum);
+                    if(resultSE[0] != null)
+                    {
+                        resultAudio.PlayOneShot(resultSE[0]);
+                    }
+                    SceneControl.Instance.LoadScene(sceneNum);
                 }
                 return;
         }

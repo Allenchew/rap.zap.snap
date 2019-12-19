@@ -11,5 +11,10 @@ BooingControl.Instance.SetBooingPlayer(プレイヤー番号)
 
 	BooingControl.Instance.SetBooingPlayer(ControllerNum.P1) => 1Pがブーイングシステムを使えるようになる
 
+	ゲーム開始時に、1Pが先攻なら2Pのブーイングシステムを使えるようにしてください。
+	ターンが切り替わったら、先攻プレイヤーのブーイングシステムを使えるようにしてください。
+
 
 BooingControl.Instance.BooingSystemOff() => ブーイングシステムを使えないようにする処理
+    
+	ゲームが終了したら、この処理を実行してください。
