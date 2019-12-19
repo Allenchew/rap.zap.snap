@@ -7,6 +7,8 @@ public class SpawnNotes : MonoBehaviour
     [SerializeField] NotesData notesdata;
     [SerializeField] NotesData2 notesdata2;
 
+    public int testplay = 0;
+
     private bool playeroneturn = true;
 
     int character_one_sequal = 0;
@@ -14,7 +16,8 @@ public class SpawnNotes : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(spawnout());
+        testcall(testplay);
+        //StartCoroutine(spawnout());
     }
 
     // Update is called once per frame
@@ -22,6 +25,39 @@ public class SpawnNotes : MonoBehaviour
     {
 
     }
+
+    private void testcall(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                character_one_sequal = 0;
+                playeroneturn = true;
+                break;
+            case 1:
+                character_one_sequal = 1;
+                playeroneturn = true;
+                break;
+            case 2:
+                character_one_sequal = 2;
+                playeroneturn = true;
+                break;
+            case 3:
+                character_two_sequal = 0;
+                playeroneturn = false;
+                break;
+            case 4:
+                character_two_sequal = 1;
+                playeroneturn = false;
+                break;
+            case 5:
+                character_two_sequal = 2;
+                playeroneturn = false;
+                break;
+        }
+        CallSpawnNotes();
+    }
+
     public void CallSpawnNotes()
     {
         StartCoroutine(spawnout());

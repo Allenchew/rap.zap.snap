@@ -99,7 +99,7 @@ public class ShowLyrics : MonoBehaviour
     }
     IEnumerator presetshow()
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(4.0f);
         GameObject tmp = gameObject.transform.GetChild(showindex).gameObject;
         showindex++;
         StartCoroutine(shuftShow(tmp));

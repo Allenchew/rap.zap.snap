@@ -955,6 +955,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 1
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -2135,6 +2136,7 @@ MonoBehaviour:
   IsOption: 1
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 2
   delayshowtime:
@@ -2350,6 +2352,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -4564,6 +4567,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 2
   OptionCount: 0
   delayshowtime:
@@ -4575,9 +4579,9 @@ MonoBehaviour:
   - 0.125
   - 0.125
   - 0.125
-  - 0.6666667
-  - 0.6666667
-  - 0.6666667
+  - 0.33333334
+  - 0.33333334
+  - 0.33333334
 --- !u!1 &2082652000180275842
 GameObject:
   m_ObjectHideFlags: 0
@@ -4636,6 +4640,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 1
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -5825,6 +5830,7 @@ MonoBehaviour:
   IsOption: 1
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 3
   delayshowtime:
@@ -6448,12 +6454,13 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
-  - 1.3333334
-  - 1.3333334
-  - 1.3333334
+  - 0.33333334
+  - 0.33333334
+  - 0.33333334
 --- !u!1 &2082652000717710140
 GameObject:
   m_ObjectHideFlags: 0
@@ -7131,13 +7138,14 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
-  - 0.5
-  - 0.5
-  - 0.5
-  - 0.5
+  - 0.25
+  - 0.25
+  - 0.25
+  - 0.25
 --- !u!1 &2082652000819079154
 GameObject:
   m_ObjectHideFlags: 0
@@ -7723,6 +7731,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -8505,6 +8514,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed43343096bff2b40ad09ced693e7eec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Totalusetime: 1
+  RunExtra: 0
+  Externalobject: []
+  Runindex: 
 --- !u!1 &2082652001025747645
 GameObject:
   m_ObjectHideFlags: 0
@@ -9440,27 +9453,28 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 1
   OptionCount: 0
   delayshowtime:
-  - 0.11111111
-  - 0.1111111
-  - 0.1111111
-  - 0.1111111
-  - 0.1111111
-  - 0.1111111
-  - 0.1111111
-  - 0.1111111
-  - 0.1111112
-  - 0.22222222
-  - 0.2222222
-  - 0.2222222
-  - 0.2222222
-  - 0.2222222
-  - 0.2222222
-  - 0.2222222
-  - 0.2222222
-  - 0.2222222
+  - 0.055555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
+  - 0.05555556
 --- !u!1 &2082652001207506402
 GameObject:
   m_ObjectHideFlags: 0
@@ -10267,7 +10281,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2082652001345483607
 Transform:
   m_ObjectHideFlags: 0
@@ -10380,17 +10394,18 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
-  - 0.4
-  - 0.4
-  - 0.4
-  - 0.4
-  - 0.4
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
   - 0.33333334
   - 0.33333334
-  - 0.3333334
+  - 0.33333334
   - 0.11111111
   - 0.1111111
   - 0.1111111
@@ -10399,7 +10414,7 @@ MonoBehaviour:
   - 0.1111111
   - 0.1111111
   - 0.1111111
-  - 0.1111112
+  - 0.11111111
 --- !u!1 &2082652001371697056
 GameObject:
   m_ObjectHideFlags: 0

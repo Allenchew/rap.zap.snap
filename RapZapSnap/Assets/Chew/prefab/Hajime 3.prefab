@@ -563,6 +563,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -3028,6 +3029,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 1
   OptionCount: 0
   delayshowtime:
@@ -4189,6 +4191,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 1
   OptionCount: 0
   delayshowtime:
@@ -4329,6 +4332,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 1
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -4631,6 +4635,7 @@ MonoBehaviour:
   IsOption: 1
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 2
   delayshowtime:
@@ -4685,6 +4690,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -5480,6 +5486,7 @@ MonoBehaviour:
   IsOption: 1
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 2
   delayshowtime:
@@ -5860,20 +5867,21 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
-  - 0.2857143
-  - 0.2857143
-  - 0.2857143
-  - 0.2857143
-  - 0.2857143
-  - 0.2857143
-  - 0.2857143
-  - 0.5
-  - 0.5
-  - 0.5
-  - 0.5
+  - 0.14285715
+  - 0.1428571
+  - 0.1428571
+  - 0.1428571
+  - 0.1428571
+  - 0.1428571
+  - 0.1428571
+  - 0.25
+  - 0.25
+  - 0.25
+  - 0.25
 --- !u!1 &8763794995908719175
 GameObject:
   m_ObjectHideFlags: 0
@@ -7051,6 +7059,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 1
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -7442,6 +7451,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -7760,6 +7770,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -8940,6 +8951,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
@@ -9315,6 +9327,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 1
+  EffectDelay: 1
   EffectIndex: 3
   OptionCount: 0
   delayshowtime:
@@ -9615,6 +9628,7 @@ MonoBehaviour:
   IsOption: 0
   showoption: 0
   OnceEffect: 0
+  EffectDelay: 1
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:

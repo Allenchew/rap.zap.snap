@@ -14,30 +14,46 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Phrase1:
   - id: 1
+    startposX: -11
+    startposY: 0.75
+    endposX: 8.5
+    endposY: 0.75
+    delaytime: 1
+    speed: 1
+    ntype: 3
+  - id: 2
+    startposX: 0
+    startposY: 7
+    endposX: 0
+    endposY: -3.75
+    delaytime: 1
+    speed: 1
+    ntype: 0
+  - id: 3
     startposX: 11
     startposY: 0.75
     endposX: -8.5
     endposY: 0.75
-    delaytime: 0.5
-    speed: 1.5
+    delaytime: 1
+    speed: 1
     ntype: 0
-  - id: 2
+  - id: 4
     startposX: 6.65
     startposY: -7
     endposX: 6.65
     endposY: 0.75
-    delaytime: 2.5
+    delaytime: 1
     speed: 1
     ntype: 1
-  - id: 3
+  - id: 5
     startposX: 11
     startposY: 4.2
     endposX: -8.7
     endposY: 4.2
-    delaytime: 2
+    delaytime: 1
     speed: 1
     ntype: 2
-  - id: 4
+  - id: 6
     startposX: 1.05
     startposY: -7
     endposX: 1.05
@@ -45,7 +61,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 3
-  - id: 5
+  - id: 7
     startposX: -11
     startposY: 4.2
     endposX: 3.2
@@ -53,7 +69,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 3
-  - id: 6
+  - id: 8
     startposX: 0
     startposY: 0
     endposX: 0
@@ -61,7 +77,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 5
-  - id: 7
+  - id: 9
     startposX: 11
     startposY: 2.4
     endposX: -8.5
@@ -69,7 +85,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 4
-  - id: 8
+  - id: 10
     startposX: 5.1
     startposY: -7
     endposX: 5.1
@@ -77,7 +93,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 2
-  - id: 9
+  - id: 11
     startposX: 11
     startposY: -0.6
     endposX: -8.65
@@ -85,7 +101,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 1
-  - id: 10
+  - id: 12
     startposX: -11
     startposY: -0.6
     endposX: 1.95
@@ -93,7 +109,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 3
-  - id: 11
+  - id: 13
     startposX: 11
     startposY: -2
     endposX: -8.6
@@ -101,7 +117,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 1
-  - id: 12
+  - id: 14
     startposX: 1.95
     startposY: 7
     endposX: 1.95
@@ -109,7 +125,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 0
-  - id: 13
+  - id: 15
     startposX: 11
     startposY: -3.65
     endposX: -8.35
@@ -117,7 +133,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 2
-  - id: 14
+  - id: 16
     startposX: 0
     startposY: 0
     endposX: 0
@@ -125,7 +141,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 3
-  - id: 15
+  - id: 17
     startposX: -11
     startposY: -0.8
     endposX: 4.3
@@ -133,7 +149,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 2
-  - id: 16
+  - id: 18
     startposX: 7.35
     startposY: 7
     endposX: 7.35
@@ -143,30 +159,46 @@ MonoBehaviour:
     ntype: 3
   Phrase2:
   - id: 1
+    startposX: -11
+    startposY: 0.75
+    endposX: 8.5
+    endposY: 0.75
+    delaytime: 1
+    speed: 1
+    ntype: 3
+  - id: 2
+    startposX: 0
+    startposY: 7
+    endposX: 0
+    endposY: -3.75
+    delaytime: 1
+    speed: 1
+    ntype: 0
+  - id: 3
     startposX: 11
     startposY: 4
     endposX: -8.35
     endposY: 4
-    delaytime: 0.5
-    speed: 1.5
+    delaytime: 1
+    speed: 1
     ntype: 0
-  - id: 2
+  - id: 4
     startposX: -2.2
     startposY: -7
     endposX: -2.2
     endposY: 4
-    delaytime: 2.5
+    delaytime: 1
     speed: 1
     ntype: 1
-  - id: 3
+  - id: 5
     startposX: 4.05
     startposY: -7
     endposX: 4.05
     endposY: 4
-    delaytime: 2
+    delaytime: 1
     speed: 1
     ntype: 2
-  - id: 4
+  - id: 6
     startposX: -11
     startposY: 4
     endposX: 7.95
@@ -174,7 +206,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 3
-  - id: 5
+  - id: 7
     startposX: -11
     startposY: 2.7
     endposX: 6.7
@@ -182,7 +214,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 3
-  - id: 6
+  - id: 8
     startposX: 0
     startposY: 0
     endposX: 0
@@ -190,7 +222,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 0
-  - id: 7
+  - id: 9
     startposX: -11
     startposY: 2.7
     endposX: 4
@@ -198,7 +230,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 4
-  - id: 8
+  - id: 10
     startposX: -11
     startposY: 2.1
     endposX: 1.1
@@ -206,7 +238,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 2
-  - id: 9
+  - id: 11
     startposX: 11
     startposY: 2.45
     endposX: -8.5
@@ -214,7 +246,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 1
-  - id: 10
+  - id: 12
     startposX: -11
     startposY: 0
     endposX: -1.6
@@ -222,7 +254,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 0
-  - id: 11
+  - id: 13
     startposX: 11
     startposY: 1
     endposX: -8.35
@@ -230,7 +262,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 1
-  - id: 12
+  - id: 14
     startposX: 11
     startposY: -0.5
     endposX: -4.9
@@ -238,7 +270,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 1
-  - id: 13
+  - id: 15
     startposX: 11
     startposY: -2.2
     endposX: -8.4
@@ -246,7 +278,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 2
-  - id: 14
+  - id: 16
     startposX: 0
     startposY: 0
     endposX: 0
@@ -254,48 +286,48 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 3
-  - id: 15
-    startposX: 11
-    startposY: -2.4
-    endposX: -2
-    endposY: -2.4
-    delaytime: 1
-    speed: 1
-    ntype: 2
-  - id: 16
-    startposX: -11
-    startposY: -2.7
-    endposX: 5.15
-    endposY: -2.7
-    delaytime: 2
-    speed: 1
-    ntype: 3
   Phrase3:
   - id: 1
+    startposX: -11
+    startposY: -2.75
+    endposX: 8.2
+    endposY: 4.2
+    delaytime: 1
+    speed: 1
+    ntype: 3
+  - id: 2
+    startposX: 5.3
+    startposY: 7
+    endposX: -8.2
+    endposY: -4.2
+    delaytime: 1
+    speed: 1
+    ntype: 0
+  - id: 3
     startposX: 11
     startposY: 4.2
     endposX: -8.3
     endposY: 4.2
-    delaytime: 0.5
-    speed: 1.5
+    delaytime: 1
+    speed: 1
     ntype: 0
-  - id: 2
+  - id: 4
     startposX: 0.7
     startposY: -7
     endposX: 0.7
     endposY: 4.2
-    delaytime: 2.5
+    delaytime: 1
     speed: 1
     ntype: 1
-  - id: 3
+  - id: 5
     startposX: 5.3
     startposY: -7
     endposX: 5.3
     endposY: 4.2
-    delaytime: 2
+    delaytime: 1
     speed: 1
     ntype: 2
-  - id: 4
+  - id: 6
     startposX: 8.1
     startposY: -7
     endposX: 8.1
@@ -303,7 +335,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 3
-  - id: 5
+  - id: 7
     startposX: -6.9
     startposY: 7
     endposX: -6.9
@@ -311,7 +343,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 3
-  - id: 6
+  - id: 8
     startposX: 0
     startposY: 0
     endposX: 0
@@ -319,7 +351,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 0
-  - id: 7
+  - id: 9
     startposX: 11
     startposY: 2.7
     endposX: -8.35
@@ -327,7 +359,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 4
-  - id: 8
+  - id: 10
     startposX: 11
     startposY: 2.15
     endposX: -5.25
@@ -335,7 +367,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 2
-  - id: 9
+  - id: 11
     startposX: 11
     startposY: 2.65
     endposX: -3.65
@@ -343,7 +375,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 1
-  - id: 10
+  - id: 12
     startposX: 5.7
     startposY: -7
     endposX: 5.7
@@ -351,7 +383,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 3
-  - id: 11
+  - id: 13
     startposX: 11
     startposY: 1.5
     endposX: -3.6
@@ -359,7 +391,7 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 1
-  - id: 12
+  - id: 14
     startposX: 5.7
     startposY: -7
     endposX: 5.7
@@ -367,7 +399,7 @@ MonoBehaviour:
     delaytime: 2
     speed: 1
     ntype: 0
-  - id: 13
+  - id: 15
     startposX: 11
     startposY: -2.6
     endposX: -3.45
@@ -375,27 +407,11 @@ MonoBehaviour:
     delaytime: 1
     speed: 1
     ntype: 2
-  - id: 14
+  - id: 16
     startposX: 0
     startposY: 0
     endposX: 0
     endposY: 0
-    delaytime: 2
-    speed: 1
-    ntype: 3
-  - id: 15
-    startposX: 11
-    startposY: 0
-    endposX: -3.7
-    endposY: 0
-    delaytime: 1
-    speed: 1
-    ntype: 2
-  - id: 16
-    startposX: 3.55
-    startposY: 7
-    endposX: 3.55
-    endposY: -0.5
     delaytime: 2
     speed: 1
     ntype: 3

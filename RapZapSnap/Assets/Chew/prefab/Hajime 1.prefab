@@ -2915,11 +2915,11 @@ MonoBehaviour:
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
-  - 0.1
-  - 0.1
-  - 0.1
-  - 0.1
-  - 0.1
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
 --- !u!1 &3034313677849731152
 GameObject:
   m_ObjectHideFlags: 0
@@ -4078,7 +4078,7 @@ MonoBehaviour:
   EffectIndex: 0
   OptionCount: 0
   delayshowtime:
-  - 4
+  - 2
 --- !u!1 &3034313678292396077
 GameObject:
   m_ObjectHideFlags: 0
