@@ -43,14 +43,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 094e1c175b2129c4bb7c1e11d242db42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  singletonMode: 1
   data_P1:
-    SelectCharacter: 0
+    SelectCharacter: 1
     TotalScore: 0
     Rap: 0
     Zap: 0
     Snap: 0
   data_P2:
-    SelectCharacter: 0
+    SelectCharacter: 2
     TotalScore: 0
     Rap: 0
     Zap: 0

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -663,15 +663,15 @@ RectTransform:
   m_GameObject: {fileID: 292575170}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.425, y: 0.425, z: 0.425}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 85238929}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -800, y: 35}
-  m_SizeDelta: {x: 1536, y: 2048}
+  m_AnchoredPosition: {x: -731, y: 11}
+  m_SizeDelta: {x: 1700, y: 3200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &292575172
 MonoBehaviour:
@@ -693,7 +693,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: b7d6426868628eb459ad4cebec6e5a77, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ea9b7f976d125fc48a64977ed547ed07, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2024,8 +2024,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterSprites:
   - {fileID: 21300000, guid: 48416596912205f43b672b521bc78887, type: 3}
-  - {fileID: 21300000, guid: 1748b3c70ea34464bafb2138a94a723e, type: 3}
-  - {fileID: 21300000, guid: b7d6426868628eb459ad4cebec6e5a77, type: 3}
+  - {fileID: 21300000, guid: ea9b7f976d125fc48a64977ed547ed07, type: 3}
+  - {fileID: 21300000, guid: 5075c595f02919341bb5415699d6b88b, type: 3}
   winnerBackSprites:
   - {fileID: 21300000, guid: 14932d70145e9b14c8f14ccde2ec6925, type: 3}
   - {fileID: 21300000, guid: e194a05d24959404294ad1abea1930e5, type: 3}
@@ -2561,15 +2561,15 @@ RectTransform:
   m_GameObject: {fileID: 1601576553}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.425, y: 0.425, z: 0.425}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 164707862}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 742, y: -50}
-  m_SizeDelta: {x: 1536, y: 2048}
+  m_AnchoredPosition: {x: 706, y: -18}
+  m_SizeDelta: {x: 1700, y: 3200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1601576555
 MonoBehaviour:
@@ -2591,7 +2591,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 1748b3c70ea34464bafb2138a94a723e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5075c595f02919341bb5415699d6b88b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2868,11 +2868,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameDataObject
       objectReference: {fileID: 0}
-    - target: {fileID: 7323845199933068962, guid: 20660e901e1374a4dbb2889b1d739fb2,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4126601276574382470, guid: 20660e901e1374a4dbb2889b1d739fb2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2926,26 +2921,6 @@ PrefabInstance:
     - target: {fileID: 4126601276574382470, guid: 20660e901e1374a4dbb2889b1d739fb2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3029406474872757766, guid: 20660e901e1374a4dbb2889b1d739fb2,
-        type: 3}
-      propertyPath: data_P1.SelectCharacter
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3029406474872757766, guid: 20660e901e1374a4dbb2889b1d739fb2,
-        type: 3}
-      propertyPath: data_P2.SelectCharacter
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3029406474872757766, guid: 20660e901e1374a4dbb2889b1d739fb2,
-        type: 3}
-      propertyPath: data_P1.TotalScore
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3029406474872757766, guid: 20660e901e1374a4dbb2889b1d739fb2,
-        type: 3}
-      propertyPath: data_P2.TotalScore
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
