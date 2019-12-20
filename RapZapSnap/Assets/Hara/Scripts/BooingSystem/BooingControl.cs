@@ -297,7 +297,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         DS4InputKey input = booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1 : GamePadControl.Instance.GetKeyDown_2;
 
         // 〇ボタンでSE再生とバイブレーションを実行
-        if(input.Circle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true) || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button2) == true : Input.GetKeyDown(KeyCode.Joystick2Button2) == true))
+        if(input.Circle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true))
         {
             if(playVibration == false) { return; }
             StartVibration(target, vibrationPower, vibDuration);
@@ -306,7 +306,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         }
 
         // △ボタンでSE再生と画面の揺れを実行
-        if(input.Triangle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.D) == true : Input.GetKeyDown(KeyCode.L) == true) || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button3) == true : Input.GetKeyDown(KeyCode.Joystick2Button3) == true))
+        if(input.Triangle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.D) == true : Input.GetKeyDown(KeyCode.L) == true))
         {
             if(playShake == false) { return; }
             ShakeAction(shakeDuration, shakeMagnitude);
@@ -315,7 +315,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         }
 
         // □ボタンで画面の邪魔を表示
-        if (input.Square == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.W) == true : Input.GetKeyDown(KeyCode.I) == true) || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button0) == true : Input.GetKeyDown(KeyCode.Joystick2Button0) == true))
+        if (input.Square == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.W) == true : Input.GetKeyDown(KeyCode.I) == true))
         {
             if(playPaint == false) { return; }
             PlayParticle(particleCallTime, particleCallSpan, booingPlayer);
