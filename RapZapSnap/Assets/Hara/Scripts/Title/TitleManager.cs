@@ -107,13 +107,13 @@ public class TitleManager : MonoBehaviour
         {
             case 0:
                 // コントローラの入力を待機
-                if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || Input.GetKeyDown(KeyCode.A) == true) && radyController1 == false)
+                if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || Input.GetKeyDown(KeyCode.A) == true || Input.GetKeyDown(KeyCode.Joystick1Button2) == true) && radyController1 == false)
                 {
                     radyController1 = true;
                     titleAudio.PlayOneShot(titleSE);
                     radyText_P1.SetActive(true);
                 }
-                if ((GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.J) == true) && radyController2 == false)
+                if ((GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.J) == true || Input.GetKeyDown(KeyCode.Joystick2Button2) == true) && radyController2 == false)
                 {
                     radyController2 = true;
                     titleAudio.PlayOneShot(titleSE);

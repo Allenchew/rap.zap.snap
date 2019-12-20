@@ -8,6 +8,14 @@ public enum ControllerNum
     P1,
     P2
 }
+public enum ControllerAxis
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
+
 
 public struct DS4InputKey
 {
@@ -230,30 +238,45 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     private void DS4SingleInputKeyUp(ControllerNum id)
     {
         DS4InputKey input = id == ControllerNum.P1 ? GetKeyUp_1 : GetKeyUp_2;
-        input.Circle = GetButtonUp(id, DS4ButtonType.Circle);
-        input.Cross = GetButtonUp(id, DS4ButtonType.Cross);
-        input.Triangle = GetButtonUp(id, DS4ButtonType.Triangle);
-        input.Square = GetButtonUp(id, DS4ButtonType.Square);
-        input.Up = GetButtonUp(id, DS4ButtonType.Up);
-        input.Down = GetButtonUp(id, DS4ButtonType.Down);
-        input.Left = GetButtonUp(id, DS4ButtonType.Left);
-        input.Right = GetButtonUp(id, DS4ButtonType.Right);
-        input.LeftStick_Up = GetAxisUp(id, DS4AxisKey.LeftStick_Up);
-        input.LeftStick_Down = GetAxisUp(id, DS4AxisKey.LeftStick_Down);
-        input.LeftStick_Left = GetAxisUp(id, DS4AxisKey.LeftStick_Left);
-        input.LeftStick_Right = GetAxisUp(id, DS4AxisKey.LeftStick_Right);
-        input.RightStick_Up = GetAxisUp(id, DS4AxisKey.RightStick_Up);
-        input.RightStick_Down = GetAxisUp(id, DS4AxisKey.RightStick_Down);
-        input.RightStick_Left = GetAxisUp(id, DS4AxisKey.RightStick_Left);
-        input.RightStick_Right = GetAxisUp(id, DS4AxisKey.RightStick_Right);
-        input.L1 = GetButtonUp(id, DS4ButtonType.L1);
-        input.L2 = GetAxisUp(id, DS4AxisKey.L2);
-        input.L3 = GetButtonUp(id, DS4ButtonType.L3);
-        input.R1 = GetButtonUp(id, DS4ButtonType.R1);
-        input.R2 = GetAxisUp(id, DS4AxisKey.R2);
-        input.R3 = GetButtonUp(id, DS4ButtonType.R3);
-        input.OPTION = GetButtonUp(id, DS4ButtonType.OPTION);
-        input.SHARE = GetButtonUp(id, DS4ButtonType.SHARE);
+        if(useDS4 == true)
+        {
+            input.Circle = GetButtonUp(id, DS4ButtonType.Circle);
+            input.Cross = GetButtonUp(id, DS4ButtonType.Cross);
+            input.Triangle = GetButtonUp(id, DS4ButtonType.Triangle);
+            input.Square = GetButtonUp(id, DS4ButtonType.Square);
+            input.Up = GetButtonUp(id, DS4ButtonType.Up);
+            input.Down = GetButtonUp(id, DS4ButtonType.Down);
+            input.Left = GetButtonUp(id, DS4ButtonType.Left);
+            input.Right = GetButtonUp(id, DS4ButtonType.Right);
+            input.LeftStick_Up = GetAxisUp(id, DS4AxisKey.LeftStick_Up);
+            input.LeftStick_Down = GetAxisUp(id, DS4AxisKey.LeftStick_Down);
+            input.LeftStick_Left = GetAxisUp(id, DS4AxisKey.LeftStick_Left);
+            input.LeftStick_Right = GetAxisUp(id, DS4AxisKey.LeftStick_Right);
+            input.RightStick_Up = GetAxisUp(id, DS4AxisKey.RightStick_Up);
+            input.RightStick_Down = GetAxisUp(id, DS4AxisKey.RightStick_Down);
+            input.RightStick_Left = GetAxisUp(id, DS4AxisKey.RightStick_Left);
+            input.RightStick_Right = GetAxisUp(id, DS4AxisKey.RightStick_Right);
+            input.L1 = GetButtonUp(id, DS4ButtonType.L1);
+            input.L2 = GetAxisUp(id, DS4AxisKey.L2);
+            input.L3 = GetButtonUp(id, DS4ButtonType.L3);
+            input.R1 = GetButtonUp(id, DS4ButtonType.R1);
+            input.R2 = GetAxisUp(id, DS4AxisKey.R2);
+            input.R3 = GetButtonUp(id, DS4ButtonType.R3);
+            input.OPTION = GetButtonUp(id, DS4ButtonType.OPTION);
+            input.SHARE = GetButtonUp(id, DS4ButtonType.SHARE);
+        }
+        else
+        {
+            input.Circle = id == ControllerNum.P1 ? Input.GetKeyUp(KeyCode.Joystick1Button2) : Input.GetKeyUp(KeyCode.Joystick2Button2);
+            input.Cross = id == ControllerNum.P1 ? Input.GetKeyUp(KeyCode.Joystick1Button1) : Input.GetKeyUp(KeyCode.Joystick2Button1);
+            input.Triangle = id == ControllerNum.P1 ? Input.GetKeyUp(KeyCode.Joystick1Button3) : Input.GetKeyUp(KeyCode.Joystick2Button3);
+            input.Square = id == ControllerNum.P1 ? Input.GetKeyUp(KeyCode.Joystick1Button0) : Input.GetKeyUp(KeyCode.Joystick2Button0);
+            input.Up = GetAxisUp(id, ControllerAxis.Up);
+            input.Down = GetAxisUp(id, ControllerAxis.Down);
+            input.Left = GetAxisUp(id, ControllerAxis.Left);
+            input.Right = GetAxisUp(id, ControllerAxis.Right);
+
+        }
         _ = id == ControllerNum.P1 ? GetKeyUp_1 = input : GetKeyUp_2 = input;
     }
 
@@ -264,30 +287,44 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     private void DS4SingleInputKeyDown(ControllerNum id)
     {
         DS4InputKey input = id == ControllerNum.P1 ? GetKeyDown_1 : GetKeyDown_2;
-        input.Circle = GetButtonDown(id, DS4ButtonType.Circle);
-        input.Cross = GetButtonDown(id, DS4ButtonType.Cross);
-        input.Triangle = GetButtonDown(id, DS4ButtonType.Triangle);
-        input.Square = GetButtonDown(id, DS4ButtonType.Square);
-        input.Up = GetButtonDown(id, DS4ButtonType.Up);
-        input.Down = GetButtonDown(id, DS4ButtonType.Down);
-        input.Left = GetButtonDown(id, DS4ButtonType.Left);
-        input.Right = GetButtonDown(id, DS4ButtonType.Right);
-        input.LeftStick_Up = GetAxisDown(id, DS4AxisKey.LeftStick_Up);
-        input.LeftStick_Down = GetAxisDown(id, DS4AxisKey.LeftStick_Down);
-        input.LeftStick_Left = GetAxisDown(id, DS4AxisKey.LeftStick_Left);
-        input.LeftStick_Right = GetAxisDown(id, DS4AxisKey.LeftStick_Right);
-        input.RightStick_Up = GetAxisDown(id, DS4AxisKey.RightStick_Up);
-        input.RightStick_Down = GetAxisDown(id, DS4AxisKey.RightStick_Down);
-        input.RightStick_Left = GetAxisDown(id, DS4AxisKey.RightStick_Left);
-        input.RightStick_Right = GetAxisDown(id, DS4AxisKey.RightStick_Right);
-        input.L1 = GetButtonDown(id, DS4ButtonType.L1);
-        input.L2 = GetAxisDown(id, DS4AxisKey.L2);
-        input.L3 = GetButtonDown(id, DS4ButtonType.L3);
-        input.R1 = GetButtonDown(id, DS4ButtonType.R1);
-        input.R2 = GetAxisDown(id, DS4AxisKey.R2);
-        input.R3 = GetButtonDown(id, DS4ButtonType.R3);
-        input.OPTION = GetButtonDown(id, DS4ButtonType.OPTION);
-        input.SHARE = GetButtonDown(id, DS4ButtonType.SHARE);
+        if(useDS4 == true)
+        {
+            input.Circle = GetButtonDown(id, DS4ButtonType.Circle);
+            input.Cross = GetButtonDown(id, DS4ButtonType.Cross);
+            input.Triangle = GetButtonDown(id, DS4ButtonType.Triangle);
+            input.Square = GetButtonDown(id, DS4ButtonType.Square);
+            input.Up = GetButtonDown(id, DS4ButtonType.Up);
+            input.Down = GetButtonDown(id, DS4ButtonType.Down);
+            input.Left = GetButtonDown(id, DS4ButtonType.Left);
+            input.Right = GetButtonDown(id, DS4ButtonType.Right);
+            input.LeftStick_Up = GetAxisDown(id, DS4AxisKey.LeftStick_Up);
+            input.LeftStick_Down = GetAxisDown(id, DS4AxisKey.LeftStick_Down);
+            input.LeftStick_Left = GetAxisDown(id, DS4AxisKey.LeftStick_Left);
+            input.LeftStick_Right = GetAxisDown(id, DS4AxisKey.LeftStick_Right);
+            input.RightStick_Up = GetAxisDown(id, DS4AxisKey.RightStick_Up);
+            input.RightStick_Down = GetAxisDown(id, DS4AxisKey.RightStick_Down);
+            input.RightStick_Left = GetAxisDown(id, DS4AxisKey.RightStick_Left);
+            input.RightStick_Right = GetAxisDown(id, DS4AxisKey.RightStick_Right);
+            input.L1 = GetButtonDown(id, DS4ButtonType.L1);
+            input.L2 = GetAxisDown(id, DS4AxisKey.L2);
+            input.L3 = GetButtonDown(id, DS4ButtonType.L3);
+            input.R1 = GetButtonDown(id, DS4ButtonType.R1);
+            input.R2 = GetAxisDown(id, DS4AxisKey.R2);
+            input.R3 = GetButtonDown(id, DS4ButtonType.R3);
+            input.OPTION = GetButtonDown(id, DS4ButtonType.OPTION);
+            input.SHARE = GetButtonDown(id, DS4ButtonType.SHARE);
+        }
+        else
+        {
+            input.Circle = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button2) : Input.GetKeyDown(KeyCode.Joystick2Button2);
+            input.Cross = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button1) : Input.GetKeyDown(KeyCode.Joystick2Button1);
+            input.Triangle = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button3) : Input.GetKeyDown(KeyCode.Joystick2Button3);
+            input.Square = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button0) : Input.GetKeyDown(KeyCode.Joystick2Button0);
+            input.Up = GetAxisDown(id, ControllerAxis.Up);
+            input.Down = GetAxisDown(id, ControllerAxis.Down);
+            input.Left = GetAxisDown(id, ControllerAxis.Left);
+            input.Right = GetAxisDown(id, ControllerAxis.Right);
+        }
         _ = id == ControllerNum.P1 ? GetKeyDown_1 = input : GetKeyDown_2 = input;
     }
 
@@ -869,6 +906,158 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
                 break;
             case DS4AxisKey.R2:
                 _ = id == ControllerNum.P1 ? inputDown_1.R2 = axisFlag : inputDown_2.R2 = axisFlag;
+                break;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// コントローラーのAxisDownを取得
+    /// </summary>
+    /// <param name="id">コントローラ番号</param>
+    /// <param name="type">取得するAxis</param>
+    /// <returns></returns>
+    private bool GetAxisDown(ControllerNum id, ControllerAxis type)
+    {
+        bool axisFlag;
+        bool isPositive;
+        string axisName;
+        bool result;
+
+        switch(type)
+        {
+            case ControllerAxis.Up:
+                axisFlag = id == ControllerNum.P1 ? inputDown_1.Lu : inputDown_2.Lu;
+                axisName = id == ControllerNum.P1 ? "Vertical_1" : "Vertical_2";
+                isPositive = false;
+                break;
+            case ControllerAxis.Down:
+                axisFlag = id == ControllerNum.P1 ? inputDown_1.Ld : inputDown_2.Ld;
+                axisName = id == ControllerNum.P1 ? "Vertical_1" : "Vertical_2";
+                isPositive = true;
+                break;
+            case ControllerAxis.Left:
+                axisFlag = id == ControllerNum.P1 ? inputDown_1.Ll : inputDown_2.Ll;
+                axisName = id == ControllerNum.P1 ? "Horizontal_1" : "Horizontal_2";
+                isPositive = false;
+                break;
+            case ControllerAxis.Right:
+                axisFlag = id == ControllerNum.P1 ? inputDown_1.Lr : inputDown_2.Lr;
+                axisName = id == ControllerNum.P1 ? "Horizontal_1" : "Horizontal_2";
+                isPositive = true;
+                break;
+            default:
+                return false;
+        }
+
+        if(_ = isPositive == true ? (Input.GetAxis(axisName) >= axisValue) : (Input.GetAxis(axisName) <= -axisValue))
+        {
+            if(axisFlag == false)
+            {
+                axisFlag = true;
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+        }
+        else
+        {
+            if(axisFlag == true) { axisFlag = false; }
+            result = false;
+        }
+
+        switch(type)
+        {
+            case ControllerAxis.Up:
+                _ = id == ControllerNum.P1 ? inputDown_1.Lu = axisFlag : inputDown_2.Lu = axisFlag;
+                break;
+            case ControllerAxis.Down:
+                _ = id == ControllerNum.P1 ? inputDown_1.Ld = axisFlag : inputDown_2.Ld = axisFlag;
+                break;
+            case ControllerAxis.Left:
+                _ = id == ControllerNum.P1 ? inputDown_1.Ll = axisFlag : inputDown_2.Ll = axisFlag;
+                break;
+            case ControllerAxis.Right:
+                _ = id == ControllerNum.P1 ? inputDown_1.Lr = axisFlag : inputDown_2.Lr = axisFlag;
+                break;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// コントローラのAxisUpを取得
+    /// </summary>
+    /// <param name="id">コントローラ番号</param>
+    /// <param name="type">取得するAxis</param>
+    /// <returns></returns>
+    private bool GetAxisUp(ControllerNum id, ControllerAxis type)
+    {
+        bool axisFlag;
+        bool isPositive;
+        string axisName;
+        bool result;
+
+        switch(type)
+        {
+            case ControllerAxis.Up:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Lu : inputUp_2.Lu;
+                axisName = id == ControllerNum.P1 ? "Vertical_1" : "Vertical_2";
+                isPositive = false;
+                break;
+            case ControllerAxis.Down:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Ld : inputUp_2.Ld;
+                axisName = id == ControllerNum.P1 ? "Vertical_1" : "Vertical_2";
+                isPositive = true;
+                break;
+            case ControllerAxis.Left:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Ll : inputUp_2.Ll;
+                axisName = id == ControllerNum.P1 ? "Horizontal_1" : "Horizontal_2";
+                isPositive = false;
+                break;
+            case ControllerAxis.Right:
+                axisFlag = id == ControllerNum.P1 ? inputUp_1.Lr : inputUp_2.Lr;
+                axisName = id == ControllerNum.P1 ? "Horizontal_1" : "Horizontal_2";
+                isPositive = true;
+                break;
+            default:
+                return false;
+        }
+
+        if(_ = isPositive == true ? (Input.GetAxis(axisName) >= axisValue) : (Input.GetAxis(axisName) <= -axisValue))
+        {
+            if(axisFlag == false) { axisFlag = true; }
+            result = false;
+        }
+        else
+        {
+            if(axisFlag == true)
+            {
+                axisFlag = false;
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+        }
+
+        switch(type)
+        {
+            case ControllerAxis.Up:
+                _ = id == ControllerNum.P1 ? inputUp_1.Lu = axisFlag : inputUp_2.Lu = axisFlag;
+                break;
+            case ControllerAxis.Down:
+                _ = id == ControllerNum.P1 ? inputUp_1.Ld = axisFlag : inputUp_2.Ld = axisFlag;
+                break;
+            case ControllerAxis.Left:
+                _ = id == ControllerNum.P1 ? inputUp_1.Ll = axisFlag : inputUp_2.Ll = axisFlag;
+                break;
+            case ControllerAxis.Right:
+                _ = id == ControllerNum.P1 ? inputUp_1.Lr = axisFlag : inputUp_2.Lr = axisFlag;
                 break;
         }
 
