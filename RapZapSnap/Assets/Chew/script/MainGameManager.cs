@@ -45,13 +45,15 @@ public class MainGameManager : MonoBehaviour
     {
         roundCounter++;
         if (roundCounter > 5) SceneManager.LoadScene(3);
+        BooingControl.Instance.BooingSystemOff();
         currentplayer = 1 - currentplayer;
         StartCoroutine(SwitchPlayer());
     }
     IEnumerator SwitchPlayer()
     {
         int tmpindex = (int)GameData.Instance.GetCharacterData(currentplayer)-1;
-        for(float i = 0; i < 1.1f; i += 0.05f)
+        BooingControl.Instance.SetBooingPlayer(BooingControl.Instance.BooingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
+        for (float i = 0; i < 1.1f; i += 0.05f)
         {
             backgroundpic.GetComponent<Image>().color = Color.Lerp(lyricsbg[1-tmpindex], lyricsbg[tmpindex], i);
             yield return new WaitForSeconds(0.01f);
@@ -63,6 +65,7 @@ public class MainGameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1.0f);
         int tmpindex = (int)GameData.Instance.GetCharacterData(currentplayer) - 1;
+        BooingControl.Instance.SetBooingPlayer(ControllerNum.P2);
         for (float i = 0; i < 1.1f; i += 0.05f)
         {
             backgroundpic.GetComponent<Image>().color = Color.Lerp(Color.white, lyricsbg[tmpindex], i);

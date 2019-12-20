@@ -38,7 +38,7 @@ public class AlphaCharSelect : MonoBehaviour
                 shufflelist(false);
                 StartCoroutine(progressmoving(true));
             }
-            else if (GamePadControl.Instance.GetKeyDown_1.Cross && !movingflag)
+            else if (GamePadControl.Instance.GetKeyDown_1.Circle && !movingflag)
             {
                 GameData.Instance.SetCharacterData(ControllerNum.P1, (Character)currentChar[0]+1);
                 movingflag = true;
@@ -57,7 +57,7 @@ public class AlphaCharSelect : MonoBehaviour
             {
                 //p2 selection moving process
             }
-            else if (GamePadControl.Instance.GetKeyDown_2.Cross && !movingflag)
+            else if (GamePadControl.Instance.GetKeyDown_2.Circle && !movingflag)
             {
                 GameData.Instance.SetCharacterData(ControllerNum.P2, (Character)currentChar[0]+1);
                 movingflag = true;
@@ -125,6 +125,7 @@ public class AlphaCharSelect : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         }
         p1picked = true;
+        movingflag = false;
     }
     void shufflelist(bool shuftLeft)
     {

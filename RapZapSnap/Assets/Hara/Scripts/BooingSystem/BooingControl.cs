@@ -9,6 +9,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
 
     [SerializeField, Tooltip("ブーイングができるプレイヤー")]
     private ControllerNum booingPlayer = ControllerNum.P2;
+    public ControllerNum BooingPlayer { get { return booingPlayer; } }
 
     private AudioSource[] audioSources = null;
 
