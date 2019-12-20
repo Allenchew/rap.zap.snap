@@ -44,9 +44,13 @@ public class MainGameManager : MonoBehaviour
     public void EndRun()
     {
         roundCounter++;
-        if (roundCounter > 5) SceneManager.LoadScene(3);
-        BooingControl.Instance.BooingSystemOff();
         currentplayer = 1 - currentplayer;
+        if (roundCounter > 5)
+        {
+            BooingControl.Instance.BooingSystemOff();
+            SceneManager.LoadScene(3);
+            return;
+        }
         StartCoroutine(SwitchPlayer());
     }
     IEnumerator SwitchPlayer()
