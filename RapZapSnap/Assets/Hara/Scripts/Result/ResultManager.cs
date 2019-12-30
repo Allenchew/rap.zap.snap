@@ -229,8 +229,6 @@ public class ResultManager : MonoBehaviour
                 {
                     step = 0;
                     actionFlag = false;
-                    GameData.Instance.ResetScore(ControllerNum.P1);
-                    GameData.Instance.ResetScore(ControllerNum.P2);
                     if(resultSE[0] != null)
                     {
                         resultAudio.PlayOneShot(resultSE[0]);

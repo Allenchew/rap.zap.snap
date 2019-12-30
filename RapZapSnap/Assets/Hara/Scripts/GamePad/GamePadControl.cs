@@ -16,6 +16,33 @@ public enum ControllerAxis
     Right
 }
 
+public enum DS4AllKeyType
+{
+    Circle,
+    Cross,
+    Triangle,
+    Square,
+    Up,
+    Down,
+    Left,
+    Right,
+    LeftStick_Up,
+    LeftStick_Down,
+    LeftStick_Left,
+    LeftStick_Right,
+    RightStick_Up,
+    RightStick_Down,
+    RightStick_Left,
+    RightStick_Right,
+    L1,
+    L2,
+    L3,
+    R1,
+    R2,
+    R3,
+    OPTION,
+    SHARE
+}
 
 public struct DS4InputKey
 {
@@ -103,21 +130,40 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
 
         public DS4KeyName(ControllerNum inputPlayer)
         {
-            // ※Unityの仕様上の都合、1Pコントローラーが2P(2Pが1P)として取得されてしまうので注意
-
-            if (inputPlayer == ControllerNum.P1)
+            if (Instance.useDS4)
             {
-                Submit = "Submit_2";
-                Cancel = "Cancel_2";
-                Horizontal = "Horizontal_2";
-                Vertical = "Vertical_2";
+                // ※Unityの仕様上の都合、1Pコントローラーが2P(2Pが1P)として取得されてしまうので注意
+                if (inputPlayer == ControllerNum.P1)
+                {
+                    Submit = "Submit_2";
+                    Cancel = "Cancel_2";
+                    Horizontal = "Horizontal_2";
+                    Vertical = "Vertical_2";
+                }
+                else
+                {
+                    Submit = "Submit_1";
+                    Cancel = "Cancel_1";
+                    Horizontal = "Horizontal_1";
+                    Vertical = "Vertical_1";
+                }
             }
             else
             {
-                Submit = "Submit_1";
-                Cancel = "Cancel_1";
-                Horizontal = "Horizontal_1";
-                Vertical = "Vertical_1";
+                if (inputPlayer == ControllerNum.P1)
+                {
+                    Submit = "Submit_1";
+                    Cancel = "Cancel_1";
+                    Horizontal = "Horizontal_1";
+                    Vertical = "Vertical_1";
+                }
+                else
+                {
+                    Submit = "Submit_2";
+                    Cancel = "Cancel_2";
+                    Horizontal = "Horizontal_2";
+                    Vertical = "Vertical_2";
+                }
             }
         }
     }
@@ -202,9 +248,6 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     {
         DS4SingleInputKeyDown(ControllerNum.P1);
         DS4SingleInputKeyDown(ControllerNum.P2);
-
-        DS4SingleInputKeyUp(ControllerNum.P1);
-        DS4SingleInputKeyUp(ControllerNum.P2);
     }
 
     /// <summary>
@@ -1062,6 +1105,133 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// DS4のキー入力を取得
+    /// </summary>
+    /// <param name="id">コントローラ番号</param>
+    /// <param name="type">DS4のButtonキー</param>
+    /// <returns></returns>
+    public bool GetButton(ControllerNum id, DS4AllKeyType type)
+    {
+        DS4ControllerType controller = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
+        DS4ButtonType buttonName;
+        switch (type)
+        {
+            case DS4AllKeyType.Circle:
+                buttonName = DS4ButtonType.Circle;
+                break;
+            case DS4AllKeyType.Cross:
+                buttonName = DS4ButtonType.Cross;
+                break;
+            case DS4AllKeyType.Triangle:
+                buttonName = DS4ButtonType.Triangle;
+                break;
+            case DS4AllKeyType.Square:
+                buttonName = DS4ButtonType.Square;
+                break;
+            case DS4AllKeyType.Up:
+                buttonName = DS4ButtonType.Up;
+                break;
+            case DS4AllKeyType.Down:
+                buttonName = DS4ButtonType.Down;
+                break;
+            case DS4AllKeyType.Left:
+                buttonName = DS4ButtonType.Left;
+                break;
+            case DS4AllKeyType.Right:
+                buttonName = DS4ButtonType.Right;
+                break;
+            case DS4AllKeyType.L1:
+                buttonName = DS4ButtonType.L1;
+                break;
+            case DS4AllKeyType.L3:
+                buttonName = DS4ButtonType.L3;
+                break;
+            case DS4AllKeyType.R1:
+                buttonName = DS4ButtonType.R1;
+                break;
+            case DS4AllKeyType.R3:
+                buttonName = DS4ButtonType.R3;
+                break;
+            case DS4AllKeyType.OPTION:
+                buttonName = DS4ButtonType.OPTION;
+                break;
+            case DS4AllKeyType.SHARE:
+                buttonName = DS4ButtonType.SHARE;
+                break;
+            default:
+                return false;
+        }
+        return ds4InputCustom.IsButton(controller, buttonName);
+    }
+
+    /// <summary>
+    /// DS4のAxisキー入力を取得
+    /// </summary>
+    /// <param name="id">コントローラ番号</param>
+    /// <param name="type">DS4のAxisキー</param>
+    /// <returns></returns>
+    public bool GetAxis(ControllerNum id, DS4AllKeyType type)
+    {
+        DS4ControllerType controller = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
+        DS4AxisType axisName;
+        bool isPositive;
+        switch (type)
+        {
+            case DS4AllKeyType.LeftStick_Up:
+                axisName = DS4AxisType.LeftStickY;
+                isPositive = false;
+                break;
+            case DS4AllKeyType.LeftStick_Down:
+                axisName = DS4AxisType.LeftStickY;
+                isPositive = true;
+                break;
+            case DS4AllKeyType.LeftStick_Left:
+                axisName = DS4AxisType.LeftStickX;
+                isPositive = false;
+                break;
+            case DS4AllKeyType.LeftStick_Right:
+                axisName = DS4AxisType.LeftStickX;
+                isPositive = true;
+                break;
+            case DS4AllKeyType.L2:
+                axisName = DS4AxisType.L2;
+                isPositive = true;
+                break;
+            case DS4AllKeyType.RightStick_Up:
+                axisName = DS4AxisType.RightStickY;
+                isPositive = false;
+                break;
+            case DS4AllKeyType.RightStick_Down:
+                axisName = DS4AxisType.RightStickY;
+                isPositive = true;
+                break;
+            case DS4AllKeyType.RightStick_Left:
+                axisName = DS4AxisType.RightStickX;
+                isPositive = false;
+                break;
+            case DS4AllKeyType.RightStick_Right:
+                axisName = DS4AxisType.RightStickX;
+                isPositive = true;
+                break;
+            case DS4AllKeyType.R2:
+                axisName = DS4AxisType.R2;
+                isPositive = true;
+                break;
+            default:
+                return false;
+        }
+
+        if (_ = isPositive == true ? (ds4InputCustom.IsAxis(controller, axisName) >= axisValue) : (ds4InputCustom.IsAxis(controller, axisName) <= -axisValue))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>

@@ -18,5 +18,9 @@ public enum NotesType
 public class NotesModel : MonoBehaviour
 {
     // ノーツのタイプ
-    public NotesType NotesTypes { set; get; } = NotesType.CircleKey;
+    public NotesType NotesType1 { set; get; } = NotesType.CircleKey;
+    public NotesType NotesType2 { set; get; } = NotesType.CircleKey;
+
+    // Doubleノーツ用の判定ID
+    public int NotesTypeNum { set; get; } = 0;
 }

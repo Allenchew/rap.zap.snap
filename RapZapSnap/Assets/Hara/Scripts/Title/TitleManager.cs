@@ -93,6 +93,10 @@ public class TitleManager : MonoBehaviour
         objP1.End = Vector3.left * titleImage_P1.rectTransform.rect.width + objP1.Start;
         objP2.End = Vector3.right * titleImage_P2.rectTransform.rect.width + objP2.Start;
 
+        // スコアの初期化
+        GameData.Instance.ResetScore(ControllerNum.P1);
+        GameData.Instance.ResetScore(ControllerNum.P2);
+
         actionFlag = true;
     }
 

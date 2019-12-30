@@ -20,13 +20,12 @@ public class calltest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            
+            NotesControl.Instance.PlayDoubleNotesOneShot(NotesType.CircleKey, NotesType.CrossKey, new Vector3(-5, -5, 0), new Vector3(-5, 3, 0), ControllerNum.P1, 0.75f);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             NotesControl.Instance.PlayNotesOneShot(NotesType.CircleKey, new Vector3(-5, -5, 0), new Vector3(-5, 3, 0), ControllerNum.P1,0.75f);
-            NotesControl.Instance.PlayNotesOneShot(NotesType.CrossKey, new Vector3(5, -5, 0), new Vector3(5, 3, 0), ControllerNum.P2, 0.75f);
         }
 
         if (Input.GetKeyDown(KeyCode.Z))

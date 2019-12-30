@@ -106,7 +106,7 @@ public class GameData : SingletonMonoBehaviour<GameData>
             }
             else
             {
-                if(data_P1.Zap >= data_P2.Zap)
+                if(data_P1.Rap + data_P1.Zap >= data_P2.Rap + data_P2.Zap)
                 {
                     return isWinner == true ? data_P1.SelectCharacter : data_P2.SelectCharacter;
                 }
@@ -202,7 +202,7 @@ public class GameData : SingletonMonoBehaviour<GameData>
             }
             else
             {
-                if (data_P1.Zap >= data_P2.Zap)
+                if (data_P1.Rap + data_P1.Zap >= data_P2.Rap + data_P2.Zap)
                 {
                     return isWinner == true ? data_P1.TotalScore : data_P2.TotalScore;
                 }
