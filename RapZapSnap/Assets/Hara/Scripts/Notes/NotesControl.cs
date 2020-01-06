@@ -238,49 +238,53 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             if(nowNotes.DoubleNotes.NotesParentObject.activeSelf == false) { return; }
         }
 
-        DS4InputKey input = id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1 : GamePadControl.Instance.GetKeyDown_2;
-
         if(nowNotes.NotesClickFlag == true)
         {
-            if(nowNotes.Mode == NotesMode.Single)
+            if(nowNotes.Mode == NotesMode.Single)    // ノーツがシングルモードの時の入力
             {
-                if (input.Circle == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true))
+                if (GamePadControl.Instance.GetButton(id, DS4AllKeyType.Circle) == true && clickFlag == true)
                 {
                     NotesCheck(nowNotes, NotesType.CircleKey, id);
+                    clickFlag = false;
                     return;
                 }
 
-                if (input.Cross == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.S) == true : Input.GetKeyDown(KeyCode.K) == true))
+                if (GamePadControl.Instance.GetButton(id, DS4AllKeyType.Cross) == true && clickFlag == true)
                 {
                     NotesCheck(nowNotes, NotesType.CrossKey, id);
+                    clickFlag = false;
                     return;
                 }
 
-                if (input.Triangle == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.D) == true : Input.GetKeyDown(KeyCode.L) == true))
+                if (GamePadControl.Instance.GetButton(id, DS4AllKeyType.Triangle) == true && clickFlag == true)
                 {
                     NotesCheck(nowNotes, NotesType.TriangleKey, id);
+                    clickFlag = false;
                     return;
                 }
 
-                if (input.Up == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.UpArrow) == true : Input.GetKeyDown(KeyCode.Keypad8) == true))
+                if (GamePadControl.Instance.GetButton(id, DS4AllKeyType.Up) == true && clickFlag == true)
                 {
                     NotesCheck(nowNotes, NotesType.UpArrow, id);
+                    clickFlag = false;
                     return;
                 }
 
-                if (input.Down == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.DownArrow) == true : Input.GetKeyDown(KeyCode.Keypad2) == true))
+                if (GamePadControl.Instance.GetButton(id, DS4AllKeyType.Down) == true && clickFlag == true)
                 {
                     NotesCheck(nowNotes, NotesType.DownArrow, id);
+                    clickFlag = false;
                     return;
                 }
 
-                if (input.Left == true || (_ = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.LeftArrow) == true : Input.GetKeyDown(KeyCode.Keypad4) == true))
+                if (GamePadControl.Instance.GetButton(id, DS4AllKeyType.Left) == true && clickFlag == true)
                 {
                     NotesCheck(nowNotes, NotesType.LeftArrow, id);
+                    clickFlag = false;
                     return;
                 }
             }
-            else if (nowNotes.Mode == NotesMode.Double)
+            else if (nowNotes.Mode == NotesMode.Double)    // 　ノーツがダブルモードの時の入力
             {
                 if((GamePadControl.Instance.GetButton(id, DS4AllKeyType.Circle) == true && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Cross) == true) && clickFlag == true)
                 {
@@ -289,11 +293,44 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
                     return;
                 }
 
-                if(GamePadControl.Instance.GetButton(id, DS4AllKeyType.Circle) == false && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Cross) == false && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Triangle) == false && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Up) == false && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Down) == false&& GamePadControl.Instance.GetButton(id, DS4AllKeyType.Left) == false && clickFlag == false)
+                if ((GamePadControl.Instance.GetButton(id, DS4AllKeyType.Circle) == true && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Triangle) == true) && clickFlag == true)
                 {
-                    clickFlag = true;
+                    clickFlag = false;
+                    NotesCheck(nowNotes, 1, id);
                     return;
                 }
+
+                if ((GamePadControl.Instance.GetButton(id, DS4AllKeyType.Circle) == true && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Up) == true) && clickFlag == true)
+                {
+                    clickFlag = false;
+                    NotesCheck(nowNotes, 2, id);
+                    return;
+                }
+
+                if ((GamePadControl.Instance.GetButton(id, DS4AllKeyType.Circle) == true && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Down) == true) && clickFlag == true)
+                {
+                    clickFlag = false;
+                    NotesCheck(nowNotes, 3, id);
+                    return;
+                }
+
+                if ((GamePadControl.Instance.GetButton(id, DS4AllKeyType.Circle) == true && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Left) == true) && clickFlag == true)
+                {
+                    clickFlag = false;
+                    NotesCheck(nowNotes, 4, id);
+                    return;
+                }
+            }
+            else
+            {
+
+            }
+
+            // キー入力が検知されなかったら入力を許可
+            if (GamePadControl.Instance.GetButton(id, DS4AllKeyType.Circle) == false && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Cross) == false && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Triangle) == false && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Up) == false && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Down) == false && GamePadControl.Instance.GetButton(id, DS4AllKeyType.Left) == false && clickFlag == false)
+            {
+                clickFlag = true;
+                return;
             }
         }
 
