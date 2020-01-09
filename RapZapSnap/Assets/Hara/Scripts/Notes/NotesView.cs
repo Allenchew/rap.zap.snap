@@ -27,10 +27,6 @@ public class NotesView : NotesModel
     public Notes DoubleNotes { set; get; }
     public Notes MashNotes { set; get; }
 
-    // ノーツのGameObject
-    //public GameObject MoveNotesObj { set; private get; } = null;
-    //public GameObject GoalNotesObj { set; private get; } = null;
-
     // ノーツのモード
     public NotesMode Mode { set; get; } = NotesMode.Single;
 
@@ -57,10 +53,6 @@ public class NotesView : NotesModel
     public float MinGood { private set; get; } = 0;
     public float MaxGood { private set; get; } = 0;
     public float MinBad { private set; get; } = 0;
-
-    // ノーツのイメージデータ情報
-    //private SpriteRenderer moveNotesSprite = null;
-    //private SpriteRenderer goalNotesSprite = null;
 
     // Imageの透明度を変更できるようにしておく
     private float mainSpriteAlpha = 1.0f;
@@ -241,8 +233,6 @@ public class NotesView : NotesModel
 
             yield return null;
         }*/
-
-
     }
 
     /// <summary>
@@ -269,8 +259,6 @@ public class NotesView : NotesModel
         // durationが0秒以下または移動開始座標と判定座標が同じならreturnする
         if (duration <= 0 || start == end) { return; }
 
-        Notes data = SingleNotes;
-
         // ノーツのデータを初期化
         NotesType1 = type;
         startPos = start;
@@ -278,9 +266,9 @@ public class NotesView : NotesModel
         moveDuration = duration;
         goalSpriteAlpha = spriteAlpha;
 
-        if (data.EndNotesObject.activeSelf == false)
+        if (SingleNotes.EndNotesObject.activeSelf == false)
         {
-            data.EndNotesObject.SetActive(true);
+            SingleNotes.EndNotesObject.SetActive(true);
         }
 
         // 判定域の設定
@@ -293,24 +281,20 @@ public class NotesView : NotesModel
         moveStartPos = startPos;
 
         // ノーツの表示サイズ&座標を初期化
-        data.NotesParentObject.transform.localScale = scale;
-        data.MoveNotesObject.transform.position = startPos;
-        data.EndNotesObject.transform.position = endPos;
+        SingleNotes.NotesParentObject.transform.localScale = scale;
+        SingleNotes.MoveNotesObject.transform.position = startPos;
+        SingleNotes.EndNotesObject.transform.position = endPos;
 
         // 進行率と入力フラグの初期化
         NotesRate = 0;
         NotesClickFlag = true;
         
         // ノーツのSprite情報を初期化
-        if (data.MoveNotesSprite1 == null) data.MoveNotesSprite1 = data.MoveNotesObject.GetComponent<SpriteRenderer>();
-        if (data.EndNotesSprite1 == null) data.EndNotesSprite1 = data.EndNotesObject.GetComponent<SpriteRenderer>();
-        data.MoveNotesSprite1.sprite = notesSprite;
-        data.MoveNotesSprite1.color = new Color(1, 1, 1, 1);
-        data.EndNotesSprite1.sprite = notesSprite;
-        data.EndNotesSprite1.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
+        SingleNotes.MoveNotesSprite1.sprite = notesSprite;
+        SingleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, 1);
+        SingleNotes.EndNotesSprite1.sprite = notesSprite;
+        SingleNotes.EndNotesSprite1.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
         mainSpriteAlpha = 1.0f;
-
-        SingleNotes = data;
 
         // ノーツの再生
         SingleNotes.NotesParentObject.SetActive(true);
@@ -325,8 +309,6 @@ public class NotesView : NotesModel
         // durationが0秒以下、移動開始座標と判定座標が同じまたはノーツタイプが同じならreturnする
         if (duration <= 0 || start == end || (type1 == type2)) { return; }
 
-        Notes data = DoubleNotes;
-
         // ノーツのデータを初期化
         NotesType1 = type1;
         NotesType2 = type2;
@@ -335,9 +317,9 @@ public class NotesView : NotesModel
         moveDuration = duration;
         goalSpriteAlpha = spriteAlpha;
 
-        if (data.EndNotesObject.activeSelf == false)
+        if (DoubleNotes.EndNotesObject.activeSelf == false)
         {
-            data.EndNotesObject.SetActive(true);
+            DoubleNotes.EndNotesObject.SetActive(true);
         }
 
         // 判定IDの設定
@@ -412,30 +394,24 @@ public class NotesView : NotesModel
         moveStartPos = startPos;
 
         // ノーツの表示サイズ&座標を初期化
-        data.NotesParentObject.transform.localScale = scale;
-        data.MoveNotesObject.transform.position = startPos;
-        data.EndNotesObject.transform.position = endPos;
+        DoubleNotes.NotesParentObject.transform.localScale = scale;
+        DoubleNotes.MoveNotesObject.transform.position = startPos;
+        DoubleNotes.EndNotesObject.transform.position = endPos;
 
         // 進行率と入力フラグの初期化
         NotesRate = 0;
         NotesClickFlag = true;
 
         // ノーツのSprite情報を初期化
-        if (data.MoveNotesSprite1 == null) data.MoveNotesSprite1 = data.MoveNotesObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        if (data.MoveNotesSprite2 == null) data.MoveNotesSprite2 = data.MoveNotesObject.transform.GetChild(1).GetComponent<SpriteRenderer>();
-        if (data.EndNotesSprite1 == null) data.EndNotesSprite1 = data.EndNotesObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        if (data.EndNotesSprite2 == null) data.EndNotesSprite2 = data.EndNotesObject.transform.GetChild(1).GetComponent<SpriteRenderer>();
-        data.MoveNotesSprite1.sprite = sprite1;
-        data.MoveNotesSprite1.color = new Color(1, 1, 1, 1);
-        data.MoveNotesSprite2.sprite = sprite2;
-        data.MoveNotesSprite2.color = new Color(1, 1, 1, 1);
-        data.EndNotesSprite1.sprite = sprite1;
-        data.EndNotesSprite1.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
-        data.EndNotesSprite2.sprite = sprite2;
-        data.EndNotesSprite2.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
+        DoubleNotes.MoveNotesSprite1.sprite = sprite1;
+        DoubleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, 1);
+        DoubleNotes.MoveNotesSprite2.sprite = sprite2;
+        DoubleNotes.MoveNotesSprite2.color = new Color(1, 1, 1, 1);
+        DoubleNotes.EndNotesSprite1.sprite = sprite1;
+        DoubleNotes.EndNotesSprite1.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
+        DoubleNotes.EndNotesSprite2.sprite = sprite2;
+        DoubleNotes.EndNotesSprite2.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
         mainSpriteAlpha = 1.0f;
-
-        DoubleNotes = data;
 
         // ノーツの再生
         DoubleNotes.NotesParentObject.SetActive(true);
