@@ -105,7 +105,7 @@ public class NotesView : NotesModel
             if(NotesClickFlag == false)
             {
                 // 透明度を下げる
-                mainSpriteAlpha -= 0.05f;
+                mainSpriteAlpha -= 0.15f;
                 if (Mode == NotesMode.Single)
                 {
                     SingleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, mainSpriteAlpha);

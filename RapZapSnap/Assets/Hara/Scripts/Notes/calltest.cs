@@ -15,17 +15,12 @@ public class calltest : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
-            
-        }
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            NotesControl.Instance.PlayDoubleNotesOneShot(NotesType.CircleKey, NotesType.CrossKey, new Vector3(-5, -5, 0), new Vector3(-5, 3, 0), ControllerNum.P1, 0.75f);
+            NotesControl.Instance.PlayDoubleNotesOneShot(NotesType.CircleKey, (NotesType)Random.Range(1, 6), new Vector3(-7, 3, 0), new Vector3(7, 3, 0), ControllerNum.P1, 1.0f);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            NotesControl.Instance.PlayNotesOneShot(NotesType.CircleKey, new Vector3(-5, -5, 0), new Vector3(-5, 3, 0), ControllerNum.P1,0.75f);
+            NotesControl.Instance.PlayNotesOneShot((NotesType)Random.Range(0, 6), new Vector3(-7, 3, 0), new Vector3(7, 3, 0), ControllerNum.P1,1.0f);
         }
 
         if (Input.GetKeyDown(KeyCode.Z))

@@ -221,17 +221,19 @@ public class ResultManager : MonoBehaviour
                     totalScoreBaseText_Win.text = totalScore_Win.text;
                     totalScore_Lose.text = GameData.Instance.GetTotalScore(false).ToString();
                     totalScoreBaseText_Lose.text = totalScore_Lose.text;
+                    resultAudio.PlayOneShot(resultSE[0]);
                     stepEndFlag = true;
                 }
                 break;
             default:
+                if(resultAudio.isPlaying == true) { return; }
                 if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.A) == true || Input.GetKeyDown(KeyCode.J) == true) && actionFlag == true)
                 {
                     step = 0;
                     actionFlag = false;
                     if(resultSE[0] != null)
                     {
-                        resultAudio.PlayOneShot(resultSE[0]);
+                        resultAudio.PlayOneShot(resultSE[1]);
                     }
                     SceneControl.Instance.LoadScene(sceneNum);
                 }
@@ -265,6 +267,7 @@ public class ResultManager : MonoBehaviour
             totalScoreBaseText_Win.text = totalScore_Win.text;
             totalScore_Lose.text = GameData.Instance.GetTotalScore(false).ToString();
             totalScoreBaseText_Lose.text = totalScore_Lose.text;
+            resultAudio.PlayOneShot(resultSE[0]);
         }
     }
 }

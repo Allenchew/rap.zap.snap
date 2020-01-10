@@ -188,7 +188,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
 
         // SEの再生
         int seNum = 1;
-        PlaySE(seNum, false);
+        PlaySE(seNum, true);
 
         // MainCameraを取得
         if (mainCamera == null) { mainCamera = Camera.main.gameObject; }

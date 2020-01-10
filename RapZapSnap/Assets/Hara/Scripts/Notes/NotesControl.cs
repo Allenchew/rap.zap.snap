@@ -12,8 +12,11 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
     [SerializeField, Tooltip("ノーツのPrefab")]
     private GameObject notesPrefab = null;
 
-    [SerializeField, Tooltip("ノーツのSpriteイメージデータ")]
-    private Sprite[] notesSprites = null;
+    [SerializeField, Tooltip("移動ノーツのSprite")]
+    private Sprite[] moveNotesSprites = null;
+
+    [SerializeField, Tooltip("判定ノーツのSprite")]
+    private Sprite[] endNotesSprites = null;
 
     private bool clickFlag = true;    // 入力フラグ
 
@@ -158,7 +161,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
 
         // ノーツにデータをセットして再生する
         notesData.NotesObjects[notesData.NotesCallCount].Mode = NotesMode.Single;
-        notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSprites[(int)type], notesSpriteAlpha);
+        notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), moveNotesSprites[(int)type], notesSpriteAlpha);
         notesData.NotesCallCount++;
 
         _ = id == ControllerNum.P1 ? dataBase1.NotesCallCount = notesData.NotesCallCount : dataBase2.NotesCallCount = notesData.NotesCallCount;
@@ -183,7 +186,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
 
         // ノーツにデータをセットして再生する
         notesData.NotesObjects[notesData.NotesCallCount].Mode = NotesMode.Double;
-        notesData.NotesObjects[notesData.NotesCallCount].DoubleNotesData(type1, type2, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), notesSprites[(int)type1], notesSprites[(int)type2], notesSpriteAlpha);
+        notesData.NotesObjects[notesData.NotesCallCount].DoubleNotesData(type1, type2, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), moveNotesSprites[(int)type1], moveNotesSprites[(int)type2], notesSpriteAlpha);
         notesData.NotesCallCount++;
 
         _ = id == ControllerNum.P1 ? dataBase1.NotesCallCount = notesData.NotesCallCount : dataBase2.NotesCallCount = notesData.NotesCallCount;

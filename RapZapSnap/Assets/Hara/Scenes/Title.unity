@@ -739,7 +739,7 @@ MonoBehaviour:
   titleImage_P2: {fileID: 1290335199}
   nowLoadingSlider: {fileID: 1828578484}
   nowLoadingText: {fileID: 1272514110}
-  titleSE: {fileID: 8300000, guid: e1c2e0d3d5146c446989431be21550d6, type: 3}
+  titleSE: {fileID: 8300000, guid: 8dc728d969585f24cb076a286d03d83a, type: 3}
   sceneNum: 1
 --- !u!4 &1047205930
 Transform:
