@@ -43,16 +43,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a4d4cf57219cc44381e71bcb36b3b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  singletonMode: 1
   maxNotes: 10
   notesPrefab: {fileID: 5018433614330757847, guid: 1a09af81682bbc34c88a6541512ebfd4,
     type: 3}
-  notesSprites:
-  - {fileID: 21300000, guid: 155c5842e4b4eb144b161797a6246cf9, type: 3}
-  - {fileID: 21300000, guid: b917a0ea770c9174d8abe9bb2d6d84af, type: 3}
-  - {fileID: 21300000, guid: 6ede808a7903d0945bd4534be09de9a0, type: 3}
-  - {fileID: 21300000, guid: 9e5f48d6f75579045837de152ac1f415, type: 3}
-  - {fileID: 21300000, guid: e11a912375d6ae24c88d460c4dde32e8, type: 3}
-  - {fileID: 21300000, guid: f0805b8bfa2b14143a2bf61c17aaf65b, type: 3}
+  moveNotesSprites:
+  - {fileID: 21300000, guid: a820291c14c96054db821bf01753c6fa, type: 3}
+  - {fileID: 21300000, guid: a9edbad56451e874bb9838af1df4b354, type: 3}
+  - {fileID: 21300000, guid: a03289c847dc37047ad934ed81a469b4, type: 3}
+  - {fileID: 21300000, guid: 069c7a770c5ab394a8c591435e3324f3, type: 3}
+  - {fileID: 21300000, guid: a8440f001f688c841be576b3eab5c6a0, type: 3}
+  - {fileID: 21300000, guid: 88b1d6a2796dc3f46afa88ad234ac588, type: 3}
+  endNotesSprites:
+  - {fileID: 21300000, guid: 61d707e860cdfac438b260624c83c9bb, type: 3}
+  - {fileID: 21300000, guid: 2831c63bd4e01a546805c1d4344b688b, type: 3}
+  - {fileID: 21300000, guid: cd7a617972279444bae34f6b38446e75, type: 3}
+  - {fileID: 21300000, guid: 2242885f039668147bcc8e4a4dbd68c1, type: 3}
+  - {fileID: 21300000, guid: d3db20e01b36dac4baa495a2256cdcf9, type: 3}
+  - {fileID: 21300000, guid: 21ce6ea08e7db1743b560a6c6a046619, type: 3}
   notesSize: 0.35
   notesSpriteAlpha: 0.25
   perfectLength: 0.015

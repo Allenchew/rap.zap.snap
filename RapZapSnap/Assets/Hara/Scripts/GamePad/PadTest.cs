@@ -22,100 +22,99 @@ public class PadTest : MonoBehaviour
 
     private void CheckInput(ControllerNum id)
     {
-        DS4InputKey input = id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1 : GamePadControl.Instance.GetKeyDown_2;
-        if(input.Circle == true)
+        if(GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Circle) == true)
         {
             Debug.Log(id + " : ○ボタン");
         }
-        if (input.Cross == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Cross) == true)
         {
             Debug.Log(id + " : ×ボタン");
         }
-        if (input.Triangle == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Triangle) == true)
         {
             Debug.Log(id + " : △ボタン");
         }
-        if (input.Square == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Square) == true)
         {
             Debug.Log(id + " :□ボタン");
         }
-        if (input.Up == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Up) == true)
         {
             Debug.Log(id + " : ↑ボタン");
         }
-        if (input.Down == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Down) == true)
         {
             Debug.Log(id + " : ↓ボタン");
         }
-        if (input.Left == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Left) == true)
         {
             Debug.Log(id + " : ←ボタン");
         }
-        if (input.Right == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Right) == true)
         {
             Debug.Log(id + " : →ボタン");
         }
-        if (input.LeftStick_Up == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.LeftStick_Up) == true)
         {
             Debug.Log(id + " : L↑ボタン");
         }
-        if (input.LeftStick_Down == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.LeftStick_Down) == true)
         {
             Debug.Log(id + " : L↓ボタン");
         }
-        if (input.LeftStick_Left == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.LeftStick_Left) == true)
         {
             Debug.Log(id + " : L←ボタン");
         }
-        if (input.LeftStick_Right == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.LeftStick_Right) == true)
         {
             Debug.Log(id + " : L→ボタン");
         }
-        if (input.RightStick_Up == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.RightStick_Up) == true)
         {
             Debug.Log(id + " : R↑ボタン");
         }
-        if (input.RightStick_Down == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.RightStick_Down) == true)
         {
             Debug.Log(id + " : R↓ボタン");
         }
-        if (input.RightStick_Left == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.RightStick_Left) == true)
         {
             Debug.Log(id + " : R←ボタン");
         }
-        if (input.RightStick_Right == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.RightStick_Right) == true)
         {
             Debug.Log(id + " : R→ボタン");
         }
-        if (input.L1 == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.L1) == true)
         {
             Debug.Log(id + " : L1ボタン");
         }
-        if (input.L2 == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.L2) == true)
         {
             Debug.Log(id + " : L2ボタン");
         }
-        if (input.L3 == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.L3) == true)
         {
             Debug.Log(id + " : L3ボタン");
         }
-        if (input.R1 == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.R1) == true)
         {
             Debug.Log(id + " : R1ボタン");
         }
-        if (input.R2 == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.R2) == true)
         {
             Debug.Log(id + " : R2ボタン");
         }
-        if (input.R3 == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.R3) == true)
         {
             Debug.Log(id + " : R3ボタン");
         }
-        if (input.OPTION == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.OPTION) == true)
         {
             Debug.Log(id + " : OPTIONボタン");
         }
-        if (input.SHARE == true)
+        if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.SHARE) == true)
         {
             Debug.Log(id + " : SHAREボタン");
         }

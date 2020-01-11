@@ -63,6 +63,35 @@ public class NotesView : NotesModel
     public bool NotesClickFlag { private set; get; } = true;    // クリックの有効フラグ
 
     /// <summary>
+    /// ノーツのSprite情報の取得
+    /// </summary>
+    /// <param name="notesObject">ノーツの親オブジェクト</param>
+    public void GetNotesSprite(GameObject notesObject)
+    {
+        Notes data;
+
+        // シングルノーツの情報取得
+        data = SingleNotes;
+        data.NotesParentObject = notesObject.transform.GetChild(0).gameObject;
+        data.MoveNotesObject = data.NotesParentObject.transform.GetChild(1).gameObject;
+        data.EndNotesObject = data.NotesParentObject.transform.GetChild(0).gameObject;
+        data.MoveNotesSprite1 = data.MoveNotesObject.GetComponent<SpriteRenderer>();
+        data.EndNotesSprite1 = data.EndNotesObject.GetComponent<SpriteRenderer>();
+        SingleNotes = data;
+
+        // ダブルノーツの情報取得
+        data = DoubleNotes;
+        data.NotesParentObject = notesObject.transform.GetChild(1).gameObject;
+        data.MoveNotesObject = data.NotesParentObject.transform.GetChild(1).gameObject;
+        data.EndNotesObject = data.NotesParentObject.transform.GetChild(0).gameObject;
+        data.MoveNotesSprite1 = data.MoveNotesObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        data.MoveNotesSprite2 = data.MoveNotesObject.transform.GetChild(1).GetComponent<SpriteRenderer>();
+        data.EndNotesSprite1 = data.EndNotesObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        data.EndNotesSprite2 = data.EndNotesObject.transform.GetChild(1).GetComponent<SpriteRenderer>();
+        DoubleNotes = data;
+    }
+
+    /// <summary>
     /// ノーツの移動コルーチン
     /// </summary>
     /// <returns></returns>
@@ -254,7 +283,7 @@ public class NotesView : NotesModel
     /// <summary>
     /// Singleモードのノーツのデータ初期化
     /// </summary>
-    public void SingleNotesData(NotesType type, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite notesSprite, float spriteAlpha)
+    public void SingleNotesData(NotesType type, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite moveSprite, Sprite endSprite, float spriteAlpha)
     {
         // durationが0秒以下または移動開始座標と判定座標が同じならreturnする
         if (duration <= 0 || start == end) { return; }
@@ -290,9 +319,9 @@ public class NotesView : NotesModel
         NotesClickFlag = true;
         
         // ノーツのSprite情報を初期化
-        SingleNotes.MoveNotesSprite1.sprite = notesSprite;
+        SingleNotes.MoveNotesSprite1.sprite = moveSprite;
         SingleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, 1);
-        SingleNotes.EndNotesSprite1.sprite = notesSprite;
+        SingleNotes.EndNotesSprite1.sprite = endSprite;
         SingleNotes.EndNotesSprite1.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
         mainSpriteAlpha = 1.0f;
 
@@ -304,7 +333,7 @@ public class NotesView : NotesModel
     /// <summary>
     /// Doubleモードのノーツのデータ初期化
     /// </summary>
-    public void DoubleNotesData(NotesType type1, NotesType type2, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite sprite1, Sprite sprite2, float spriteAlpha)
+    public void DoubleNotesData(NotesType type1, NotesType type2, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite moveSprite1, Sprite moveSprite2, Sprite endSprite1, Sprite endSprite2, float spriteAlpha)
     {
         // durationが0秒以下、移動開始座標と判定座標が同じまたはノーツタイプが同じならreturnする
         if (duration <= 0 || start == end || (type1 == type2)) { return; }
@@ -403,13 +432,13 @@ public class NotesView : NotesModel
         NotesClickFlag = true;
 
         // ノーツのSprite情報を初期化
-        DoubleNotes.MoveNotesSprite1.sprite = sprite1;
+        DoubleNotes.MoveNotesSprite1.sprite = moveSprite1;
         DoubleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, 1);
-        DoubleNotes.MoveNotesSprite2.sprite = sprite2;
+        DoubleNotes.MoveNotesSprite2.sprite = moveSprite2;
         DoubleNotes.MoveNotesSprite2.color = new Color(1, 1, 1, 1);
-        DoubleNotes.EndNotesSprite1.sprite = sprite1;
+        DoubleNotes.EndNotesSprite1.sprite = endSprite1;
         DoubleNotes.EndNotesSprite1.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
-        DoubleNotes.EndNotesSprite2.sprite = sprite2;
+        DoubleNotes.EndNotesSprite2.sprite = endSprite2;
         DoubleNotes.EndNotesSprite2.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
         mainSpriteAlpha = 1.0f;
 
