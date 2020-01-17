@@ -113,7 +113,6 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
                     obj.transform.GetChild(j).gameObject.SetActive(false);
                 }
                 notesData.NotesObjects[i] = obj.GetComponent<NotesView>();
-                notesData.NotesObjects[i].GetNotesSprite(obj);
             }
         }
         _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
@@ -133,11 +132,11 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
 
         // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-        if (notesData.NotesObjects[notesData.NotesCallCount].SingleNotes.NotesParentObject.activeSelf == true || notesData.NotesObjects[notesData.NotesCallCount].DoubleNotes.NotesParentObject.activeSelf == true) { return; }
+        if (notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData.NotesObject.activeSelf == true || notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData.NotesObject.activeSelf == true) { return; }
 
         // ノーツにデータをセットして再生する
         notesData.NotesObjects[notesData.NotesCallCount].Mode = NotesMode.Single;
-        notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), moveNotesSprites[(int)type], endNotesSprites[(int)type], notesSpriteAlpha);
+        notesData.NotesObjects[notesData.NotesCallCount].SetSingleNotes(type, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), moveNotesSprites[(int)type], endNotesSprites[(int)type], notesSpriteAlpha);
         notesData.NotesCallCount++;
 
         _ = id == ControllerNum.P1 ? dataBase1.NotesCallCount = notesData.NotesCallCount : dataBase2.NotesCallCount = notesData.NotesCallCount;
@@ -158,11 +157,11 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
 
         // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-        if (notesData.NotesObjects[notesData.NotesCallCount].SingleNotes.NotesParentObject.activeSelf == true || notesData.NotesObjects[notesData.NotesCallCount].DoubleNotes.NotesParentObject.activeSelf == true) { return; }
+        if (notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData.NotesObject.activeSelf == true || notesData.NotesObjects[notesData.NotesCallCount].DoubleNotesData.NotesObject.activeSelf == true) { return; }
 
         // ノーツにデータをセットして再生する
         notesData.NotesObjects[notesData.NotesCallCount].Mode = NotesMode.Double;
-        notesData.NotesObjects[notesData.NotesCallCount].DoubleNotesData(type1, type2, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), moveNotesSprites[(int)type1], moveNotesSprites[(int)type2], endNotesSprites[(int)type1], endNotesSprites[(int)type2], notesSpriteAlpha);
+        notesData.NotesObjects[notesData.NotesCallCount].SetDoubleNotes(type1, type2, startPos, endPos, duration, perfectLength, goodLength, badLength, new Vector3(notesSize, notesSize, notesSize), moveNotesSprites[(int)type1], moveNotesSprites[(int)type2], endNotesSprites[(int)type1], endNotesSprites[(int)type2], notesSpriteAlpha);
         notesData.NotesCallCount++;
 
         _ = id == ControllerNum.P1 ? dataBase1.NotesCallCount = notesData.NotesCallCount : dataBase2.NotesCallCount = notesData.NotesCallCount;
@@ -216,11 +215,11 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
 
         if(nowNotes.Mode == NotesMode.Single)
         {
-            if(nowNotes.SingleNotes.NotesParentObject.activeSelf == false) { return; }
+            if(nowNotes.SingleNotesData.NotesObject.activeSelf == false) { return; }
         }
         else if(nowNotes.Mode == NotesMode.Double)
         {
-            if(nowNotes.DoubleNotes.NotesParentObject.activeSelf == false) { return; }
+            if(nowNotes.DoubleNotesData.NotesObject.activeSelf == false) { return; }
         }
 
         if (nowNotes.NotesClickFlag == true)
@@ -398,7 +397,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
 
         if(nowNotes.Mode == NotesMode.Single)
         {
-            if (nowNotes.NotesClickFlag == false || (nextNotes.SingleNotes.NotesParentObject.activeSelf == true && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
+            if (nowNotes.NotesClickFlag == false || (nextNotes.SingleNotesData.NotesObject.activeSelf == true && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
             {
                 NotesResult(0, 0, id);
                 return;
@@ -406,7 +405,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         }
         else if (nowNotes.Mode == NotesMode.Double)
         {
-            if (nowNotes.NotesClickFlag == false || (nextNotes.DoubleNotes.NotesParentObject.activeSelf == true && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
+            if (nowNotes.NotesClickFlag == false || (nextNotes.DoubleNotesData.NotesObject.activeSelf == true && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
             {
                 NotesResult(0, 0, id);
                 return;

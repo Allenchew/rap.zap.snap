@@ -393,6 +393,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ec950f1977595342a76271e3ae13464, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  singleNotes:
+    NotesObject: {fileID: 597909595602628877}
+    MoveObject: {fileID: 5018433615196861122}
+    EndObject: {fileID: 5018433615678297093}
+    MoveSprite: {fileID: 5018433615196861120}
+    EndSprite: {fileID: 5018433615678297092}
+  doubleNotes:
+    NotesObject: {fileID: 7393387576153181642}
+    MoveObject: {fileID: 7919705834622971312}
+    EndObject: {fileID: 8127633659241902275}
+    MoveSprite1: {fileID: 666826648384367604}
+    MoveSprite2: {fileID: 5286127427477776034}
+    EndSprite1: {fileID: 11190017327069458}
+    EndSprite2: {fileID: 5861471319091952693}
 --- !u!1 &5018433615196861122
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,21 +11,31 @@ public enum NotesMode
 
 public class NotesView : NotesModel
 {
-    public struct Notes
+    [System.Serializable]
+    public struct SingleNotes
     {
-        public GameObject NotesParentObject;
-        public GameObject MoveNotesObject;
-        public GameObject EndNotesObject;
-
-        public SpriteRenderer MoveNotesSprite1;
-        public SpriteRenderer MoveNotesSprite2;
-        public SpriteRenderer EndNotesSprite1;
-        public SpriteRenderer EndNotesSprite2;
+        public GameObject NotesObject;
+        public GameObject MoveObject;
+        public GameObject EndObject;
+        public SpriteRenderer MoveSprite;
+        public SpriteRenderer EndSprite;
     }
+    [SerializeField, Header("シングルノーツ")] private SingleNotes singleNotes;
+    public SingleNotes SingleNotesData { get { return singleNotes; } }
 
-    public Notes SingleNotes { set; get; }
-    public Notes DoubleNotes { set; get; }
-    public Notes MashNotes { set; get; }
+    [System.Serializable]
+    public struct DoubleNotes
+    {
+        public GameObject NotesObject;
+        public GameObject MoveObject;
+        public GameObject EndObject;
+        public SpriteRenderer MoveSprite1;
+        public SpriteRenderer MoveSprite2;
+        public SpriteRenderer EndSprite1;
+        public SpriteRenderer EndSprite2;
+    }
+    [SerializeField, Header("ダブルノーツ")] private DoubleNotes doubleNotes;
+    public DoubleNotes DoubleNotesData { get { return doubleNotes; } }
 
     // ノーツのモード
     public NotesMode Mode { set; get; } = NotesMode.Single;
@@ -63,35 +73,6 @@ public class NotesView : NotesModel
     public bool NotesClickFlag { private set; get; } = true;    // クリックの有効フラグ
 
     /// <summary>
-    /// ノーツのSprite情報の取得
-    /// </summary>
-    /// <param name="notesObject">ノーツの親オブジェクト</param>
-    public void GetNotesSprite(GameObject notesObject)
-    {
-        Notes data;
-
-        // シングルノーツの情報取得
-        data = SingleNotes;
-        data.NotesParentObject = notesObject.transform.GetChild(0).gameObject;
-        data.MoveNotesObject = data.NotesParentObject.transform.GetChild(1).gameObject;
-        data.EndNotesObject = data.NotesParentObject.transform.GetChild(0).gameObject;
-        data.MoveNotesSprite1 = data.MoveNotesObject.GetComponent<SpriteRenderer>();
-        data.EndNotesSprite1 = data.EndNotesObject.GetComponent<SpriteRenderer>();
-        SingleNotes = data;
-
-        // ダブルノーツの情報取得
-        data = DoubleNotes;
-        data.NotesParentObject = notesObject.transform.GetChild(1).gameObject;
-        data.MoveNotesObject = data.NotesParentObject.transform.GetChild(1).gameObject;
-        data.EndNotesObject = data.NotesParentObject.transform.GetChild(0).gameObject;
-        data.MoveNotesSprite1 = data.MoveNotesObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        data.MoveNotesSprite2 = data.MoveNotesObject.transform.GetChild(1).GetComponent<SpriteRenderer>();
-        data.EndNotesSprite1 = data.EndNotesObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        data.EndNotesSprite2 = data.EndNotesObject.transform.GetChild(1).GetComponent<SpriteRenderer>();
-        DoubleNotes = data;
-    }
-
-    /// <summary>
     /// ノーツの移動コルーチン
     /// </summary>
     /// <returns></returns>
@@ -108,11 +89,11 @@ public class NotesView : NotesModel
             // ノーツを移動する処理
             if(Mode == NotesMode.Single)
             {
-                SingleNotes.MoveNotesObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
+                singleNotes.MoveObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
             }
             else if(Mode == NotesMode.Double)
             {
-                DoubleNotes.MoveNotesObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
+                doubleNotes.MoveObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
             }
 
             time += Time.deltaTime;
@@ -122,11 +103,11 @@ public class NotesView : NotesModel
                 // 判定ノーツを非表示にする
                 if (Mode == NotesMode.Single)
                 {
-                    SingleNotes.EndNotesObject.SetActive(false);
+                    singleNotes.EndObject.SetActive(false);
                 }
                 else if (Mode == NotesMode.Double)
                 {
-                    DoubleNotes.EndNotesObject.SetActive(false);
+                    doubleNotes.EndObject.SetActive(false);
                 }
                 NotesClickFlag = false;
             }
@@ -137,12 +118,12 @@ public class NotesView : NotesModel
                 mainSpriteAlpha -= 0.15f;
                 if (Mode == NotesMode.Single)
                 {
-                    SingleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, mainSpriteAlpha);
+                    singleNotes.MoveSprite.color = new Color(1, 1, 1, mainSpriteAlpha);
                 }
                 else if (Mode == NotesMode.Double)
                 {
-                    DoubleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, mainSpriteAlpha);
-                    DoubleNotes.MoveNotesSprite2.color = new Color(1, 1, 1, mainSpriteAlpha);
+                    doubleNotes.MoveSprite1.color = new Color(1, 1, 1, mainSpriteAlpha);
+                    doubleNotes.MoveSprite2.color = new Color(1, 1, 1, mainSpriteAlpha);
                 }
             }
 
@@ -272,18 +253,18 @@ public class NotesView : NotesModel
         StopCoroutine(coroutine);
         if(Mode == NotesMode.Single)
         {
-            SingleNotes.NotesParentObject.SetActive(false);
+            singleNotes.NotesObject.SetActive(false);
         }
         else if (Mode == NotesMode.Double)
         {
-            DoubleNotes.NotesParentObject.SetActive(false);
+            doubleNotes.NotesObject.SetActive(false);
         }
     }
 
     /// <summary>
     /// Singleモードのノーツのデータ初期化
     /// </summary>
-    public void SingleNotesData(NotesType type, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite moveSprite, Sprite endSprite, float spriteAlpha)
+    public void SetSingleNotes(NotesType type, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite moveSprite, Sprite endSprite, float spriteAlpha)
     {
         // durationが0秒以下または移動開始座標と判定座標が同じならreturnする
         if (duration <= 0 || start == end) { return; }
@@ -295,9 +276,9 @@ public class NotesView : NotesModel
         moveDuration = duration;
         goalSpriteAlpha = spriteAlpha;
 
-        if (SingleNotes.EndNotesObject.activeSelf == false)
+        if (singleNotes.EndObject.activeSelf == false)
         {
-            SingleNotes.EndNotesObject.SetActive(true);
+            singleNotes.EndObject.SetActive(true);
         }
 
         // 判定域の設定
@@ -310,30 +291,30 @@ public class NotesView : NotesModel
         moveStartPos = startPos;
 
         // ノーツの表示サイズ&座標を初期化
-        SingleNotes.NotesParentObject.transform.localScale = scale;
-        SingleNotes.MoveNotesObject.transform.position = startPos;
-        SingleNotes.EndNotesObject.transform.position = endPos;
+        singleNotes.NotesObject.transform.localScale = scale;
+        singleNotes.MoveObject.transform.position = startPos;
+        singleNotes.EndObject.transform.position = endPos;
 
         // 進行率と入力フラグの初期化
         NotesRate = 0;
         NotesClickFlag = true;
         
         // ノーツのSprite情報を初期化
-        SingleNotes.MoveNotesSprite1.sprite = moveSprite;
-        SingleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, 1);
-        SingleNotes.EndNotesSprite1.sprite = endSprite;
-        SingleNotes.EndNotesSprite1.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
+        singleNotes.MoveSprite.sprite = moveSprite;
+        singleNotes.MoveSprite.color = new Color(1, 1, 1, 1);
+        singleNotes.EndSprite.sprite = endSprite;
+        singleNotes.EndSprite.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
         mainSpriteAlpha = 1.0f;
 
         // ノーツの再生
-        SingleNotes.NotesParentObject.SetActive(true);
+        singleNotes.NotesObject.SetActive(true);
         coroutine = StartCoroutine(DoNotesMove());
     }
 
     /// <summary>
     /// Doubleモードのノーツのデータ初期化
     /// </summary>
-    public void DoubleNotesData(NotesType type1, NotesType type2, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite moveSprite1, Sprite moveSprite2, Sprite endSprite1, Sprite endSprite2, float spriteAlpha)
+    public void SetDoubleNotes(NotesType type1, NotesType type2, Vector3 start, Vector3 end, float duration, float perfect, float good, float bad, Vector3 scale, Sprite moveSprite1, Sprite moveSprite2, Sprite endSprite1, Sprite endSprite2, float spriteAlpha)
     {
         // durationが0秒以下、移動開始座標と判定座標が同じまたはノーツタイプが同じならreturnする
         if (duration <= 0 || start == end || (type1 == type2)) { return; }
@@ -346,9 +327,9 @@ public class NotesView : NotesModel
         moveDuration = duration;
         goalSpriteAlpha = spriteAlpha;
 
-        if (DoubleNotes.EndNotesObject.activeSelf == false)
+        if (doubleNotes.EndObject.activeSelf == false)
         {
-            DoubleNotes.EndNotesObject.SetActive(true);
+            doubleNotes.EndObject.SetActive(true);
         }
 
         // 判定IDの設定
@@ -423,27 +404,27 @@ public class NotesView : NotesModel
         moveStartPos = startPos;
 
         // ノーツの表示サイズ&座標を初期化
-        DoubleNotes.NotesParentObject.transform.localScale = scale;
-        DoubleNotes.MoveNotesObject.transform.position = startPos;
-        DoubleNotes.EndNotesObject.transform.position = endPos;
+        doubleNotes.NotesObject.transform.localScale = scale;
+        doubleNotes.MoveObject.transform.position = startPos;
+        doubleNotes.EndObject.transform.position = endPos;
 
         // 進行率と入力フラグの初期化
         NotesRate = 0;
         NotesClickFlag = true;
 
         // ノーツのSprite情報を初期化
-        DoubleNotes.MoveNotesSprite1.sprite = moveSprite1;
-        DoubleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, 1);
-        DoubleNotes.MoveNotesSprite2.sprite = moveSprite2;
-        DoubleNotes.MoveNotesSprite2.color = new Color(1, 1, 1, 1);
-        DoubleNotes.EndNotesSprite1.sprite = endSprite1;
-        DoubleNotes.EndNotesSprite1.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
-        DoubleNotes.EndNotesSprite2.sprite = endSprite2;
-        DoubleNotes.EndNotesSprite2.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
+        doubleNotes.MoveSprite1.sprite = moveSprite1;
+        doubleNotes.MoveSprite1.color = new Color(1, 1, 1, 1);
+        doubleNotes.MoveSprite2.sprite = moveSprite2;
+        doubleNotes.MoveSprite2.color = new Color(1, 1, 1, 1);
+        doubleNotes.EndSprite1.sprite = endSprite1;
+        doubleNotes.EndSprite1.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
+        doubleNotes.EndSprite2.sprite = endSprite2;
+        doubleNotes.EndSprite2.color = new Color(1, 1, 1, goalSpriteAlpha);    // 透明度を設定
         mainSpriteAlpha = 1.0f;
 
         // ノーツの再生
-        DoubleNotes.NotesParentObject.SetActive(true);
+        doubleNotes.NotesObject.SetActive(true);
         coroutine = StartCoroutine(DoNotesMove());
     }
 }
