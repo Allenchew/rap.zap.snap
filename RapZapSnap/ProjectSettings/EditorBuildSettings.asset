@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/Hara/Scenes/Title.unity
     guid: 6f85f445dfc18ba49959fc275d1b3c8f
   - enabled: 1
-    path: Assets/Chew/scene/CharacterSelection.unity
-    guid: 19ab2d513fc4a064aa3fe882e7f5187b
+    path: Assets/Hara/Scenes/CharacterSelection.unity
+    guid: b6adddd9a80bf274dbae5cf4d58e7480
   - enabled: 1
     path: Assets/Chew/scene/MainGame.unity
     guid: 488653a8e2c1a694983905ae24e6aed0

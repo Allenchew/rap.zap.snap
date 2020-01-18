@@ -8,13 +8,6 @@ public enum ControllerNum
     P1,
     P2
 }
-public enum ControllerAxis
-{
-    Up,
-    Down,
-    Left,
-    Right
-}
 
 public enum DS4AllKeyType
 {
@@ -308,18 +301,6 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
             input.OPTION = GetButtonUp(id, DS4ButtonType.OPTION);
             input.SHARE = GetButtonUp(id, DS4ButtonType.SHARE);
         }
-        else
-        {
-            input.Circle = id == ControllerNum.P1 ? Input.GetKeyUp(KeyCode.Joystick1Button2) : Input.GetKeyUp(KeyCode.Joystick2Button2);
-            input.Cross = id == ControllerNum.P1 ? Input.GetKeyUp(KeyCode.Joystick1Button1) : Input.GetKeyUp(KeyCode.Joystick2Button1);
-            input.Triangle = id == ControllerNum.P1 ? Input.GetKeyUp(KeyCode.Joystick1Button3) : Input.GetKeyUp(KeyCode.Joystick2Button3);
-            input.Square = id == ControllerNum.P1 ? Input.GetKeyUp(KeyCode.Joystick1Button0) : Input.GetKeyUp(KeyCode.Joystick2Button0);
-            input.Up = GetAxisUp(id, ControllerAxis.Up);
-            input.Down = GetAxisUp(id, ControllerAxis.Down);
-            input.Left = GetAxisUp(id, ControllerAxis.Left);
-            input.Right = GetAxisUp(id, ControllerAxis.Right);
-
-        }
         _ = id == ControllerNum.P1 ? GetKeyUp_1 = input : GetKeyUp_2 = input;
     }
 
@@ -356,17 +337,6 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
             input.R3 = GetButtonDown(id, DS4ButtonType.R3);
             input.OPTION = GetButtonDown(id, DS4ButtonType.OPTION);
             input.SHARE = GetButtonDown(id, DS4ButtonType.SHARE);
-        }
-        else
-        {
-            input.Circle = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button2) : Input.GetKeyDown(KeyCode.Joystick2Button2);
-            input.Cross = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button1) : Input.GetKeyDown(KeyCode.Joystick2Button1);
-            input.Triangle = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button3) : Input.GetKeyDown(KeyCode.Joystick2Button3);
-            input.Square = id == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.Joystick1Button0) : Input.GetKeyDown(KeyCode.Joystick2Button0);
-            input.Up = GetAxisDown(id, ControllerAxis.Up);
-            input.Down = GetAxisDown(id, ControllerAxis.Down);
-            input.Left = GetAxisDown(id, ControllerAxis.Left);
-            input.Right = GetAxisDown(id, ControllerAxis.Right);
         }
         _ = id == ControllerNum.P1 ? GetKeyDown_1 = input : GetKeyDown_2 = input;
     }
@@ -956,158 +926,6 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     }
 
     /// <summary>
-    /// コントローラーのAxisDownを取得
-    /// </summary>
-    /// <param name="id">コントローラ番号</param>
-    /// <param name="type">取得するAxis</param>
-    /// <returns></returns>
-    private bool GetAxisDown(ControllerNum id, ControllerAxis type)
-    {
-        bool axisFlag;
-        bool isPositive;
-        string axisName;
-        bool result;
-
-        switch(type)
-        {
-            case ControllerAxis.Up:
-                axisFlag = id == ControllerNum.P1 ? inputDown_1.Lu : inputDown_2.Lu;
-                axisName = id == ControllerNum.P1 ? "Vertical_1" : "Vertical_2";
-                isPositive = false;
-                break;
-            case ControllerAxis.Down:
-                axisFlag = id == ControllerNum.P1 ? inputDown_1.Ld : inputDown_2.Ld;
-                axisName = id == ControllerNum.P1 ? "Vertical_1" : "Vertical_2";
-                isPositive = true;
-                break;
-            case ControllerAxis.Left:
-                axisFlag = id == ControllerNum.P1 ? inputDown_1.Ll : inputDown_2.Ll;
-                axisName = id == ControllerNum.P1 ? "Horizontal_1" : "Horizontal_2";
-                isPositive = false;
-                break;
-            case ControllerAxis.Right:
-                axisFlag = id == ControllerNum.P1 ? inputDown_1.Lr : inputDown_2.Lr;
-                axisName = id == ControllerNum.P1 ? "Horizontal_1" : "Horizontal_2";
-                isPositive = true;
-                break;
-            default:
-                return false;
-        }
-
-        if(_ = isPositive == true ? (Input.GetAxis(axisName) >= axisValue) : (Input.GetAxis(axisName) <= -axisValue))
-        {
-            if(axisFlag == false)
-            {
-                axisFlag = true;
-                result = true;
-            }
-            else
-            {
-                result = false;
-            }
-        }
-        else
-        {
-            if(axisFlag == true) { axisFlag = false; }
-            result = false;
-        }
-
-        switch(type)
-        {
-            case ControllerAxis.Up:
-                _ = id == ControllerNum.P1 ? inputDown_1.Lu = axisFlag : inputDown_2.Lu = axisFlag;
-                break;
-            case ControllerAxis.Down:
-                _ = id == ControllerNum.P1 ? inputDown_1.Ld = axisFlag : inputDown_2.Ld = axisFlag;
-                break;
-            case ControllerAxis.Left:
-                _ = id == ControllerNum.P1 ? inputDown_1.Ll = axisFlag : inputDown_2.Ll = axisFlag;
-                break;
-            case ControllerAxis.Right:
-                _ = id == ControllerNum.P1 ? inputDown_1.Lr = axisFlag : inputDown_2.Lr = axisFlag;
-                break;
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    /// コントローラのAxisUpを取得
-    /// </summary>
-    /// <param name="id">コントローラ番号</param>
-    /// <param name="type">取得するAxis</param>
-    /// <returns></returns>
-    private bool GetAxisUp(ControllerNum id, ControllerAxis type)
-    {
-        bool axisFlag;
-        bool isPositive;
-        string axisName;
-        bool result;
-
-        switch(type)
-        {
-            case ControllerAxis.Up:
-                axisFlag = id == ControllerNum.P1 ? inputUp_1.Lu : inputUp_2.Lu;
-                axisName = id == ControllerNum.P1 ? "Vertical_1" : "Vertical_2";
-                isPositive = false;
-                break;
-            case ControllerAxis.Down:
-                axisFlag = id == ControllerNum.P1 ? inputUp_1.Ld : inputUp_2.Ld;
-                axisName = id == ControllerNum.P1 ? "Vertical_1" : "Vertical_2";
-                isPositive = true;
-                break;
-            case ControllerAxis.Left:
-                axisFlag = id == ControllerNum.P1 ? inputUp_1.Ll : inputUp_2.Ll;
-                axisName = id == ControllerNum.P1 ? "Horizontal_1" : "Horizontal_2";
-                isPositive = false;
-                break;
-            case ControllerAxis.Right:
-                axisFlag = id == ControllerNum.P1 ? inputUp_1.Lr : inputUp_2.Lr;
-                axisName = id == ControllerNum.P1 ? "Horizontal_1" : "Horizontal_2";
-                isPositive = true;
-                break;
-            default:
-                return false;
-        }
-
-        if(_ = isPositive == true ? (Input.GetAxis(axisName) >= axisValue) : (Input.GetAxis(axisName) <= -axisValue))
-        {
-            if(axisFlag == false) { axisFlag = true; }
-            result = false;
-        }
-        else
-        {
-            if(axisFlag == true)
-            {
-                axisFlag = false;
-                result = true;
-            }
-            else
-            {
-                result = false;
-            }
-        }
-
-        switch(type)
-        {
-            case ControllerAxis.Up:
-                _ = id == ControllerNum.P1 ? inputUp_1.Lu = axisFlag : inputUp_2.Lu = axisFlag;
-                break;
-            case ControllerAxis.Down:
-                _ = id == ControllerNum.P1 ? inputUp_1.Ld = axisFlag : inputUp_2.Ld = axisFlag;
-                break;
-            case ControllerAxis.Left:
-                _ = id == ControllerNum.P1 ? inputUp_1.Ll = axisFlag : inputUp_2.Ll = axisFlag;
-                break;
-            case ControllerAxis.Right:
-                _ = id == ControllerNum.P1 ? inputUp_1.Lr = axisFlag : inputUp_2.Lr = axisFlag;
-                break;
-        }
-
-        return result;
-    }
-
-    /// <summary>
     /// DS4のキー入力を取得
     /// </summary>
     /// <param name="id">コントローラ番号</param>
@@ -1116,7 +934,11 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
     public bool GetDS4Key(ControllerNum id, DS4AllKeyType type)
     {
         DS4ControllerType controller = id == ControllerNum.P1 ? DS4ControllerType.P1 : DS4ControllerType.P2;
-        if(type == DS4AllKeyType.Circle || type == DS4AllKeyType.Cross || type == DS4AllKeyType.Triangle || type == DS4AllKeyType.Square || type == DS4AllKeyType.Up || type == DS4AllKeyType.Down || type == DS4AllKeyType.Left || type == DS4AllKeyType.Right || type == DS4AllKeyType.L1 || type == DS4AllKeyType.L3 || type == DS4AllKeyType.R1 || type == DS4AllKeyType.R3 || type == DS4AllKeyType.OPTION || type == DS4AllKeyType.SHARE)
+
+        // コントローラーが接続されているかチェック
+        if (ds4InputCustom.IsController(controller) == false) { return false; }
+
+        if (type == DS4AllKeyType.Circle || type == DS4AllKeyType.Cross || type == DS4AllKeyType.Triangle || type == DS4AllKeyType.Square || type == DS4AllKeyType.Up || type == DS4AllKeyType.Down || type == DS4AllKeyType.Left || type == DS4AllKeyType.Right || type == DS4AllKeyType.L1 || type == DS4AllKeyType.L3 || type == DS4AllKeyType.R1 || type == DS4AllKeyType.R3 || type == DS4AllKeyType.OPTION || type == DS4AllKeyType.SHARE)
         {
             DS4ButtonType buttonName;
             switch (type)
@@ -1227,6 +1049,135 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
                 return false;
             }
         }
+    }
+
+    /// <summary>
+    /// DS4のキーが何か入力されているかを取得
+    /// </summary>
+    /// <param name="id"></param>
+    public bool GetDS4AnyKey(ControllerNum id)
+    {
+        if(GetDS4Key(id, DS4AllKeyType.Circle) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.Cross) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.Triangle) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.Square) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.Up) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.Down) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.Left) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.Right) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.LeftStick_Up) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.LeftStick_Down) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.LeftStick_Left) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.LeftStick_Right) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.RightStick_Up) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.RightStick_Down) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.RightStick_Left) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.RightStick_Right) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.L1) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.L2) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.L3) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.R1) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.R2) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.R3) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.OPTION) == true)
+        {
+            return true;
+        }
+
+        if (GetDS4Key(id, DS4AllKeyType.SHARE) == true)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>

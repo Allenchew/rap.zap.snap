@@ -388,7 +388,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             }
 
             // キー入力が検知されなかったら入力を許可
-            if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Circle) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Cross) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Triangle) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Up) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Down) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Left) == false && (id == ControllerNum.P1 ? (clickFlag1 == false) : (clickFlag2 == false)))
+            if(GamePadControl.Instance.GetDS4AnyKey(id) == false && (id == ControllerNum.P1 ? (clickFlag1 == false) : (clickFlag2 == false)))
             {
                 _ = id == ControllerNum.P1 ? clickFlag1 = true : clickFlag2 = true;
                 return;
