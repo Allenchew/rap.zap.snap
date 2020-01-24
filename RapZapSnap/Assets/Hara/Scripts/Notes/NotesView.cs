@@ -72,6 +72,10 @@ public class NotesView : NotesModel
 
     public bool NotesClickFlag { private set; get; } = true;    // クリックの有効フラグ
 
+    [SerializeField, Header("ノーツの判定結果"), Tooltip("判定結果アイコン")] private Sprite[] notesResultSprites = null;
+    [SerializeField, Tooltip("判定オブジェクト")] private SpriteRenderer notesResultObj = null;
+    [SerializeField, Tooltip("アニメーター")] private Animator notesResultAnime = null; 
+
     /// <summary>
     /// ノーツの移動コルーチン
     /// </summary>
@@ -259,6 +263,29 @@ public class NotesView : NotesModel
         {
             doubleNotes.NotesObject.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// ノーツの判定リザルトを表示
+    /// </summary>
+    /// <param name="result">判定値</param>
+    public void OutputResult(int result)
+    {
+        switch (result)
+        {
+            case 0:
+                notesResultObj.sprite = notesResultSprites[0];
+                break;
+            case 1:
+                notesResultObj.sprite = notesResultSprites[1];
+                break;
+            case 2:
+                notesResultObj.sprite = notesResultSprites[2];
+                break;
+            default:
+                return;
+        }
+        notesResultAnime.Play(0);
     }
 
     /// <summary>

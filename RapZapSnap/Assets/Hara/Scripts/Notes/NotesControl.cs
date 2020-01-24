@@ -108,10 +108,6 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             if(notesData.NotesObjects[i] == null)
             {
                 GameObject obj = Instantiate(notesPrefab, gameObject.transform, false);
-                for(int j = 0; j < obj.transform.childCount; j++)
-                {
-                    obj.transform.GetChild(j).gameObject.SetActive(false);
-                }
                 notesData.NotesObjects[i] = obj.GetComponent<NotesView>();
             }
         }
@@ -500,6 +496,8 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             result = 0;
             score = 0;
         }
+
+        view.OutputResult(result);
 
         // 結果を算出
         NotesResult(result, score, id);
