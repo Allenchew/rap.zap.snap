@@ -21,6 +21,6 @@ public class NotesModel : MonoBehaviour
     public NotesType NotesType1 { set; get; } = NotesType.CircleKey;
     public NotesType NotesType2 { set; get; } = NotesType.CircleKey;
 
-    // Doubleノーツ用の判定ID
+    // ノーツ用の判定ID
     public int NotesTypeNum { set; get; } = 0;
 }

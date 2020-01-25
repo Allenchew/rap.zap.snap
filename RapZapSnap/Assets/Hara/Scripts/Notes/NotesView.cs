@@ -6,7 +6,7 @@ public enum NotesMode
 {
     Single,    // シングル
     Double,    // ダブル
-    Mash       // 連打
+    Long       // 連打
 }
 
 public class NotesView : NotesModel
@@ -74,7 +74,9 @@ public class NotesView : NotesModel
 
     [SerializeField, Header("ノーツの判定結果"), Tooltip("判定結果アイコン")] private Sprite[] notesResultSprites = null;
     [SerializeField, Tooltip("判定オブジェクト")] private SpriteRenderer notesResultObj = null;
-    [SerializeField, Tooltip("アニメーター")] private Animator notesResultAnime = null; 
+    public SpriteRenderer NotesResultObj { get { return notesResultObj; } }
+    public Animator NotesResultAnime { set; private get; } = null;
+    
 
     /// <summary>
     /// ノーツの移動コルーチン
@@ -134,7 +136,7 @@ public class NotesView : NotesModel
             yield return null;
         }
 
-        ResetNotes();
+        ResultNotes(0);
 
         /*
         // 第2移動の目的地を設定する
@@ -250,10 +252,11 @@ public class NotesView : NotesModel
     }
 
     /// <summary>
-    /// ノーツの判定結果を返す＆ノーツの初期化処理
+    /// ノーツのリザルトを表示
     /// </summary>
-    public void ResetNotes()
+    public void ResultNotes(int result)
     {
+        // ノーツを非表示
         StopCoroutine(coroutine);
         if(Mode == NotesMode.Single)
         {
@@ -263,29 +266,39 @@ public class NotesView : NotesModel
         {
             doubleNotes.NotesObject.SetActive(false);
         }
-    }
 
-    /// <summary>
-    /// ノーツの判定リザルトを表示
-    /// </summary>
-    /// <param name="result">判定値</param>
-    public void OutputResult(int result)
-    {
+        // ノーツの判定を表示
         switch (result)
         {
             case 0:
+                // Zap
                 notesResultObj.sprite = notesResultSprites[0];
                 break;
             case 1:
+                // Snap
                 notesResultObj.sprite = notesResultSprites[1];
                 break;
             case 2:
+                // Rap
                 notesResultObj.sprite = notesResultSprites[2];
                 break;
             default:
                 return;
         }
-        notesResultAnime.Play(0);
+        notesResultObj.gameObject.transform.position = endPos;
+        StartCoroutine(DoResultAnime());
+    }
+
+    private IEnumerator DoResultAnime()
+    {
+        notesResultObj.gameObject.SetActive(true);
+
+        while(NotesResultAnime.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+        {
+            yield return null;
+        }
+
+        notesResultObj.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -306,6 +319,32 @@ public class NotesView : NotesModel
         if (singleNotes.EndObject.activeSelf == false)
         {
             singleNotes.EndObject.SetActive(true);
+        }
+
+        // 判定IDの設定
+        if(NotesType1 == NotesType.CircleKey)
+        {
+            NotesTypeNum = 0;
+        }
+        else if(NotesType1 == NotesType.CrossKey)
+        {
+            NotesTypeNum = 1;
+        }
+        else if (NotesType1 == NotesType.TriangleKey)
+        {
+            NotesTypeNum = 2;
+        }
+        else if (NotesType1 == NotesType.UpArrow)
+        {
+            NotesTypeNum = 3;
+        }
+        else if (NotesType1 == NotesType.DownArrow)
+        {
+            NotesTypeNum = 4;
+        }
+        else
+        {
+            NotesTypeNum = 5;
         }
 
         // 判定域の設定

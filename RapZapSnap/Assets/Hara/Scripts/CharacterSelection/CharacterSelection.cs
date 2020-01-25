@@ -256,21 +256,21 @@ public class CharacterSelection : MonoBehaviour
             SelectCharacter();
         }
 
-        if((GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Left) == true || GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.LeftStick_Left) == true) && singleInput == true)
+        if(GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Left) == true && singleInput == true)
         {
             // 各プレイヤーの左キーが押されたら実行
             singleInput = false;
             ChangeCharacter(false);
         }
 
-        if ((GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Right) == true || GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.LeftStick_Right) == true) && singleInput == true)
+        if (GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Right) == true && singleInput == true)
         {
             // 各プレイヤーの右キーが押されたら実行
             singleInput = false;
             ChangeCharacter(true);
         }
 
-        if(GamePadControl.Instance.GetDS4AnyKey(selectPlayer) == false && singleInput == false)
+        if(GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Circle) == false && GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Left) == false && GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Right) == false && singleInput == false)
         {
             singleInput = true;
         }

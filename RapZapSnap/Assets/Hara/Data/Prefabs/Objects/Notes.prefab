@@ -93,7 +93,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: e79cf5b8a44b7074085f402988bb96c2, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -511,7 +511,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 824815d8b33e89f4f9dfbde6b881d0b3, type: 3}
   - {fileID: 21300000, guid: 856691db2b6e2bc479edb80a2ea3ecbb, type: 3}
   - {fileID: 21300000, guid: 2d140d9102ddd7e47a2f1c5dd21e94be, type: 3}
-  notesResultAnime: {fileID: 325199285882535875}
+  notesResultObj: {fileID: 1365715930}
 --- !u!1 &5018433615196861122
 GameObject:
   m_ObjectHideFlags: 0

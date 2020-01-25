@@ -53,13 +53,13 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
     [SerializeField, Tooltip("判定ノーツの透明度"), Range(0, 1.0f)]
     private float notesSpriteAlpha = 0.5f;
 
-    [SerializeField, Tooltip("ノーツ判定距離:Perfect"), Range(0.0001f, 0.05f), Header("ノーツの判定域")]
+    [SerializeField, Tooltip("ノーツ判定距離:Rap"), Range(0.0001f, 0.05f), Header("ノーツの判定域")]
     private float perfectLength = 0.05f;
 
-    [SerializeField, Tooltip("ノーツの判定距離:Good"), Range(0.0001f, 0.05f)]
+    [SerializeField, Tooltip("ノーツの判定距離:Zap"), Range(0.0001f, 0.05f)]
     private float goodLength = 0.05f;
 
-    [SerializeField, Tooltip("ノーツの判定距離:Bad"), Range(0.0001f, 0.05f)]
+    [SerializeField, Tooltip("ノーツの判定距離:Snap"), Range(0.0001f, 0.05f)]
     private float badLength = 0.05f;
 
     protected override void Awake()
@@ -109,6 +109,10 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             {
                 GameObject obj = Instantiate(notesPrefab, gameObject.transform, false);
                 notesData.NotesObjects[i] = obj.GetComponent<NotesView>();
+                notesData.NotesObjects[i].SingleNotesData.NotesObject.SetActive(false);
+                notesData.NotesObjects[i].DoubleNotesData.NotesObject.SetActive(false);
+                notesData.NotesObjects[i].NotesResultAnime = notesData.NotesObjects[i].NotesResultObj.GetComponent<Animator>();
+                notesData.NotesObjects[i].NotesResultObj.gameObject.SetActive(false);
             }
         }
         _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
@@ -128,7 +132,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
 
         // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-        if (notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData.NotesObject.activeSelf == true || notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData.NotesObject.activeSelf == true) { return; }
+        if (notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData.NotesObject.activeSelf == true || notesData.NotesObjects[notesData.NotesCallCount].DoubleNotesData.NotesObject.activeSelf == true) { return; }
 
         // ノーツにデータをセットして再生する
         notesData.NotesObjects[notesData.NotesCallCount].Mode = NotesMode.Single;
@@ -172,12 +176,12 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         {
             if(dataBase1.NotesObjects[i].gameObject.activeSelf == true)
             {
-                dataBase1.NotesObjects[i].ResetNotes();
+                dataBase1.NotesObjects[i].ResultNotes(-1);
             }
 
             if(dataBase2.NotesObjects[i].gameObject.activeSelf == true)
             {
-                dataBase2.NotesObjects[i].ResetNotes();
+                dataBase2.NotesObjects[i].ResultNotes(-1);
             }
         }
         dataBase1.NotesCallCount = 0;
@@ -224,42 +228,42 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             {
                 if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Circle) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
                 {
-                    NotesCheck(nowNotes, NotesType.CircleKey, id);
+                    NotesCheck(nowNotes, (int)NotesType.CircleKey, id);
                     _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
                 if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Cross) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
                 {
-                    NotesCheck(nowNotes, NotesType.CrossKey, id);
+                    NotesCheck(nowNotes, (int)NotesType.CrossKey, id);
                     _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
                 if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Triangle) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
                 {
-                    NotesCheck(nowNotes, NotesType.TriangleKey, id);
+                    NotesCheck(nowNotes, (int)NotesType.TriangleKey, id);
                     _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
                 if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Up) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
                 {
-                    NotesCheck(nowNotes, NotesType.UpArrow, id);
+                    NotesCheck(nowNotes, (int)NotesType.UpArrow, id);
                     _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
                 if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Down) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
                 {
-                    NotesCheck(nowNotes, NotesType.DownArrow, id);
+                    NotesCheck(nowNotes, (int)NotesType.DownArrow, id);
                     _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
                 if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Left) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
                 {
-                    NotesCheck(nowNotes, NotesType.LeftArrow, id);
+                    NotesCheck(nowNotes, (int)NotesType.LeftArrow, id);
                     _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
@@ -384,7 +388,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             }
 
             // キー入力が検知されなかったら入力を許可
-            if(GamePadControl.Instance.GetDS4AnyKey(id) == false && (id == ControllerNum.P1 ? (clickFlag1 == false) : (clickFlag2 == false)))
+            if(GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Circle) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Cross) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Triangle) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Up) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Down) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Left) == false && (id == ControllerNum.P1 ? (clickFlag1 == false) : (clickFlag2 == false)))
             {
                 _ = id == ControllerNum.P1 ? clickFlag1 = true : clickFlag2 = true;
                 return;
@@ -407,56 +411,14 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
                 return;
             }
         }
+        else
+        {
+
+        }
     }
 
     /// <summary>
     /// ノーツの判定処理
-    /// </summary>
-    /// <param name="view">判定をチェックしたいノーツ</param>
-    /// <param name="type">判定ID</param>
-    /// <param name="id">プレイヤー番号</param>
-    private void NotesCheck(NotesView view,  NotesType type, ControllerNum id)
-    {
-        // ノーツの進行率をチェック
-        var rate = view.NotesRate;
-        if(rate < view.MinBad) { return; }
-
-        // ノーツを非表示
-        view.ResetNotes();
-
-        // ノーツの判定をチェック
-        int result;
-        int score;
-        if (type == view.NotesType1)
-        {
-            if(rate >= view.MinPerfect && rate <= view.MaxPerfect)
-            {
-                result = 2;
-                score = 800;
-            }
-            else if((rate >= view.MinGood && rate < view.MinPerfect) || (rate <= view.MaxGood && rate > view.MaxPerfect))
-            {
-                result = 1;
-                score = 400;
-            }
-            else
-            {
-                result = 0;
-                score = 0;
-            }
-        }
-        else
-        {
-            result = 0;
-            score = 0;
-        }
-
-        // 結果を算出
-        NotesResult(result, score, id);
-    }
-
-    /// <summary>
-    /// ノーツの判定処理(ダブル用)
     /// </summary>
     /// <param name="view">判定をチェックしたいノーツ</param>
     /// <param name="type">入力されたノーツタイプID</param>
@@ -466,9 +428,6 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         // ノーツの進行率をチェック
         var rate = view.NotesRate;
         if (rate < view.MinBad) { return; }
-
-        // ノーツを非表示
-        view.ResetNotes();
 
         // ノーツの判定をチェック
         int result;
@@ -497,7 +456,8 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             score = 0;
         }
 
-        view.OutputResult(result);
+        // ノーツを非表示
+        view.ResultNotes(result);
 
         // 結果を算出
         NotesResult(result, score, id);
