@@ -132,7 +132,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
 
         // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-        if (notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData.NotesObject.activeSelf == true || notesData.NotesObjects[notesData.NotesCallCount].DoubleNotesData.NotesObject.activeSelf == true) { return; }
+        if (notesData.NotesObjects[notesData.NotesCallCount].NotesCoroutine != null) { return; }
 
         // ノーツにデータをセットして再生する
         notesData.NotesObjects[notesData.NotesCallCount].Mode = NotesMode.Single;
@@ -157,7 +157,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
 
         // 呼び出そうとしたノーツがすでに稼働中なら処理を終了
-        if (notesData.NotesObjects[notesData.NotesCallCount].SingleNotesData.NotesObject.activeSelf == true || notesData.NotesObjects[notesData.NotesCallCount].DoubleNotesData.NotesObject.activeSelf == true) { return; }
+        if (notesData.NotesObjects[notesData.NotesCallCount].NotesCoroutine != null) { return; }
 
         // ノーツにデータをセットして再生する
         notesData.NotesObjects[notesData.NotesCallCount].Mode = NotesMode.Double;

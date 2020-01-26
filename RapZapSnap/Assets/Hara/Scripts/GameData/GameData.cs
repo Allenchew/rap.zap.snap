@@ -119,6 +119,44 @@ public class GameData : SingletonMonoBehaviour<GameData>
     }
 
     /// <summary>
+    /// 勝利プレイヤー情報を取得
+    /// </summary>
+    /// <returns></returns>
+    public ControllerNum GetWinnerPlayer()
+    {
+        if (data_P1.TotalScore > data_P2.TotalScore)
+        {
+            return ControllerNum.P1;
+        }
+        else if (data_P1.TotalScore < data_P2.TotalScore)
+        {
+            return ControllerNum.P2;
+        }
+        else
+        {
+            if (data_P1.Rap > data_P2.Rap)
+            {
+                return ControllerNum.P1;
+            }
+            else if (data_P1.Rap < data_P2.Rap)
+            {
+                return ControllerNum.P2;
+            }
+            else
+            {
+                if (data_P1.Rap + data_P1.Zap >= data_P2.Rap + data_P2.Zap)
+                {
+                    return ControllerNum.P1;
+                }
+                else
+                {
+                    return ControllerNum.P2;
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// トータルスコアを加算する
     /// </summary>
     /// <param name="id">プレイヤー番号</param>

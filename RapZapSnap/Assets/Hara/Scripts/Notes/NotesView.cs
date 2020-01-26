@@ -68,7 +68,7 @@ public class NotesView : NotesModel
     private float mainSpriteAlpha = 1.0f;
     private float goalSpriteAlpha = 0.5f;
 
-    private Coroutine coroutine = null;
+    public Coroutine NotesCoroutine { private set; get; } = null;
 
     public bool NotesClickFlag { private set; get; } = true;    // クリックの有効フラグ
 
@@ -257,7 +257,8 @@ public class NotesView : NotesModel
     public void ResultNotes(int result)
     {
         // ノーツを非表示
-        StopCoroutine(coroutine);
+        StopCoroutine(NotesCoroutine);
+        NotesCoroutine = null;
         if(Mode == NotesMode.Single)
         {
             singleNotes.NotesObject.SetActive(false);
@@ -374,7 +375,7 @@ public class NotesView : NotesModel
 
         // ノーツの再生
         singleNotes.NotesObject.SetActive(true);
-        coroutine = StartCoroutine(DoNotesMove());
+        NotesCoroutine = StartCoroutine(DoNotesMove());
     }
 
     /// <summary>
@@ -491,6 +492,6 @@ public class NotesView : NotesModel
 
         // ノーツの再生
         doubleNotes.NotesObject.SetActive(true);
-        coroutine = StartCoroutine(DoNotesMove());
+        NotesCoroutine = StartCoroutine(DoNotesMove());
     }
 }
