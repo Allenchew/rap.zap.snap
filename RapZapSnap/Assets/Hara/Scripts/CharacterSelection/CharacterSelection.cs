@@ -5,14 +5,27 @@ using UnityEngine.UI;
 
 public class CharacterSelection : MonoBehaviour
 {
-    [SerializeField, Header("背景イメージ"), Tooltip("1P用")] private Sprite backImage_1P = null;
-    [SerializeField, Tooltip("2P用")] private Sprite backImage_2P = null;
-    [SerializeField, Tooltip("背景オブジェクト")] private Image backImageObject = null;
+    [System.Serializable]
+    private struct DataBase
+    {
+        // キャラクター選択時に使用するオブジェクト
+        [Header("背景イメージ")] public Sprite BackSprite;
+        [Header("キャラクター選択用の画像リスト")] public Sprite[] CharacterSprites;
+        [Header("選択済み用の文字カラー")] public Color SelectedColor;
 
-    [SerializeField, Header("キャラクターイメージ"), Tooltip("1P用")] private Sprite[] characterImages_1P = null;
-    [SerializeField, Tooltip("2P用")] private Sprite[] characterImages_2P = null;
-    [SerializeField, Tooltip("キャラクターイメージオブジェクト")] private Image nowCharacterImageObj = null;
-    [SerializeField, Tooltip("切り替え用のイメージオブジェクト")] private Image nextCharacterImageObj = null;
+        // キャラクター決定後に使用するオブジェクト
+        [Header("VS用のキャラクター画像リスト")] public Sprite[] VsCharacterSprites;
+        [Header("VS用のキャラクターイメージオブジェクト")] public Image VsCharacterImage;
+        [Header("VS用のキャラクター名画像リスト")] public Sprite[] VsCharacterNameSprites;
+        [Header("VS用のキャラクター名イメージオブジェクト")] public Image VsCharacterNameImage;
+    }
+    [SerializeField, Header("1P")] private DataBase player1 = new DataBase();
+    [SerializeField, Header("2P")] private DataBase player2 = new DataBase();
+
+    [SerializeField, Header("背景オブジェクト")] private Image backImageObject = null;
+
+    [SerializeField, Header("選択中のイメージオブジェクト")] private Image nowCharacterImageObj = null;
+    [SerializeField, Header("切り替え時のイメージオブジェクト")] private Image nextCharacterImageObj = null;
 
     [SerializeField, Header("選択済みテキスト"), Tooltip("選択中のImage用")] private Text nowCharacterImageText = null;
     [SerializeField, Tooltip("切り替えImage用")] private Text nextCharacterImageText = null;
@@ -25,8 +38,10 @@ public class CharacterSelection : MonoBehaviour
 
     [SerializeField, Header("選択済みカラー")] private Color selectedColor = new Color(100f / 255f, 100f / 255f, 100f / 255f, 1);
     private Color unSelectedColor = new Color(1, 1, 1, 1);
-    [SerializeField, Header("選択済みテキストカラー"), Tooltip("1P用")] private Color selectedTextColor_P1 = new Color(0, 0, 0, 1);
-    [SerializeField, Tooltip("2P用")] private Color selectedTextColor_P2 = new Color(0, 0, 0, 1);
+
+    [SerializeField, Header("VSオブジェクト")] private GameObject vsObject = null;
+    [SerializeField, Header("VSアイコン")] private Image vsIcon = null;
+    [SerializeField, Header("ぶっかませ！オブジェクト")] private GameObject battleStartObj = null;
 
     private readonly string selectedText_P1 = "1P Selected!!";
     private readonly string selectedText_P2 = "2P Selected!!";
@@ -54,14 +69,17 @@ public class CharacterSelection : MonoBehaviour
         nextCharacterImageText.text = "";
 
         // 画像差し替え
-        backImageObject.sprite = backImage_1P;
-        nowCharacterImageObj.sprite = characterImages_1P[(int)id];
+        backImageObject.sprite = player1.BackSprite;
+        nowCharacterImageObj.sprite = player1.CharacterSprites[(int)id];
         nowCharacterImageObj.transform.localPosition = new Vector3(0, 0, 0);
         nowCharacterImageObj.color = unSelectedColor;
-        nextCharacterImageObj.sprite = characterImages_1P[(int)id + 1];
+        nextCharacterImageObj.sprite = player1.CharacterSprites[(int)id + 1];
         if(scaler == null) { scaler = GetComponent<CanvasScaler>(); }
         nextCharacterImageObj.transform.localPosition = new Vector3(scaler.referenceResolution.x * -1, 0, 0);
         nextCharacterImageObj.color = unSelectedColor;
+
+        // VSオブジェクト非表示
+        vsObject.SetActive(false);
     }
 
     /// <summary>
@@ -86,7 +104,7 @@ public class CharacterSelection : MonoBehaviour
 
         nowCharacterImageObj.color = selectedColor;
         nowCharacterImageText.text = selectPlayer == ControllerNum.P1 ? selectedText_P1 : selectedText_P2;
-        nowCharacterImageText.color = selectPlayer == ControllerNum.P1 ? selectedTextColor_P1 : selectedTextColor_P2;
+        nowCharacterImageText.color = selectPlayer == ControllerNum.P1 ? player1.SelectedColor : player2.SelectedColor;
 
         while(time < duration)
         {
@@ -98,7 +116,7 @@ public class CharacterSelection : MonoBehaviour
         if (selectPlayer == ControllerNum.P1)
         {
             selectPlayer = ControllerNum.P2;
-            backImageObject.sprite = backImage_2P;
+            backImageObject.sprite = player2.BackSprite;
             ChangeCharacter(true);
         }
         else
@@ -169,14 +187,14 @@ public class CharacterSelection : MonoBehaviour
         }
 
         nextCharacterImageObj.transform.localPosition = moveStartPos;
-        nextCharacterImageObj.sprite = selectPlayer == ControllerNum.P1 ? characterImages_1P[(int)id] : characterImages_2P[(int)id];
+        nextCharacterImageObj.sprite = selectPlayer == ControllerNum.P1 ? player1.CharacterSprites[(int)id] : player2.CharacterSprites[(int)id];
         if (selectPlayer == ControllerNum.P2)
         {
             if(selectedID_P1 == id)
             {
                 nextCharacterImageObj.color = selectedColor;
                 nextCharacterImageText.text = selectedText_P1;
-                nextCharacterImageText.color = selectedTextColor_P1;
+                nextCharacterImageText.color = player1.SelectedColor;
             }
             else
             {
@@ -205,7 +223,7 @@ public class CharacterSelection : MonoBehaviour
             {
                 nowCharacterImageObj.color = selectedColor;
                 nowCharacterImageText.text = selectedText_P1;
-                nowCharacterImageText.color = selectedTextColor_P1;
+                nowCharacterImageText.color = player1.SelectedColor;
             }
             else
             {
@@ -237,7 +255,106 @@ public class CharacterSelection : MonoBehaviour
     private void SelectCompleted()
     {
         inputFlag = false;
-        SceneControl.Instance.LoadScene(2);
+        StartCoroutine(DoVSAction());
+    }
+
+    private IEnumerator DoVSAction()
+    {
+        // シーンの読み込みを開始
+        AsyncOperation async = SceneControl.Instance.LoadScene(2);
+        async.allowSceneActivation = false;
+
+        // VSオブジェクトの初期化
+        vsIcon.enabled = false;
+        player1.VsCharacterImage.sprite = player1.VsCharacterSprites[(int)selectedID_P1];
+        player1.VsCharacterNameImage.sprite = player1.VsCharacterNameSprites[(int)selectedID_P1];
+        player1.VsCharacterImage.transform.localPosition = Vector3.left * scaler.referenceResolution.x;
+        player1.VsCharacterNameImage.transform.localPosition = Vector3.left * scaler.referenceResolution.x;
+        player2.VsCharacterImage.sprite = player2.VsCharacterSprites[(int)selectedID_P2];
+        player2.VsCharacterNameImage.sprite = player2.VsCharacterNameSprites[(int)selectedID_P2];
+        player2.VsCharacterImage.transform.localPosition = Vector3.right * scaler.referenceResolution.x;
+        player2.VsCharacterNameImage.transform.localPosition = Vector3.right * scaler.referenceResolution.x;
+        battleStartObj.transform.localPosition = Vector3.right * scaler.referenceResolution.x + Vector3.up * scaler.referenceResolution.y;
+        vsObject.SetActive(true);
+
+        float time;
+        float duration;
+        float diff;
+
+        // VS用のキャラクターイメージをスライドイン
+        time = 0;
+        duration = 0.75f;
+        while(time < duration)
+        {
+            diff = time / duration;
+            player1.VsCharacterImage.transform.localPosition = Vector3.Lerp(player1.VsCharacterImage.transform.localPosition, new Vector3(0, 0, 0), diff);
+            player2.VsCharacterImage.transform.localPosition = Vector3.Lerp(player2.VsCharacterImage.transform.localPosition, new Vector3(0, 0, 0), diff);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        player1.VsCharacterImage.transform.localPosition = new Vector3(0, 0, 0);
+        player2.VsCharacterImage.transform.localPosition = new Vector3(0, 0, 0);
+        vsIcon.enabled = true;
+
+        // 遅延処理
+        time = 0;
+        duration = 0.5f;
+        while(time < duration)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // VS用のキャラクター名イメージをスライドイン
+        time = 0;
+        duration = 0.75f;
+        while(time < duration)
+        {
+            diff = time / duration;
+            player1.VsCharacterNameImage.transform.localPosition = Vector3.Lerp(player1.VsCharacterNameImage.transform.localPosition, new Vector3(0, 0, 0), diff);
+            player2.VsCharacterNameImage.transform.localPosition = Vector3.Lerp(player2.VsCharacterNameImage.transform.localPosition, new Vector3(0, 0, 0), diff);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // VS用のキャラクター名イメージを揺らす
+        time = 0;
+        duration = 1.5f;
+        Vector3 pos1 = player1.VsCharacterNameImage.transform.localPosition;
+        Vector3 pos2 = player2.VsCharacterNameImage.transform.localPosition;
+        while(time < duration)
+        {
+            float magnitude = 10;
+            player1.VsCharacterNameImage.transform.localPosition = new Vector3(pos1.x + Random.Range(-1f, 1f) * magnitude, pos1.y + Random.Range(-1f, 1f) * magnitude, 0);
+            player2.VsCharacterNameImage.transform.localPosition = new Vector3(pos2.x + Random.Range(-1f, 1f) * magnitude, pos2.y + Random.Range(-1f, 1f) * magnitude, 0);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        player1.VsCharacterNameImage.transform.localPosition = pos1;
+        player2.VsCharacterNameImage.transform.localPosition = pos2;
+
+        // ぶっかませを表示
+        time = 0;
+        duration = 1.0f;
+        while(time < duration)
+        {
+            diff = time / duration;
+            battleStartObj.transform.localPosition = Vector3.Lerp(backImageObject.transform.localPosition, new Vector3(0, 0, 0), diff);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // 遅延処理
+        time = 0;
+        duration = 1.0f;
+        while(time < duration)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // シーン切り替え
+        async.allowSceneActivation = true;
     }
 
     /// <summary>
