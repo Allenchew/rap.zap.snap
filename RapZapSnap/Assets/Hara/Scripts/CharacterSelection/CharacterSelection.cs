@@ -18,7 +18,6 @@ public class CharacterSelection : MonoBehaviour
     [SerializeField, Tooltip("切り替えImage用")] private Text nextCharacterImageText = null;
 
     private bool inputFlag = true;    // 入力を許可するフラグ
-    private bool singleInput = false;
 
     private ControllerNum selectPlayer = ControllerNum.P1;    // キャラクター選択をするプレイヤー
 
@@ -249,30 +248,22 @@ public class CharacterSelection : MonoBehaviour
 
         if(inputFlag == false) { return; }
 
-        if(GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Circle) == true && singleInput == true)
+        if(selectPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Circle == true : GamePadControl.Instance.GetKeyDown_2.Circle == true)
         {
             // 各プレイヤーの〇ボタンキーが押されたら実行
-            singleInput = false;
             SelectCharacter();
         }
 
-        if(GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Left) == true && singleInput == true)
+        if(selectPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Left == true : GamePadControl.Instance.GetKeyDown_2.Left == true)
         {
             // 各プレイヤーの左キーが押されたら実行
-            singleInput = false;
             ChangeCharacter(false);
         }
 
-        if (GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Right) == true && singleInput == true)
+        if (selectPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Right == true : GamePadControl.Instance.GetKeyDown_2.Right == true)
         {
             // 各プレイヤーの右キーが押されたら実行
-            singleInput = false;
             ChangeCharacter(true);
-        }
-
-        if(GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Circle) == false && GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Left) == false && GamePadControl.Instance.GetDS4Key(selectPlayer, DS4AllKeyType.Right) == false && singleInput == false)
-        {
-            singleInput = true;
         }
     }
 }

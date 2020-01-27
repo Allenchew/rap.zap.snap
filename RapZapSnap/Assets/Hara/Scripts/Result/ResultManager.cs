@@ -75,9 +75,6 @@ public class ResultManager : MonoBehaviour
         scoreBoardMove.EndPos = new Vector3(0, 0, 0);
         scoreBoardMove.StartPos = Vector3.up * scaler.referenceResolution.y + scoreBoardMove.EndPos;
 
-        // Winオブジェクトを非表示
-        winImageObj.gameObject.SetActive(false);
-
         resultAudio = GetComponent<AudioSource>();
 
         actionFlag = true;
@@ -111,6 +108,8 @@ public class ResultManager : MonoBehaviour
                 player2.SnapText.text = "";
 
                 scoreBoardObject.transform.localPosition = scoreBoardMove.StartPos;
+
+                winImageObj.gameObject.SetActive(false);
 
                 stepEndFlag = true;
                 break;
@@ -216,7 +215,7 @@ public class ResultManager : MonoBehaviour
                 time += Time.deltaTime;
                 if(time >= span)
                 {
-                    _ = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? winImageObj.sprite = player1.WinSprite : winImageObj.sprite = player2.WinSprite;
+                    winImageObj.sprite = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? player1.WinSprite : player2.WinSprite;
                     winImageObj.gameObject.SetActive(true);
                     if(resultSE[0] != null) { resultAudio.PlayOneShot(resultSE[0]); }
                     stepEndFlag = true;
@@ -224,7 +223,7 @@ public class ResultManager : MonoBehaviour
                 break;
             default:
                 if(resultAudio.isPlaying == true) { return; }
-                if ((GamePadControl.Instance.GetDS4Key(ControllerNum.P1, DS4AllKeyType.Circle) == true || GamePadControl.Instance.GetDS4Key(ControllerNum.P2, DS4AllKeyType.Circle) == true) && actionFlag == true)
+                if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true) && actionFlag == true)
                 {
                     step = 0;
                     actionFlag = false;
@@ -245,7 +244,7 @@ public class ResultManager : MonoBehaviour
         }
 
         // どちらかのプレイヤーが決定キーを入力したらアニメーションをスキップ
-        if ((GamePadControl.Instance.GetDS4Key(ControllerNum.P1, DS4AllKeyType.Circle) == true || GamePadControl.Instance.GetDS4Key(ControllerNum.P2, DS4AllKeyType.Circle) == true) && actionFlag == true)
+        if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true) && actionFlag == true)
         {
             step = 9;
             stepEndFlag = false;
@@ -264,7 +263,7 @@ public class ResultManager : MonoBehaviour
             player2.SnapText.text = GameData.Instance.GetSnapScore(ControllerNum.P2).ToString();
             player1.TotalScoreText.text = GameData.Instance.GetTotalScore(ControllerNum.P1).ToString();
             player2.TotalScoreText.text = GameData.Instance.GetTotalScore(ControllerNum.P2).ToString();
-            _ = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? winImageObj.sprite = player1.WinSprite : winImageObj.sprite = player2.WinSprite;
+            winImageObj.sprite = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? player1.WinSprite : player2.WinSprite;
             winImageObj.gameObject.SetActive(true);
             if (resultSE[0] != null) { resultAudio.PlayOneShot(resultSE[0]); }
         }

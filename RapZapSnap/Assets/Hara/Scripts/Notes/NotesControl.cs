@@ -226,45 +226,39 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         {
             if(nowNotes.Mode == NotesMode.Single)    // ノーツがシングルモードの時の入力
             {
-                if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Circle) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
+                if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Circle == true : GamePadControl.Instance.GetKeyDown_2.Circle == true)
                 {
                     NotesCheck(nowNotes, (int)NotesType.CircleKey, id);
-                    _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
-                if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Cross) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
+                if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Cross == true : GamePadControl.Instance.GetKeyDown_2.Cross == true)
                 {
                     NotesCheck(nowNotes, (int)NotesType.CrossKey, id);
-                    _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
-                if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Triangle) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
+                if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Triangle == true : GamePadControl.Instance.GetKeyDown_2.Triangle == true)
                 {
                     NotesCheck(nowNotes, (int)NotesType.TriangleKey, id);
-                    _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
-                if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Up) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
+                if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Up == true : GamePadControl.Instance.GetKeyDown_2.Up == true)
                 {
                     NotesCheck(nowNotes, (int)NotesType.UpArrow, id);
-                    _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
-                if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Down) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
+                if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Down == true : GamePadControl.Instance.GetKeyDown_2.Down == true)
                 {
                     NotesCheck(nowNotes, (int)NotesType.DownArrow, id);
-                    _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
 
-                if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Left) == true && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
+                if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Left == true : GamePadControl.Instance.GetKeyDown_2.Left == true)
                 {
                     NotesCheck(nowNotes, (int)NotesType.LeftArrow, id);
-                    _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
             }
@@ -381,39 +375,27 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
                     _ = id == ControllerNum.P1 ? clickFlag1 = false : clickFlag2 = false;
                     return;
                 }
+
+                // キー入力が検知されなかったら入力を許可
+                if (GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Circle) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Cross) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Triangle) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Up) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Down) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Left) == false && (id == ControllerNum.P1 ? (clickFlag1 == false) : (clickFlag2 == false)))
+                {
+                    _ = id == ControllerNum.P1 ? clickFlag1 = true : clickFlag2 = true;
+                    return;
+                }
             }
             else
             {
 
             }
-
-            // キー入力が検知されなかったら入力を許可
-            if(GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Circle) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Cross) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Triangle) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Up) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Down) == false && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Left) == false && (id == ControllerNum.P1 ? (clickFlag1 == false) : (clickFlag2 == false)))
-            {
-                _ = id == ControllerNum.P1 ? clickFlag1 = true : clickFlag2 = true;
-                return;
-            }
         }
 
-        if(nowNotes.Mode == NotesMode.Single)
+        if(nowNotes.Mode != NotesMode.Long)
         {
-            if (nowNotes.NotesClickFlag == false || (nextNotes.SingleNotesData.NotesObject.activeSelf == true && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
+            if (nowNotes.NotesClickFlag == false || (nextNotes.NotesCoroutine != null && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
             {
                 NotesResult(0, 0, id);
                 return;
             }
-        }
-        else if (nowNotes.Mode == NotesMode.Double)
-        {
-            if (nowNotes.NotesClickFlag == false || (nextNotes.DoubleNotesData.NotesObject.activeSelf == true && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
-            {
-                NotesResult(0, 0, id);
-                return;
-            }
-        }
-        else
-        {
-
         }
     }
 
