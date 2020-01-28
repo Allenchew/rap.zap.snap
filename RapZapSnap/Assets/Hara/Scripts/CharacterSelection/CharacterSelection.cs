@@ -43,8 +43,8 @@ public class CharacterSelection : MonoBehaviour
     [SerializeField, Header("VSアイコン")] private Image vsIcon = null;
     [SerializeField, Header("ぶっかませ！オブジェクト")] private GameObject battleStartObj = null;
 
-    private readonly string selectedText_P1 = "1P Selected!!";
-    private readonly string selectedText_P2 = "2P Selected!!";
+    private readonly string selectedText_P1 = "1P SELECTED!!";
+    private readonly string selectedText_P2 = "2P SELECTED!!";
 
     private enum CharacterID
     {
@@ -260,10 +260,6 @@ public class CharacterSelection : MonoBehaviour
 
     private IEnumerator DoVSAction()
     {
-        // シーンの読み込みを開始
-        AsyncOperation async = SceneControl.Instance.LoadScene(2);
-        async.allowSceneActivation = false;
-
         // VSオブジェクトの初期化
         vsIcon.enabled = false;
         player1.VsCharacterImage.sprite = player1.VsCharacterSprites[(int)selectedID_P1];
@@ -354,7 +350,7 @@ public class CharacterSelection : MonoBehaviour
         }
 
         // シーン切り替え
-        async.allowSceneActivation = true;
+        SceneControl.Instance.LoadScene(2);
     }
 
     /// <summary>

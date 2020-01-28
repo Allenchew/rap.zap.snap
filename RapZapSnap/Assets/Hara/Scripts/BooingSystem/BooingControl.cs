@@ -50,12 +50,6 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         Init();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -294,10 +288,9 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         if (booingFlag == false) { return; }
 
         ControllerNum target = booingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1;
-        DS4InputKey input = booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1 : GamePadControl.Instance.GetKeyDown_2;
 
         // 〇ボタンでSE再生とバイブレーションを実行
-        if(input.Circle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.A) == true : Input.GetKeyDown(KeyCode.J) == true))
+        if (booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Circle == true : GamePadControl.Instance.GetKeyDown_2.Circle == true)
         {
             if(playVibration == false) { return; }
             StartVibration(target, vibrationPower, vibDuration);
@@ -306,7 +299,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         }
 
         // △ボタンでSE再生と画面の揺れを実行
-        if(input.Triangle == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.D) == true : Input.GetKeyDown(KeyCode.L) == true))
+        if(booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Triangle == true : GamePadControl.Instance.GetKeyDown_2.Triangle == true)
         {
             if(playShake == false) { return; }
             ShakeAction(shakeDuration, shakeMagnitude);
@@ -315,7 +308,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         }
 
         // □ボタンで画面の邪魔を表示
-        if (input.Square == true || (_ = booingPlayer == ControllerNum.P1 ? Input.GetKeyDown(KeyCode.W) == true : Input.GetKeyDown(KeyCode.I) == true))
+        if (booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Square == true : GamePadControl.Instance.GetKeyDown_2.Square == true)
         {
             if(playPaint == false) { return; }
             PlayParticle(particleCallTime, particleCallSpan, booingPlayer);
