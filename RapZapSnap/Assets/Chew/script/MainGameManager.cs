@@ -10,6 +10,7 @@ public class MainGameManager : MonoBehaviour
 
     public ControllerNum currentplayer;
     public GameObject backgroundpic;
+    public GameObject lyrics1;
 
     [SerializeField]
     public Color[] lyricsbg = new Color[2] { new Color(96, 15, 19, 255), new Color(13, 15, 13, 255) };
@@ -77,5 +78,6 @@ public class MainGameManager : MonoBehaviour
         }
         yield return new WaitForSeconds(0.5f);
         SpawnNotes.Instance.CallSpawnNotes();
+        lyrics1.SetActive(true);
     }
 }

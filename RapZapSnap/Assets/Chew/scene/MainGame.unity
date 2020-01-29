@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -363,8 +363,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7d00bba30dd1654b94a83ac9846d50a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentplayer: 0
+  currentplayer: 1
   backgroundpic: {fileID: 1777581127}
+  lyrics1: {fileID: 0}
   lyricsbg:
   - {r: 0.3764706, g: 0.05882353, b: 0.07450981, a: 1}
   - {r: 0.050980393, g: 0.05882353, b: 0.050980393, a: 1}
@@ -1269,6 +1270,7 @@ MonoBehaviour:
   - {fileID: 2696529111848692222, guid: 1f73ced233a426840b708c8c3172db4b, type: 3}
   notesdata: {fileID: 11400000, guid: ad18fcacd24226149b67a4596cff9ec1, type: 2}
   notesdata2: {fileID: 11400000, guid: 9c59492e35a70cb429e78cf40b06471d, type: 2}
+  tmplyrics: {fileID: 0}
 --- !u!1 &1448172278
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,16 +9,14 @@ public class MaskMovement : MonoBehaviour
 
     public bool StartEffect = false;
     public bool EndEffect = false;
-    public bool IsOption = false;
-    public bool showoption = false;
     public bool OnceEffect = false;
     public float EffectDelay = 1.0f;
     public int EffectIndex =0;
-    public int OptionCount = 0;
-    
-    public float[] delayshowtime;
+
+    private int runcount = 0;
     void Start()
     {
-        ThisMaskData.Set(delayshowtime,StartEffect,EndEffect,IsOption,EffectIndex,OptionCount,showoption,OnceEffect,EffectDelay);
+        runcount = gameObject.transform.childCount;
+        ThisMaskData.Set(runcount,StartEffect,EndEffect,EffectIndex,OnceEffect,EffectDelay);
     }
 }

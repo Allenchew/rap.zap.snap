@@ -4,24 +4,18 @@ using UnityEngine;
 
 public struct MaskData
 {
-    public float[] delayshowtime;
+    public int RunCount;
     public bool OnceEffect;
     public bool StartEffect;
     public bool EndEffect;
-    public bool IsOption;
-    public bool ShowOption;
     public int EffectIndex;
-    public int OptionCount;
     public float EffectDelay;
-    public void Set(float[] tmpdelay, bool SE, bool EE, bool isop, int Eindex, int opcount, bool ShowOp, bool onceEf, float effectdelay)
+    public void Set(int runcount ,bool SE, bool EE,  int Eindex, bool onceEf, float effectdelay)
     {
-        delayshowtime = tmpdelay;
+        RunCount = runcount;
         StartEffect = SE;
         EndEffect = EE;
-        IsOption = isop;
         EffectIndex = Eindex;
-        OptionCount = opcount;
-        ShowOption = ShowOp;
         OnceEffect = onceEf;
         EffectDelay = effectdelay;
     }
@@ -42,6 +36,8 @@ public class SpawnNotes : MonoBehaviour
     private Character currentcharacter;
     int[] character_sequal = new int[2];
 
+    public GameObject tmplyrics;
+
     void Awake()
     {
         if(Instance == null)
@@ -53,7 +49,7 @@ public class SpawnNotes : MonoBehaviour
     void Start()
     {
         character_sequal[0] = 0;
-        character_sequal[1] = 0;
+        character_sequal[1] = 2;
     }
     public void CallSpawnNotes()
     {
@@ -64,7 +60,8 @@ public class SpawnNotes : MonoBehaviour
             currentcharacter = GameData.Instance.GetCharacterData(currentplayer);
             int tmpbgmIndex = ((int)(GameData.Instance.GetCharacterData(currentplayer))-1)*3;
             BgmManager.Instance.StartPlay(tmpbgmIndex+character_sequal[(int)currentplayer]);
-            Instantiate(LyricsPrefabs[tmpbgmIndex + character_sequal[(int)currentplayer]]);
+            tmplyrics.SetActive(true);
+            //Instantiate(LyricsPrefabs[tmpbgmIndex + character_sequal[(int)currentplayer]]);
             StartCoroutine(spawnout());
         }
     }
@@ -74,6 +71,7 @@ public class SpawnNotes : MonoBehaviour
         {
             MstNotesEntity tmpdata;
             tmpdata = GetDatabyId(i+1);
+
             if (tmpdata.startposX == tmpdata.endposX && tmpdata.startposY == tmpdata.endposY)
             {
                 yield return new WaitForSeconds(tmpdata.delaytime);
