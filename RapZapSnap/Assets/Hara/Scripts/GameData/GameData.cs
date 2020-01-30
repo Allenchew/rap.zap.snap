@@ -106,13 +106,51 @@ public class GameData : SingletonMonoBehaviour<GameData>
             }
             else
             {
-                if(data_P1.Zap >= data_P2.Zap)
+                if(data_P1.Rap + data_P1.Zap >= data_P2.Rap + data_P2.Zap)
                 {
                     return isWinner == true ? data_P1.SelectCharacter : data_P2.SelectCharacter;
                 }
                 else
                 {
                     return isWinner == true ? data_P2.SelectCharacter : data_P1.SelectCharacter;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 勝利プレイヤー情報を取得
+    /// </summary>
+    /// <returns></returns>
+    public ControllerNum GetWinnerPlayer()
+    {
+        if (data_P1.TotalScore > data_P2.TotalScore)
+        {
+            return ControllerNum.P1;
+        }
+        else if (data_P1.TotalScore < data_P2.TotalScore)
+        {
+            return ControllerNum.P2;
+        }
+        else
+        {
+            if (data_P1.Rap > data_P2.Rap)
+            {
+                return ControllerNum.P1;
+            }
+            else if (data_P1.Rap < data_P2.Rap)
+            {
+                return ControllerNum.P2;
+            }
+            else
+            {
+                if (data_P1.Rap + data_P1.Zap >= data_P2.Rap + data_P2.Zap)
+                {
+                    return ControllerNum.P1;
+                }
+                else
+                {
+                    return ControllerNum.P2;
                 }
             }
         }
@@ -202,7 +240,7 @@ public class GameData : SingletonMonoBehaviour<GameData>
             }
             else
             {
-                if (data_P1.Zap >= data_P2.Zap)
+                if (data_P1.Rap + data_P1.Zap >= data_P2.Rap + data_P2.Zap)
                 {
                     return isWinner == true ? data_P1.TotalScore : data_P2.TotalScore;
                 }

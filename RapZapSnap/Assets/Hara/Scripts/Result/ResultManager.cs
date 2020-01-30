@@ -5,28 +5,26 @@ using UnityEngine.UI;
 
 public class ResultManager : MonoBehaviour
 {
-    [SerializeField, Tooltip("リザルトに表示するキャラクター画像")]
-    private List<Sprite> characterSprites = new List<Sprite>();
+    [SerializeField, Header("シーン内のキャンバススケーラー")] private CanvasScaler scaler = null;
 
-    [SerializeField, Tooltip("勝利プレイヤー用の背景画像")]
-    private List<Sprite> winnerBackSprites = new List<Sprite>();
+    [System.Serializable]
+    private struct ResultDataBase
+    {
+        [Header("リザルトに表示するキャラクターの画像リスト")] public Sprite[] CharacterSprites;
+        [Header("リザルトに表示するキャラクター画像のオブジェクト")] public Image CharacterImage;
+        [Header("トータルスコアのオブジェクト")] public GameObject TotalScoreObj;
+        [Header("トータルスコアのテキスト")] public Text TotalScoreText;
+        [Header("Rapのスコアテキスト")] public Text RapText;
+        [Header("Zapのスコアテキスト")] public Text ZapText;
+        [Header("Snapのスコアテキスト")] public Text SnapText;
+        [Header("Winの画像データ")] public Sprite WinSprite;
+    }
 
-    [SerializeField, Tooltip("敗北プレイヤー用の背景画像")]
-    private List<Sprite> loserBackSprites = new List<Sprite>();
+    [SerializeField, Header("1P")] private ResultDataBase player1 = new ResultDataBase();
+    [SerializeField, Header("2P")] private ResultDataBase player2 = new ResultDataBase();
 
-
-    // リザルトシーンのオブジェクト
-    [SerializeField, Tooltip("Winnerオブジェクト")] private GameObject winnerObj = null;
-    [SerializeField, Tooltip("Loserオブジェクト")] private GameObject loserObj = null;
-    [SerializeField, Tooltip("ノーツのスコアボードオブジェクト")] private GameObject notesScoreBoard = null;
-    [SerializeField, Tooltip("勝利プレイヤー用のトータルスコアテキスト")] private Text totalScore_Win = null;
-    [SerializeField, Tooltip("敗北プレイヤー用のトータルスコアテキスト")] private Text totalScore_Lose = null;
-    [SerializeField, Tooltip("勝利プレイヤー用のrapのスコアテキスト")] private Text rapScore_Win = null;
-    [SerializeField, Tooltip("敗北プレイヤー用のrapのスコアテキスト")] private Text rapScore_Lose = null;
-    [SerializeField, Tooltip("勝利プレイヤー用のzapのスコアテキスト")] private Text zapScore_Win = null;
-    [SerializeField, Tooltip("敗北プレイヤー用のzapのスコアテキスト")] private Text zapScore_Lose = null;
-    [SerializeField, Tooltip("勝利プレイヤー用のsnapのスコアテキスト")] private Text snapScore_Win = null;
-    [SerializeField, Tooltip("敗北プレイヤー用のsnapのスコアテキスト")] private Text snapScore_Lose = null;
+    [SerializeField, Header("スコアボードオブジェクト")] private GameObject scoreBoardObject = null;
+    [SerializeField, Header("Winオブジェクト")] private Image winImageObj = null;
 
     [SerializeField, Header("リザルトシーン用のSE")] private AudioClip[] resultSE = null;
     private AudioSource resultAudio = null;
@@ -37,16 +35,9 @@ public class ResultManager : MonoBehaviour
         public Vector3 EndPos;
     }
 
-    private Image winnerBackImage = null;
-    private Image winnerCharacterImage = null;
-    private Image loserBackImage = null;
-    private Image loserCharacterImage = null;
-    private MoveObjPos winnerObjMove;
-    private MoveObjPos loserObjMove;
+    private MoveObjPos objectMove_1 = new MoveObjPos();
+    private MoveObjPos objectMove_2 = new MoveObjPos();
     private MoveObjPos scoreBoardMove;
-    private Text totalScoreBaseText_Win = null;
-    private Text totalScoreBaseText_Lose = null;
-
 
     private float time = 0;
     private float span = 0;
@@ -72,23 +63,17 @@ public class ResultManager : MonoBehaviour
     /// </summary>
     private void ResultInit()
     {
-        // Winnerオブジェクトの初期化
-        winnerObjMove.EndPos = winnerObj.transform.localPosition;
-        winnerObjMove.StartPos = Vector3.left * 1200 + winnerObjMove.EndPos;
-        winnerBackImage = winnerObj.transform.GetChild(0).GetComponent<Image>();
-        winnerCharacterImage = winnerObj.transform.GetChild(1).GetComponent<Image>();
-        totalScoreBaseText_Win = totalScore_Win.transform.GetChild(0).GetComponent<Text>();
+        // 1P用の座標設定
+        objectMove_1.EndPos = new Vector3(0, 0, 0);
+        objectMove_1.StartPos = Vector3.left * scaler.referenceResolution.x + objectMove_1.EndPos;
 
-        // Loserオブジェクトの初期化
-        loserObjMove.EndPos = loserObj.transform.localPosition;
-        loserObjMove.StartPos = Vector3.right * 1200 + loserObjMove.EndPos;
-        loserBackImage = loserObj.transform.GetChild(0).GetComponent<Image>();
-        loserCharacterImage = loserObj.transform.GetChild(1).GetComponent<Image>();
-        totalScoreBaseText_Lose = totalScore_Lose.transform.GetChild(0).GetComponent<Text>();
+        // 2P用の座標設定
+        objectMove_2.EndPos = new Vector3(0, 0, 0);
+        objectMove_2.StartPos = Vector3.right * scaler.referenceResolution.x + objectMove_1.EndPos;
 
         // ScoreBoardの初期化
-        scoreBoardMove.EndPos = notesScoreBoard.transform.localPosition;
-        scoreBoardMove.StartPos = Vector3.up * 1200 + scoreBoardMove.EndPos;
+        scoreBoardMove.EndPos = new Vector3(0, 0, 0);
+        scoreBoardMove.StartPos = Vector3.up * scaler.referenceResolution.y + scoreBoardMove.EndPos;
 
         resultAudio = GetComponent<AudioSource>();
 
@@ -105,90 +90,94 @@ public class ResultManager : MonoBehaviour
         switch (step)
         {
             case 0:
-                // オブジェクトの情報を初期化
-                winnerObj.transform.localPosition = winnerObjMove.StartPos;
-                winnerBackImage.sprite = winnerBackSprites[(int)GameData.Instance.GetCharacterData(true)];
-                winnerCharacterImage.sprite = characterSprites[(int)GameData.Instance.GetCharacterData(true)];
-                totalScore_Win.text = "0";
-                totalScoreBaseText_Win.text = "0";
+                // オブジェクトを初期値に配置及び初期化
+                player1.CharacterImage.transform.localPosition = objectMove_1.StartPos;
+                player1.CharacterImage.sprite = player1.CharacterSprites[(int)GameData.Instance.GetCharacterData(ControllerNum.P1)];
+                player1.TotalScoreObj.transform.localPosition = objectMove_1.StartPos;
+                player1.TotalScoreText.text = "0";
+                player1.RapText.text = "";
+                player1.ZapText.text = "";
+                player1.SnapText.text = "";
 
-                loserObj.transform.localPosition = loserObjMove.StartPos;
-                loserBackImage.sprite = loserBackSprites[(int)GameData.Instance.GetCharacterData(false)];
-                loserCharacterImage.sprite = characterSprites[(int)GameData.Instance.GetCharacterData(false)];
-                totalScore_Lose.text = "0";
-                totalScoreBaseText_Lose.text = "0";
+                player2.CharacterImage.transform.localPosition = objectMove_2.StartPos;
+                player2.CharacterImage.sprite = player2.CharacterSprites[(int)GameData.Instance.GetCharacterData(ControllerNum.P2)];
+                player2.TotalScoreObj.transform.localPosition = objectMove_2.StartPos;
+                player2.TotalScoreText.text = "0";
+                player2.RapText.text = "";
+                player2.ZapText.text = "";
+                player2.SnapText.text = "";
 
-                notesScoreBoard.transform.localPosition = scoreBoardMove.StartPos;
-                rapScore_Win.text = "";
-                rapScore_Lose.text = "";
-                zapScore_Win.text = "";
-                zapScore_Lose.text = "";
-                snapScore_Win.text = "";
-                snapScore_Lose.text = "";
+                scoreBoardObject.transform.localPosition = scoreBoardMove.StartPos;
+
+                winImageObj.gameObject.SetActive(false);
 
                 stepEndFlag = true;
                 break;
             case 1:
-                // 勝利プレイヤーのキャラクターとスコアを表示(スライドイン)させる
+                // 1Pのキャラクターをスライドイン
                 span = 0.75f;
                 var diff = time / span;
-                winnerObj.transform.localPosition = Vector3.Lerp(winnerObjMove.StartPos, winnerObjMove.EndPos, diff);
+                player1.CharacterImage.transform.localPosition = Vector3.Lerp(objectMove_1.StartPos, objectMove_1.EndPos, diff);
                 time += Time.deltaTime;
                 if(time >= span)
                 {
-                    winnerObj.transform.localPosition = winnerObjMove.EndPos;
+                    player1.CharacterImage.transform.localPosition = objectMove_1.EndPos;
                     stepEndFlag = true;
                 }
                 break;
             case 2:
-                // 敗北プレイヤーのキャラクターとスコアを表示(スライドイン)させる
+                // 2Pのキャラクターをスライドイン
                 span = 0.75f;
                 diff = time / span;
-                loserObj.transform.localPosition = Vector3.Lerp(loserObjMove.StartPos, loserObjMove.EndPos, diff);
+                player2.CharacterImage.transform.localPosition = Vector3.Lerp(objectMove_2.StartPos, objectMove_2.EndPos, diff);
                 time += Time.deltaTime;
                 if (time >= span)
                 {
-                    loserObj.transform.localPosition = loserObjMove.EndPos;
+                    player2.CharacterImage.transform.localPosition = objectMove_2.EndPos;
                     stepEndFlag = true;
                 }
                 break;
             case 3:
-                // ノーツのスコアボードを表示(スライドイン)させる
-                span = 1.0f;
+                // スコアボードとトータルスコアをスライドイン
+                span = 0.75f;
                 diff = time / span;
-                notesScoreBoard.transform.localPosition = Vector3.Lerp(scoreBoardMove.StartPos, scoreBoardMove.EndPos, diff);
+                scoreBoardObject.transform.localPosition = Vector3.Lerp(scoreBoardMove.StartPos, scoreBoardMove.EndPos, diff);
+                player1.TotalScoreObj.transform.localPosition = Vector3.Lerp(objectMove_1.StartPos, objectMove_1.EndPos, diff);
+                player2.TotalScoreObj.transform.localPosition = Vector3.Lerp(objectMove_2.StartPos, objectMove_2.EndPos, diff);
                 time += Time.deltaTime;
                 if (time >= span)
                 {
-                    notesScoreBoard.transform.localPosition = scoreBoardMove.EndPos;
+                    scoreBoardObject.transform.localPosition = scoreBoardMove.EndPos;
+                    player1.TotalScoreObj.transform.localPosition = objectMove_1.EndPos;
+                    player2.TotalScoreObj.transform.localPosition = objectMove_2.EndPos;
                     stepEndFlag = true;
                 }
                 break;
             case 4:
                 // Rapのスコアを表示
-                span = 1.0f;
+                span = 0.75f;
                 int i = 11 * Random.Range(1, 10);
-                rapScore_Win.text = i.ToString();
-                rapScore_Lose.text = i.ToString();
+                player1.RapText.text = i.ToString();
+                player2.RapText.text = i.ToString();
                 time += Time.deltaTime;
                 if (time >= span)
                 {
-                    rapScore_Win.text = GameData.Instance.GetNotesResult(true, 2).ToString();
-                    rapScore_Lose.text = GameData.Instance.GetNotesResult(false, 2).ToString();
+                    player1.RapText.text = GameData.Instance.GetRapScore(ControllerNum.P1).ToString();
+                    player2.RapText.text = GameData.Instance.GetRapScore(ControllerNum.P2).ToString();
                     stepEndFlag = true;
                 }
                 break;
             case 5:
                 // Zapのスコアを表示
-                span = 1.0f;
+                span = 0.75f;
                 i = 11 * Random.Range(1, 10);
-                zapScore_Win.text = i.ToString();
-                zapScore_Lose.text = i.ToString();
+                player1.ZapText.text = i.ToString();
+                player2.ZapText.text = i.ToString();
                 time += Time.deltaTime;
                 if (time >= span)
                 {
-                    zapScore_Win.text = GameData.Instance.GetNotesResult(true, 1).ToString();
-                    zapScore_Lose.text = GameData.Instance.GetNotesResult(false, 1).ToString();
+                    player1.ZapText.text = GameData.Instance.GetZapScore(ControllerNum.P1).ToString();
+                    player2.ZapText.text = GameData.Instance.GetZapScore(ControllerNum.P2).ToString();
                     stepEndFlag = true;
                 }
                 break;
@@ -196,44 +185,51 @@ public class ResultManager : MonoBehaviour
                 // Snapのスコアを表示
                 span = 1.0f;
                 i = 11 * Random.Range(1, 10);
-                snapScore_Win.text = i.ToString();
-                snapScore_Lose.text = i.ToString();
+                player1.SnapText.text = i.ToString();
+                player2.SnapText.text = i.ToString();
                 time += Time.deltaTime;
                 if (time >= span)
                 {
-                    snapScore_Win.text = GameData.Instance.GetNotesResult(true, 0).ToString();
-                    snapScore_Lose.text = GameData.Instance.GetNotesResult(false, 0).ToString();
+                    player1.SnapText.text = GameData.Instance.GetSnapScore(ControllerNum.P1).ToString();
+                    player2.SnapText.text = GameData.Instance.GetSnapScore(ControllerNum.P2).ToString();
                     stepEndFlag = true;
                 }
                 break;
             case 7:
                 // トータルスコアを表示
-                span = 1.5f;
+                span = 1.0f;
                 diff = time / span;
-                totalScore_Win.text = ((int)(GameData.Instance.GetTotalScore(true) * diff)).ToString();
-                totalScoreBaseText_Win.text = totalScore_Win.text;
-                totalScore_Lose.text = ((int)(GameData.Instance.GetTotalScore(false) * diff)).ToString();
-                totalScoreBaseText_Lose.text = totalScore_Lose.text;
+                player1.TotalScoreText.text = ((int)(GameData.Instance.GetTotalScore(ControllerNum.P1) * diff)).ToString();
+                player2.TotalScoreText.text = ((int)(GameData.Instance.GetTotalScore(ControllerNum.P2) * diff)).ToString();
                 time += Time.deltaTime;
                 if (time >= span)
                 {
-                    totalScore_Win.text = GameData.Instance.GetTotalScore(true).ToString();
-                    totalScoreBaseText_Win.text = totalScore_Win.text;
-                    totalScore_Lose.text = GameData.Instance.GetTotalScore(false).ToString();
-                    totalScoreBaseText_Lose.text = totalScore_Lose.text;
+                    player1.TotalScoreText.text = GameData.Instance.GetTotalScore(ControllerNum.P1).ToString();
+                    player2.TotalScoreText.text = GameData.Instance.GetTotalScore(ControllerNum.P2).ToString();
+                    stepEndFlag = true;
+                }
+                break;
+            case 8:
+                // Winオブジェクトを表示
+                span = 0.5f;
+                time += Time.deltaTime;
+                if(time >= span)
+                {
+                    winImageObj.sprite = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? player1.WinSprite : player2.WinSprite;
+                    winImageObj.gameObject.SetActive(true);
+                    if(resultSE[0] != null) { resultAudio.PlayOneShot(resultSE[0]); }
                     stepEndFlag = true;
                 }
                 break;
             default:
-                if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.A) == true || Input.GetKeyDown(KeyCode.J) == true) && actionFlag == true)
+                if(resultAudio.isPlaying == true) { return; }
+                if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true) && actionFlag == true)
                 {
                     step = 0;
                     actionFlag = false;
-                    GameData.Instance.ResetScore(ControllerNum.P1);
-                    GameData.Instance.ResetScore(ControllerNum.P2);
-                    if(resultSE[0] != null)
+                    if(resultSE[1] != null)
                     {
-                        resultAudio.PlayOneShot(resultSE[0]);
+                        resultAudio.PlayOneShot(resultSE[1]);
                     }
                     SceneControl.Instance.LoadScene(sceneNum);
                 }
@@ -248,25 +244,28 @@ public class ResultManager : MonoBehaviour
         }
 
         // どちらかのプレイヤーが決定キーを入力したらアニメーションをスキップ
-        if((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.A) == true || Input.GetKeyDown(KeyCode.J) == true) && actionFlag == true)
+        if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true) && actionFlag == true)
         {
-            step = 8;
+            step = 9;
             stepEndFlag = false;
             time = 0;
 
-            winnerObj.transform.localPosition = winnerObjMove.EndPos;
-            loserObj.transform.localPosition = loserObjMove.EndPos;
-            notesScoreBoard.transform.localPosition = scoreBoardMove.EndPos;
-            rapScore_Win.text = GameData.Instance.GetNotesResult(true, 2).ToString();
-            rapScore_Lose.text = GameData.Instance.GetNotesResult(false, 2).ToString();
-            zapScore_Win.text = GameData.Instance.GetNotesResult(true, 1).ToString();
-            zapScore_Lose.text = GameData.Instance.GetNotesResult(false, 1).ToString();
-            snapScore_Win.text = GameData.Instance.GetNotesResult(true, 0).ToString();
-            snapScore_Lose.text = GameData.Instance.GetNotesResult(false, 0).ToString();
-            totalScore_Win.text = GameData.Instance.GetTotalScore(true).ToString();
-            totalScoreBaseText_Win.text = totalScore_Win.text;
-            totalScore_Lose.text = GameData.Instance.GetTotalScore(false).ToString();
-            totalScoreBaseText_Lose.text = totalScore_Lose.text;
+            player1.CharacterImage.transform.localPosition = objectMove_1.EndPos;
+            player2.CharacterImage.transform.localPosition = objectMove_2.EndPos;
+            scoreBoardObject.transform.localPosition = scoreBoardMove.EndPos;
+            player1.TotalScoreObj.transform.localPosition = objectMove_1.EndPos;
+            player2.TotalScoreObj.transform.localPosition = objectMove_2.EndPos;
+            player1.RapText.text = GameData.Instance.GetRapScore(ControllerNum.P1).ToString();
+            player2.RapText.text = GameData.Instance.GetRapScore(ControllerNum.P2).ToString();
+            player1.ZapText.text = GameData.Instance.GetZapScore(ControllerNum.P1).ToString();
+            player2.ZapText.text = GameData.Instance.GetZapScore(ControllerNum.P2).ToString();
+            player1.SnapText.text = GameData.Instance.GetSnapScore(ControllerNum.P1).ToString();
+            player2.SnapText.text = GameData.Instance.GetSnapScore(ControllerNum.P2).ToString();
+            player1.TotalScoreText.text = GameData.Instance.GetTotalScore(ControllerNum.P1).ToString();
+            player2.TotalScoreText.text = GameData.Instance.GetTotalScore(ControllerNum.P2).ToString();
+            winImageObj.sprite = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? player1.WinSprite : player2.WinSprite;
+            winImageObj.gameObject.SetActive(true);
+            if (resultSE[0] != null) { resultAudio.PlayOneShot(resultSE[0]); }
         }
     }
 }

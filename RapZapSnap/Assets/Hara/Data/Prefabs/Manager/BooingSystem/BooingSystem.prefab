@@ -52,7 +52,7 @@ MonoBehaviour:
   vibrationPower: 255
   vibDuration: 1.5
   shakeMagnitude: 0.5
-  shakeDuration: 1.5
+  shakeDuration: 0.8
   particleCameraObject: {fileID: 5692923855610798694, guid: 20867f9afa0ebf34987a87078868f4bc,
     type: 3}
   particleCallTime: 3
@@ -165,7 +165,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 6e9b4614c240feb46a3284c59d87d24b, type: 3}
+  m_audioClip: {fileID: 8300000, guid: dec91b717b6af47499518be86f501b30, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -261,7 +261,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 13472ff3e3e81fb499a0fd010fd1887e, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 0c25b2aea96e87a41a0352128a0084c1, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

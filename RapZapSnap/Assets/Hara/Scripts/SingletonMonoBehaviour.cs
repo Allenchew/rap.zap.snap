@@ -17,7 +17,7 @@ public class SingletonMonoBehaviour <T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
-    [SerializeField, Tooltip("シングルトンにするか")] protected bool singletonMode = true;
+    [SerializeField, Tooltip("シーン遷移後も残す")] protected bool dontDestroy = true;
 
     protected virtual void Awake()
     {
@@ -27,6 +27,6 @@ public class SingletonMonoBehaviour <T> : MonoBehaviour where T : MonoBehaviour
             return;
         }
         instance = GetComponent<T>();
-        if(singletonMode == true) { DontDestroyOnLoad(gameObject); }
+        if(dontDestroy == true) { DontDestroyOnLoad(gameObject); }
     }
 }
