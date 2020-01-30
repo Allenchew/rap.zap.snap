@@ -78,6 +78,6 @@ public class MainGameManager : MonoBehaviour
         }
         yield return new WaitForSeconds(0.5f);
         SpawnNotes.Instance.CallSpawnNotes();
-        lyrics1.SetActive(true);
+        //lyrics1.SetActive(true); active lyrics
     }
 }

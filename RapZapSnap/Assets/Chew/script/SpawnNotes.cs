@@ -29,7 +29,6 @@ public class SpawnNotes : MonoBehaviour
     public GameObject[] LyricsPrefabs;
 
     [SerializeField] NotesData notesdata;
-    [SerializeField] NotesData2 notesdata2;
 
     private bool runningnotes = false;
     private ControllerNum currentplayer;
@@ -67,37 +66,31 @@ public class SpawnNotes : MonoBehaviour
     }
     IEnumerator spawnout()
     {
-        for(int i = 0;i< notesdata.Phrase1.Count; i++)
-        {
-            MstNotesEntity tmpdata;
-            tmpdata = GetDatabyId(i+1);
-
-            if (tmpdata.startposX == tmpdata.endposX && tmpdata.startposY == tmpdata.endposY)
-            {
-                yield return new WaitForSeconds(tmpdata.delaytime);
-                continue;
-            }
-            Vector3 tmpstart = new Vector3(tmpdata.startposX, tmpdata.startposY, 0);
-            Vector3 tmpend = new Vector3(tmpdata.endposX, tmpdata.endposY, 0);
-            yield return new WaitForSeconds(tmpdata.delaytime);
-            NotesControl.Instance.PlayNotesOneShot(tmpdata.ntype,tmpstart, tmpend, currentplayer,tmpdata.speed);
-        }
-        character_sequal[(int)currentplayer]++;
-        BgmManager.Instance.StopPlay();
-        runningnotes = false;
+          for(int i = 0;i< 18; i++)
+          {
+              MstNotesEntity tmpdata;
+              tmpdata = GetDatabyId(i+1);
+              Vector3 tmpstart = new Vector3(11, 4, 0);
+              Vector3 tmpend = new Vector3(tmpdata.endposX, 4, 0);
+              yield return new WaitForSeconds(tmpdata.delaytime);
+              NotesControl.Instance.PlayNotesOneShot(tmpdata.ntype,tmpstart, tmpend, currentplayer,tmpdata.speed);
+          }
+          character_sequal[(int)currentplayer]++;
+          BgmManager.Instance.StopPlay();
+          runningnotes = false;
     }
     public MstNotesEntity GetDatabyId(int id)
     {
-        if (currentcharacter == Character.Tokiwa)
+       if (currentcharacter == Character.Tokiwa)
         {
             switch (character_sequal[(int)currentplayer])
             {
                 case 0:
-                    return notesdata.Phrase1.Find(entity => entity.id == id);
+                    return notesdata.tokiwa1.Find(entity => entity.id == id);
                 case 1:
-                    return notesdata.Phrase2.Find(entity => entity.id == id);
+                    return notesdata.tokiwa2.Find(entity => entity.id == id);
                 case 2:
-                    return notesdata.Phrase3.Find(entity => entity.id == id);
+                    return notesdata.tokiwa3.Find(entity => entity.id == id);
                 default:
                     return null;
             }
@@ -107,11 +100,11 @@ public class SpawnNotes : MonoBehaviour
             switch (character_sequal[(int)currentplayer])
             {
                 case 0:
-                    return notesdata2.Phrase1.Find(entity => entity.id == id);
+                    return notesdata.hajime1.Find(entity => entity.id == id);
                 case 1:
-                    return notesdata2.Phrase2.Find(entity => entity.id == id);
+                    return notesdata.hajime2.Find(entity => entity.id == id);
                 case 2:
-                    return notesdata2.Phrase3.Find(entity => entity.id == id);
+                    return notesdata.hajime3.Find(entity => entity.id == id);
                 default:
                     return null;
             }

@@ -2124,6 +2124,7 @@ MonoBehaviour:
   LyricsExcel: {fileID: 0}
   Bigeffect: {fileID: 850008574890284853}
   Slideeffect: {fileID: 850008574614445701}
+  StartDelay: 5
 --- !u!1 &850008576583605710
 GameObject:
   m_ObjectHideFlags: 0

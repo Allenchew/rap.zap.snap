@@ -9,6 +9,7 @@ public class ShowLyrics : MonoBehaviour
 
     public GameObject Bigeffect;
     public GameObject Slideeffect;
+    public float StartDelay = 0f;
     private ControllerNum PlayerControl;
     private bool showing_flag = true;
     private int showindex = 0;
@@ -94,7 +95,7 @@ public class ShowLyrics : MonoBehaviour
     }
     IEnumerator presetshow()
     {
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(StartDelay);
         GameObject tmp = gameObject.transform.GetChild(showindex).gameObject;
         showindex++;
         StartCoroutine(shuftShow(tmp));
