@@ -33,9 +33,7 @@ public class SpawnNotes : MonoBehaviour
     private bool runningnotes = false;
     private ControllerNum currentplayer;
     private Character currentcharacter;
-    int[] character_sequal = new int[2];
-
-    public GameObject tmplyrics;
+    private int[] localsequal = new int[2];
 
     void Awake()
     {
@@ -47,8 +45,7 @@ public class SpawnNotes : MonoBehaviour
 
     void Start()
     {
-        character_sequal[0] = 0;
-        character_sequal[1] = 2;
+        localsequal = MainGameManager.instance.character_sequal;
     }
     public void CallSpawnNotes()
     {
@@ -58,15 +55,18 @@ public class SpawnNotes : MonoBehaviour
             currentplayer = MainGameManager.instance.currentplayer;
             currentcharacter = GameData.Instance.GetCharacterData(currentplayer);
             int tmpbgmIndex = ((int)(GameData.Instance.GetCharacterData(currentplayer))-1)*3;
-            BgmManager.Instance.StartPlay(tmpbgmIndex+character_sequal[(int)currentplayer]);
-            tmplyrics.SetActive(true);
-            //Instantiate(LyricsPrefabs[tmpbgmIndex + character_sequal[(int)currentplayer]]);
+            Debug.Log(tmpbgmIndex);
+            Debug.Log(tmpbgmIndex + MainGameManager.instance.character_sequal[(int)currentplayer]);
+            BgmManager.Instance.StartPlay(tmpbgmIndex+MainGameManager.instance.character_sequal[(int)currentplayer]);
+            
+            Instantiate(LyricsPrefabs[tmpbgmIndex + MainGameManager.instance.character_sequal[(int)currentplayer]]);
             StartCoroutine(spawnout());
         }
     }
     IEnumerator spawnout()
     {
-          for(int i = 0;i< 18; i++)
+        localsequal = MainGameManager.instance.character_sequal;
+        for (int i = 0;i< 18; i++)
           {
               MstNotesEntity tmpdata;
               tmpdata = GetDatabyId(i+1);
@@ -75,15 +75,15 @@ public class SpawnNotes : MonoBehaviour
               yield return new WaitForSeconds(tmpdata.delaytime);
               NotesControl.Instance.PlayNotesOneShot(tmpdata.ntype,tmpstart, tmpend, currentplayer,tmpdata.speed);
           }
-          character_sequal[(int)currentplayer]++;
-          BgmManager.Instance.StopPlay();
-          runningnotes = false;
+       
+        
+        runningnotes = false;
     }
     public MstNotesEntity GetDatabyId(int id)
     {
        if (currentcharacter == Character.Tokiwa)
         {
-            switch (character_sequal[(int)currentplayer])
+            switch (localsequal[(int)currentplayer])
             {
                 case 0:
                     return notesdata.tokiwa1.Find(entity => entity.id == id);
@@ -97,7 +97,7 @@ public class SpawnNotes : MonoBehaviour
         }
         else if(currentcharacter == Character.Hajime)
         {
-            switch (character_sequal[(int)currentplayer])
+            switch (localsequal[(int)currentplayer])
             {
                 case 0:
                     return notesdata.hajime1.Find(entity => entity.id == id);

@@ -2121,7 +2121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 375922fb72e8b324aa76c126d20f2dce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LyricsExcel: {fileID: 0}
+  LyricsExcel: {fileID: 11400000, guid: c6dbe4a5fdf557248b1c0c28ce103526, type: 2}
   Bigeffect: {fileID: 850008574890284853}
   Slideeffect: {fileID: 850008574614445701}
   StartDelay: 5

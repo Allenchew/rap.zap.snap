@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Video;
 
 public class MainGameManager : MonoBehaviour
 {
@@ -10,8 +11,9 @@ public class MainGameManager : MonoBehaviour
 
     public ControllerNum currentplayer;
     public GameObject backgroundpic;
-    public GameObject lyrics1;
-
+    public GameObject VideoPlayertokiwa;
+    public GameObject VideoPlayerhajime;
+    public int[] character_sequal = new int[2];
     [SerializeField]
     public Color[] lyricsbg = new Color[2] { new Color(96, 15, 19, 255), new Color(13, 15, 13, 255) };
 
@@ -27,10 +29,11 @@ public class MainGameManager : MonoBehaviour
 
     void Start()
     {
+        character_sequal[0] = 0;
+        character_sequal[1] = 0;
         StartCoroutine(Startup());
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -45,6 +48,7 @@ public class MainGameManager : MonoBehaviour
     public void EndRun()
     {
         roundCounter++;
+        MainGameManager.instance.character_sequal[(int)currentplayer]++;
         currentplayer = 1 - currentplayer;
         if (roundCounter > 5)
         {
@@ -56,6 +60,7 @@ public class MainGameManager : MonoBehaviour
     }
     IEnumerator SwitchPlayer()
     {
+       
         int tmpindex = (int)GameData.Instance.GetCharacterData(currentplayer)-1;
         BooingControl.Instance.SetBooingPlayer(BooingControl.Instance.BooingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
         for (float i = 0; i < 1.1f; i += 0.05f)
@@ -65,6 +70,23 @@ public class MainGameManager : MonoBehaviour
         }
         yield return new WaitForSeconds(1.0f);
         SpawnNotes.Instance.CallSpawnNotes();
+        if (tmpindex == 0)
+        {
+            VideoPlayerhajime.SetActive(false);
+            VideoPlayertokiwa.SetActive(true);
+            VideoPlayertokiwa.GetComponent<VideoPlayer>().Play();
+        }
+        else
+        {
+            VideoPlayerhajime.SetActive(true);
+            VideoPlayertokiwa.SetActive(false);
+            VideoPlayerhajime.GetComponent<VideoPlayer>().Play();
+        }
+        for (float i = 0; i < 1.1f; i += 0.1f)
+        {
+            backgroundpic.GetComponent<Image>().color = Color.Lerp(lyricsbg[tmpindex], Color.clear, i);
+            yield return new WaitForSeconds(0.01f);
+        }
     }
     IEnumerator Startup()
     {
@@ -78,6 +100,23 @@ public class MainGameManager : MonoBehaviour
         }
         yield return new WaitForSeconds(0.5f);
         SpawnNotes.Instance.CallSpawnNotes();
-        //lyrics1.SetActive(true); active lyrics
+        if (tmpindex == 0)
+        {
+            VideoPlayerhajime.SetActive(false);
+            VideoPlayertokiwa.SetActive(true);
+            VideoPlayertokiwa.GetComponent<VideoPlayer>().Play();
+        }
+        else
+        {
+            VideoPlayerhajime.SetActive(true);
+            VideoPlayertokiwa.SetActive(false);
+            VideoPlayerhajime.GetComponent<VideoPlayer>().Play();
+        }
+
+        for (float i = 0; i < 1.1f; i += 0.1f)
+        {
+            backgroundpic.GetComponent<Image>().color = Color.Lerp(lyricsbg[tmpindex],Color.clear, i);
+            yield return new WaitForSeconds(0.01f);
+        }
     }
 }

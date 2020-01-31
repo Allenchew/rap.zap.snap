@@ -334,6 +334,71 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d8ca744b702ac6d44beb0e30d97b0e8d, type: 3}
+--- !u!1 &157102458
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 157102460}
+  - component: {fileID: 157102459}
+  m_Layer: 0
+  m_Name: PV_HAJIME01_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!328 &157102459
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 157102458}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 32900000, guid: 763a2855b0c0f534399366d72829c837, type: 3}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 1613380646}
+  m_TargetTexture: {fileID: 0}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: _MainTex
+  m_RenderMode: 0
+  m_AspectRatio: 2
+  m_DataSource: 0
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 2
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 01
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 1
+  m_SkipOnDrop: 1
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+--- !u!4 &157102460
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 157102458}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &343245023
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,7 +430,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentplayer: 0
   backgroundpic: {fileID: 1068473267}
-  lyrics1: {fileID: 0}
+  VideoPlayertokiwa: {fileID: 1651033223}
+  VideoPlayerhajime: {fileID: 157102458}
   lyricsbg:
   - {r: 0.3764706, g: 0.05882353, b: 0.07450981, a: 1}
   - {r: 0.050980393, g: 0.05882353, b: 0.050980393, a: 1}
@@ -715,7 +781,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 0
   m_Pitch: 1
   Loop: 0
@@ -1336,14 +1402,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LyricsPrefabs:
-  - {fileID: 7123178754015428824, guid: d4161e207e7b8c14d97f50a6874c9861, type: 3}
-  - {fileID: 7399453808335611767, guid: 6d8f2109d7be7114799920dd9efa9705, type: 3}
-  - {fileID: 7859584254824163694, guid: 6c47c53a78a6d8148b3c304f0bbc2a61, type: 3}
-  - {fileID: 3034313677671743280, guid: d9fa15acd42b7ad489e7dcf99275f9ed, type: 3}
-  - {fileID: 7101728281653390607, guid: 294c68090a664f84d978a47e4fbc6423, type: 3}
-  - {fileID: 2696529111848692222, guid: 1f73ced233a426840b708c8c3172db4b, type: 3}
+  - {fileID: 345793411316664673, guid: d4161e207e7b8c14d97f50a6874c9861, type: 3}
+  - {fileID: 2542691537338106560, guid: 6d8f2109d7be7114799920dd9efa9705, type: 3}
+  - {fileID: 7681147850896917379, guid: 6c47c53a78a6d8148b3c304f0bbc2a61, type: 3}
+  - {fileID: 4334294377215681529, guid: d9fa15acd42b7ad489e7dcf99275f9ed, type: 3}
+  - {fileID: 5591189874505768839, guid: 294c68090a664f84d978a47e4fbc6423, type: 3}
+  - {fileID: 3136051713517334100, guid: 1f73ced233a426840b708c8c3172db4b, type: 3}
   notesdata: {fileID: 11400000, guid: ad18fcacd24226149b67a4596cff9ec1, type: 2}
-  tmplyrics: {fileID: 0}
 --- !u!1 &1448172278
 GameObject:
   m_ObjectHideFlags: 0
@@ -1720,6 +1785,71 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1651033223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1651033225}
+  - component: {fileID: 1651033224}
+  m_Layer: 0
+  m_Name: PV_TOKIWA01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!328 &1651033224
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651033223}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 32900000, guid: 39768e3772511ae41ad0e06a3efe52b9, type: 3}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 1613380646}
+  m_TargetTexture: {fileID: 0}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: _MainTex
+  m_RenderMode: 0
+  m_AspectRatio: 2
+  m_DataSource: 0
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 2
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 01
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 0
+  m_SkipOnDrop: 1
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+--- !u!4 &1651033225
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651033223}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1933689716
 PrefabInstance:

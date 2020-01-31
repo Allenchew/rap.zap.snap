@@ -16,11 +16,16 @@ public class ShowLyrics : MonoBehaviour
     private int selectedtext = 0;
     private int resetindex = 0;
     private int totalruncount = 1;
+    private Character currentcharacter;
+    int[] localsequal = new int[2];
+
     private DS4InputKey thiscontrol;
 
     void Start()
     {
+        localsequal = MainGameManager.instance.character_sequal;
         PlayerControl = MainGameManager.instance.currentplayer;
+        currentcharacter = GameData.Instance.GetCharacterData(PlayerControl);
         setplayercontrol();
         StartCoroutine(presetshow());
     }
@@ -57,6 +62,7 @@ public class ShowLyrics : MonoBehaviour
     {
         MaskData thisMaskdata = target.GetComponent<MaskMovement>().ThisMaskData;
         
+
         if (thisMaskdata.OnceEffect)
          {
              ShowSpecifyEffect(thisMaskdata.EffectIndex);
@@ -65,7 +71,7 @@ public class ShowLyrics : MonoBehaviour
          for (int i = 0; i < thisMaskdata.RunCount; i++)
          {
             LyricsEntity tmplyrics;
-            tmplyrics = LyricsExcel.tokiwa1.Find(entity => entity.id == (totalruncount+i));
+            tmplyrics = GetDatabyId(i+1);
             target.transform.GetChild(i).gameObject.SetActive(true);
              if (thisMaskdata.StartEffect)
              {
@@ -88,7 +94,8 @@ public class ShowLyrics : MonoBehaviour
          if(!(showindex < gameObject.transform.childCount))
          {
              yield return new WaitForSeconds(2.0f);
-             MainGameManager.instance.EndRun();
+            BgmManager.Instance.StopPlay();
+            MainGameManager.instance.EndRun();
              Destroy(transform.parent.gameObject);
          }
         target.SetActive(false);
@@ -118,6 +125,41 @@ public class ShowLyrics : MonoBehaviour
                 break;
             default:
                 break;
+        }
+    }
+    public LyricsEntity GetDatabyId(int id)
+    {
+        if (currentcharacter == Character.Tokiwa)
+        {
+            switch (localsequal[(int)PlayerControl])
+            {
+                case 0:
+                    return LyricsExcel.tokiwa1.Find(entity => entity.id == id);
+                case 1:
+                    return LyricsExcel.tokiwa2.Find(entity => entity.id == id);
+                case 2:
+                    return LyricsExcel.tokiwa3.Find(entity => entity.id == id);
+                default:
+                    return null;
+            }
+        }
+        else if (currentcharacter == Character.Hajime)
+        {
+            switch (localsequal[(int)PlayerControl])
+            {
+                case 0:
+                    return LyricsExcel.hajime1.Find(entity => entity.id == id);
+                case 1:
+                    return LyricsExcel.hajime2.Find(entity => entity.id == id);
+                case 2:
+                    return LyricsExcel.hajime3.Find(entity => entity.id == id);
+                default:
+                    return null;
+            }
+        }
+        else
+        {
+            return null;
         }
     }
 }
