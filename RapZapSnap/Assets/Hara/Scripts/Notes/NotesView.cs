@@ -20,7 +20,7 @@ public class NotesView : NotesModel
         public SpriteRenderer MoveSprite;
         public SpriteRenderer EndSprite;
     }
-    [SerializeField, Header("シングルノーツ")] private SingleNotes singleNotes;
+    [SerializeField, Header("シングルノーツ")] private SingleNotes singleNotes = new SingleNotes();
     public SingleNotes SingleNotesData { get { return singleNotes; } }
 
     [System.Serializable]
@@ -34,7 +34,7 @@ public class NotesView : NotesModel
         public SpriteRenderer EndSprite1;
         public SpriteRenderer EndSprite2;
     }
-    [SerializeField, Header("ダブルノーツ")] private DoubleNotes doubleNotes;
+    [SerializeField, Header("ダブルノーツ")] private DoubleNotes doubleNotes = new DoubleNotes();
     public DoubleNotes DoubleNotesData { get { return doubleNotes; } }
 
     // ノーツのモード

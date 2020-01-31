@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91f72354ceb090b4c992a270067fc98e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  singletonMode: 1
+  dontDestroy: 1
   booingFlag: 0
   booingPlayer: 1
   vibrationPower: 255
@@ -57,7 +57,7 @@ MonoBehaviour:
     type: 3}
   particleCallTime: 3
   particleCallSpan: 0.75
-  particleColor: {r: 1, g: 0.8352941, b: 0.30980393, a: 0.6862745}
+  particleColor: {r: 1, g: 1, b: 1, a: 1}
   particleSize: 1.5
 --- !u!82 &1361749972680301589
 AudioSource:
@@ -69,7 +69,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 62ddb5b6f293fe140be579ad285b65a3, type: 3}
+  m_audioClip: {fileID: 8300000, guid: ab6f30dd29fdfb2498c1efb87fe43f62, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

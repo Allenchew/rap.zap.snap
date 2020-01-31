@@ -140,6 +140,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
 
         // SEの再生
         int seNum = 0;
+        audioSources[seNum].volume = 1;
         PlaySE(seNum, true);
 
         float time = 0f;
@@ -150,11 +151,15 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         while (time < duration)
         {
             time += Time.deltaTime;
+            audioSources[seNum].volume = 1.0f - (time / duration);
             yield return null;
         }
 
         // 振動停止
         GamePadControl.Instance.StopVibration(id);
+
+        // SEの停止
+        StopSE(seNum);
 
         isRunningVibration = false;
     }
@@ -232,19 +237,19 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     private IEnumerator DoParticle(int time, float span, ControllerNum id)
     {
         isRunningParticle = true;
-        Character character = GameData.Instance.GetCharacterData(id);
+        int colorType = Random.Range(0, 3);
 
         // パーティクルの色(RawImageの色)を設定
-        switch(character)
+        switch(colorType)
         {
-            case Character.Mari:
-                particleColor = new Color(255f / 255f, 213f / 255f, 79f / 255f, particleColor.a);    // 黄色
+            case 0:
+                particleColor = new Color(96f / 255f, 14f / 255f, 18f / 255f, particleColor.a);    // 常盤カラー
                 break;
-            case Character.Tokiwa:
-                particleColor = new Color(244f / 255f, 67f / 255f, 54f / 255f, particleColor.a);    // 赤色
+            case 1:
+                particleColor = new Color(10f / 255f, 25f / 255f, 50f / 255f, particleColor.a);    // 創カラー
                 break;
-            case Character.Hajime:
-                particleColor = new Color(92f / 255f, 107f / 255f, 192f / 255f, particleColor.a);    // 青色
+            case 2:
+                particleColor = new Color(234f / 255f, 162f / 255f, 23f / 255f, particleColor.a);    // 茉莉カラー
                 break;
         }
         particleRawImage.color = particleColor;
