@@ -55,7 +55,7 @@ public class calltest : MonoBehaviour
             SceneControl.Instance.LoadScene("Result");
         }
 
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.Delete))
         {
             NotesControl.Instance.StopNotes();
         }

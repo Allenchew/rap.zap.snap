@@ -172,17 +172,19 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
     /// </summary>
     public void StopNotes()
     {
-        for(int i = 0; i < maxNotes; i++)
+        for (int i = 0; i < maxNotes; i++)
         {
-            if(dataBase1.NotesObjects[i].gameObject.activeSelf == true)
+            if (dataBase1.NotesObjects[i].NotesCoroutine != null)
             {
                 dataBase1.NotesObjects[i].ResultNotes(-1);
             }
+            dataBase1.NotesObjects[i].NotesResultObj.gameObject.SetActive(false);
 
-            if(dataBase2.NotesObjects[i].gameObject.activeSelf == true)
+            if (dataBase2.NotesObjects[i].NotesCoroutine != null)
             {
                 dataBase2.NotesObjects[i].ResultNotes(-1);
             }
+            dataBase2.NotesObjects[i].NotesResultObj.gameObject.SetActive(false);
         }
         dataBase1.NotesCallCount = 0;
         dataBase1.NotesCheckCount = 0;
