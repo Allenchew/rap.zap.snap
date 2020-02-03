@@ -13,8 +13,6 @@ public class ShowLyrics : MonoBehaviour
     private ControllerNum PlayerControl;
     private bool showing_flag = true;
     private int showindex = 0;
-    private int selectedtext = 0;
-    private int resetindex = 0;
     private int totalruncount = 1;
     private Character currentcharacter;
     int[] localsequal = new int[2];
