@@ -21,6 +21,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
     private bool clickFlag1 = true;    // 1P用の入力フラグ
     private bool clickFlag2 = true;    // 2P用の入力フラグ
 
+    [System.Serializable]
     /// <summary>
     /// ノーツの管理用データベース
     /// </summary>
@@ -30,11 +31,11 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         public NotesView[] NotesObjects;
 
         // ノーツの呼び出し番号
-        private int notesCallCount;
+        [SerializeField]private int notesCallCount;
         public int NotesCallCount { set { notesCallCount = value; if (notesCallCount >= NotesObjects.Length || notesCallCount < 0) notesCallCount = 0; } get { return notesCallCount; } }
 
         // 判定チェック中のノーツ番号
-        private int notesCheckCount;
+        [SerializeField]private int notesCheckCount;
         public int NotesCheckCount { set { notesCheckCount = value; if (notesCheckCount >= NotesObjects.Length || notesCheckCount < 0) notesCheckCount = 0; } get { return notesCheckCount; } }
 
         // 初期化
@@ -44,7 +45,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             notesCheckCount = 0;
         }
     }
-    private NotesDataBase dataBase1;
+    [SerializeField]private NotesDataBase dataBase1;
     private NotesDataBase dataBase2;
 
     [SerializeField, Tooltip("生成されるノーツのサイズ")]
@@ -215,14 +216,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             nextNotes = dataBase2.NotesObjects[nextNotesNum];
         }
 
-        if(nowNotes.Mode == NotesMode.Single)
-        {
-            if(nowNotes.SingleNotesData.NotesObject.activeSelf == false) { return; }
-        }
-        else if(nowNotes.Mode == NotesMode.Double)
-        {
-            if(nowNotes.DoubleNotesData.NotesObject.activeSelf == false) { return; }
-        }
+        if(nowNotes.NotesCoroutine == null) { return; }
 
         if (nowNotes.NotesClickFlag == true)
         {
@@ -230,37 +224,37 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             {
                 if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Circle == true : GamePadControl.Instance.GetKeyDown_2.Circle == true)
                 {
-                    NotesCheck(nowNotes, (int)NotesType.CircleKey, id);
+                    NotesCheck(nowNotes, 0, id);
                     return;
                 }
 
                 if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Cross == true : GamePadControl.Instance.GetKeyDown_2.Cross == true)
                 {
-                    NotesCheck(nowNotes, (int)NotesType.CrossKey, id);
+                    NotesCheck(nowNotes, 1, id);
                     return;
                 }
 
                 if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Triangle == true : GamePadControl.Instance.GetKeyDown_2.Triangle == true)
                 {
-                    NotesCheck(nowNotes, (int)NotesType.TriangleKey, id);
+                    NotesCheck(nowNotes, 2, id);
                     return;
                 }
 
                 if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Up == true : GamePadControl.Instance.GetKeyDown_2.Up == true)
                 {
-                    NotesCheck(nowNotes, (int)NotesType.UpArrow, id);
+                    NotesCheck(nowNotes, 3, id);
                     return;
                 }
 
                 if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Down == true : GamePadControl.Instance.GetKeyDown_2.Down == true)
                 {
-                    NotesCheck(nowNotes, (int)NotesType.DownArrow, id);
+                    NotesCheck(nowNotes, 4, id);
                     return;
                 }
 
                 if (id == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Left == true : GamePadControl.Instance.GetKeyDown_2.Left == true)
                 {
-                    NotesCheck(nowNotes, (int)NotesType.LeftArrow, id);
+                    NotesCheck(nowNotes, 5, id);
                     return;
                 }
             }
@@ -393,7 +387,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
 
         if(nowNotes.Mode != NotesMode.Long)
         {
-            if (nowNotes.NotesClickFlag == false || (nextNotes.NotesCoroutine != null && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
+            if((nowNotes.NotesClickFlag == false || nextNotes.NotesCoroutine != null && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)))
             {
                 NotesResult(0, 0, id);
                 return;
@@ -455,7 +449,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
     /// <param name="id">プレイヤー番号</param>
     private void NotesResult(int result, int score, ControllerNum id)
     {
-        NotesDataBase notesData = id == ControllerNum.P1 ? dataBase1 : dataBase2;
+        _ = id == ControllerNum.P1 ? dataBase1.NotesCheckCount++ : dataBase2.NotesCheckCount++;
 
         switch (result)
         {
@@ -471,10 +465,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
             default:
                 return;
         }
-
-        notesData.NotesCheckCount++;
+        
         GameData.Instance.PlusTotalScore(id, score);
-
-        _ = id == ControllerNum.P1 ? dataBase1 = notesData : dataBase2 = notesData;
     }
 }

@@ -25,7 +25,12 @@ public class calltest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            NotesControl.Instance.PlayNotesOneShot((NotesType)Random.Range(0, 6), new Vector3(-7, 0, 0), new Vector3(5, 0, 0), ControllerNum.P1,1.0f);
+            NotesControl.Instance.PlayNotesOneShot((NotesType)Random.Range(0, 6), new Vector3(-7, 0, 0), new Vector3(5, 0, 0), ControllerNum.P1, 1.0f);
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            NotesControl.Instance.PlayNotesOneShot(NotesType.CircleKey, new Vector3(-7, 0, 0), new Vector3(5, 0, 0), ControllerNum.P1, 1.0f);
         }
 
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
