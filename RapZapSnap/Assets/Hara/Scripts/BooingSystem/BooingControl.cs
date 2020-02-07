@@ -30,12 +30,10 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
 
     [SerializeField, Tooltip("パーティクル用のカメラ"), Header("画面を汚すお邪魔システム")]
     private GameObject particleCameraObject = null;
-    private ParticleSystem particle = null;
-    private UnityEngine.UI.RawImage particleRawImage = null;
     [SerializeField, Tooltip("再生回数"), Range(0, 5)] private int particleCallTime = 1;
     [SerializeField, Tooltip("再生間隔"), Range(0f, 2.0f)] private float particleCallSpan = 1.0f;
-    [SerializeField, Tooltip("パーティクルのカラー")] private Color particleColor = Color.black;
     [SerializeField, Tooltip("パーティクルのサイズ"), Range(0f, 3.0f)] private float particleSize = 1.0f;
+    private BooingParticle particle = null;
     private bool isRunningParticle = false;
     private Coroutine particleCoroutine = null;
 
@@ -67,8 +65,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         {
             var particleCamera = Instantiate(particleCameraObject, gameObject.transform, false);
             particleCamera.transform.position = Camera.main.transform.position + Vector3.back * 10;
-            particle = particleCamera.transform.GetChild(0).GetComponent<ParticleSystem>();
-            particleRawImage = particleCamera.transform.GetChild(2).transform.GetChild(0).GetComponent<UnityEngine.UI.RawImage>();
+            particle = particleCamera.GetComponent<BooingParticle>();
         }
     }
 
@@ -222,7 +219,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// <param name="id">プレイヤー番号</param>
     private void PlayParticle(int time, float span, ControllerNum id)
     {
-        if(isRunningParticle == true) { return; }
+        if(isRunningParticle == true || particle == null) { return; }
 
         particleCoroutine = StartCoroutine(DoParticle(time, span, id));
     }
@@ -238,24 +235,24 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     {
         isRunningParticle = true;
         int colorType = Random.Range(0, 3);
+        Color particleColor;
 
         // パーティクルの色(RawImageの色)を設定
         switch(colorType)
         {
             case 0:
-                particleColor = new Color(96f / 255f, 14f / 255f, 18f / 255f, particleColor.a);    // 常盤カラー
+                particleColor = new Color(96f / 255f, 14f / 255f, 18f / 255f, 1);    // 常盤カラー
                 break;
             case 1:
-                particleColor = new Color(10f / 255f, 25f / 255f, 50f / 255f, particleColor.a);    // 創カラー
+                particleColor = new Color(10f / 255f, 25f / 255f, 50f / 255f, 1);    // 創カラー
                 break;
             case 2:
-                particleColor = new Color(234f / 255f, 162f / 255f, 23f / 255f, particleColor.a);    // 茉莉カラー
+                particleColor = new Color(234f / 255f, 162f / 255f, 23f / 255f, 1);    // 茉莉カラー
                 break;
+            default:
+                yield break;
         }
-        particleRawImage.color = particleColor;
-
-        // パーティクルのMainModuleを取得
-        ParticleSystem.MainModule mainModule = particle.main;
+        particle.SetColor(particleColor);
 
         float deltaTime;
 
@@ -264,11 +261,10 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
             // 時間の初期化
             deltaTime = 0f;
 
-            // パーティクルの大きさの設定
-            mainModule.startSize = particleSize;
+            int index = Random.Range(0, particle.GetParticleIndex);
 
             // パーティクルの再生
-            particle.Emit(1);
+            particle.ParticlePlay(index, particleSize);
 
             // SEの再生
             int seNum = 2;
@@ -359,14 +355,11 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
             isRunningShake = false;
         }
 
-        if(isRunningParticle == true)
+        if(isRunningParticle == true && particle != null)
         {
             StopCoroutine(particleCoroutine);
 
-            if(particle.IsAlive(true) == true)
-            {
-                particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-            }
+            particle.StopParticle();
 
             isRunningParticle = false;
         }
