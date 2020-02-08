@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BooingParticle : MonoBehaviour
+public class ParticleControl : MonoBehaviour
 {
     [SerializeField, Header("お邪魔用パーティクル")] private ParticleSystem[] booingParticle = null;
     [SerializeField, Header("パーティクルの描画用Image")] private RawImage rawImage = null;
@@ -16,7 +16,7 @@ public class BooingParticle : MonoBehaviour
     /// <param name="size">パーティクルのサイズ</param>
     public void ParticlePlay(int index, float size)
     {
-        if(index < 0 || index >= booingParticle.Length) { return; }
+        if (index < 0 || index >= booingParticle.Length) { return; }
 
         ParticleSystem.MainModule mainModule = booingParticle[index].main;
 
@@ -39,9 +39,9 @@ public class BooingParticle : MonoBehaviour
     /// </summary>
     public void StopParticle()
     {
-        foreach(var particle in booingParticle)
+        foreach (var particle in booingParticle)
         {
-            if(particle.IsAlive(true) == true)
+            if (particle.IsAlive(true) == true)
             {
                 particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             }

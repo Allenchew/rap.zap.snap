@@ -60,9 +60,6 @@ public class ResultManager : MonoBehaviour
     [SerializeField, Header("スコアボードオブジェクト")] private GameObject scoreBoardObject = null;
     [SerializeField, Header("Winオブジェクト")] private Image winImageObj = null;
 
-    [SerializeField, Header("リザルトシーン用のSE")] private AudioClip[] resultSE = null;
-    private AudioSource resultAudio = null;
-
     private struct MoveObjPos
     {
         public Vector3 StartPos;
@@ -109,8 +106,6 @@ public class ResultManager : MonoBehaviour
         // ScoreBoardの初期化
         scoreBoardMove.EndPos = new Vector3(0, 0, 0);
         scoreBoardMove.StartPos = Vector3.up * scaler.referenceResolution.y + scoreBoardMove.EndPos;
-
-        resultAudio = GetComponent<AudioSource>();
 
         step = 0;
 
@@ -197,20 +192,17 @@ public class ResultManager : MonoBehaviour
                 {
                     winImageObj.sprite = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? player1.WinSprite : player2.WinSprite;
                     winImageObj.gameObject.SetActive(true);
-                    if (resultSE[0] != null) { resultAudio.PlayOneShot(resultSE[0]); }
+                    SoundManager.Instance.PlaySE(SEName.WinSE, true);
                     stepEndFlag = true;
                 }
                 break;
             default:
-                if (resultAudio.isPlaying == true) { return; }
+                if(SoundManager.Instance.IsPlayingSE(true) == true) { return; }
                 if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true) && actionFlag == true)
                 {
                     step = 0;
                     actionFlag = false;
-                    if (resultSE[1] != null)
-                    {
-                        resultAudio.PlayOneShot(resultSE[1]);
-                    }
+                    SoundManager.Instance.PlaySE(SEName.InputSE, true);
                     SceneControl.Instance.LoadScene(sceneNum);
                 }
                 return;
@@ -235,8 +227,7 @@ public class ResultManager : MonoBehaviour
             scoreBoardObject.transform.localPosition = scoreBoardMove.EndPos;
             winImageObj.sprite = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? player1.WinSprite : player2.WinSprite;
             winImageObj.gameObject.SetActive(true);
-
-            if (resultSE[0] != null) { resultAudio.PlayOneShot(resultSE[0]); }
+            SoundManager.Instance.PlaySE(SEName.WinSE, true);
         }
     }
 

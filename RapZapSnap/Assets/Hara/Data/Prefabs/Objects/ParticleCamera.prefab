@@ -14176,7 +14176,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5692923855610798692}
   - component: {fileID: 5692923855610798693}
-  - component: {fileID: 607501879649159984}
+  - component: {fileID: 1973380081098770529}
   m_Layer: 0
   m_Name: ParticleCamera
   m_TagString: Untagged
@@ -14246,7 +14246,7 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &607501879649159984
+--- !u!114 &1973380081098770529
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14255,7 +14255,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5692923855610798694}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c6fd08c43cc9ca44b562c91934f24dc, type: 3}
+  m_Script: {fileID: 11500000, guid: 7316ec8f3f17c02478b8b45b385945dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   booingParticle:

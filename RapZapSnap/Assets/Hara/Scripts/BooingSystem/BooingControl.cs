@@ -11,13 +11,10 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     private ControllerNum booingPlayer = ControllerNum.P2;
     public ControllerNum BooingPlayer { get { return booingPlayer; } }
 
-    private AudioSource[] audioSources = null;
-
     [SerializeField, Tooltip("振動の強さ"), Header("コントローラーを振動させるお邪魔システム")]
     private byte vibrationPower = 255;
     [SerializeField, Tooltip("再生時間"), Range(0, 5.0f)] private float vibDuration = 2.0f;
     private bool isRunningVibration = false;
-    private Coroutine vibrationCoroutine = null;
 
     [SerializeField, Tooltip("揺れの強さ"), Range(0f, 2.0f), Header("画面を揺らすお邪魔システム")]
     private float shakeMagnitude = 0.5f;
@@ -33,7 +30,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     [SerializeField, Tooltip("再生回数"), Range(0, 5)] private int particleCallTime = 1;
     [SerializeField, Tooltip("再生間隔"), Range(0f, 2.0f)] private float particleCallSpan = 1.0f;
     [SerializeField, Tooltip("パーティクルのサイズ"), Range(0f, 3.0f)] private float particleSize = 1.0f;
-    private BooingParticle particle = null;
+    private ParticleControl particle = null;
     private bool isRunningParticle = false;
     private Coroutine particleCoroutine = null;
 
@@ -59,56 +56,11 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// </summary>
     private void Init()
     {
-        audioSources = GetComponents<AudioSource>();
-
         if (particleCameraObject != null)
         {
             var particleCamera = Instantiate(particleCameraObject, gameObject.transform, false);
             particleCamera.transform.position = Camera.main.transform.position + Vector3.back * 10;
-            particle = particleCamera.GetComponent<BooingParticle>();
-        }
-    }
-
-    /// <summary>
-    /// お邪魔SEを再生する
-    /// </summary>
-    /// <param name="seNumber">再生するSE番号</param>
-    /// <param name="playOneShot">再生モード</param>
-    private void PlaySE(int seNumber, bool playOneShot)
-    {
-        if (seNumber < 0 || seNumber >= audioSources.Length || (seNumber < audioSources.Length && audioSources[seNumber].clip == null))
-        {
-            Debug.LogError("指定した番号にSEが登録されていません");
-            return;
-        }
-
-        // SEの再生
-        if(playOneShot == true)
-        {
-            audioSources[seNumber].PlayOneShot(audioSources[seNumber].clip);
-        }
-        else
-        {
-            audioSources[seNumber].Play();
-        }
-    }
-
-    /// <summary>
-    /// お邪魔のSEを停止する
-    /// </summary>
-    /// <param name="seNumber">停止するSE番号</param>
-    private void StopSE(int seNumber)
-    {
-        if (seNumber < 0 || seNumber >= audioSources.Length || (seNumber < audioSources.Length && audioSources[seNumber].clip == null))
-        {
-            Debug.LogError("指定した番号にSEが登録されていません");
-            return;
-        }
-
-        // SEの停止
-        if(audioSources[seNumber].isPlaying == true)
-        {
-            audioSources[seNumber].Stop();
+            particle = particleCamera.GetComponent<ParticleControl>();
         }
     }
 
@@ -121,44 +73,18 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     private void StartVibration(ControllerNum id, byte vibration, float duration)
     {
         if (isRunningVibration == true) { return; }
-        vibrationCoroutine = StartCoroutine(DoVibration(id, vibration, duration));
-    }
 
-    /// <summary>
-    /// コントローラーの振動コルーチン
-    /// </summary>
-    /// <param name="id">コントローラー番号</param>
-    /// <param name="vibration">振動値</param>
-    /// <param name="duration">振動時間</param>
-    /// <returns></returns>
-    private IEnumerator DoVibration(ControllerNum id, byte vibration, float duration)
-    {
         isRunningVibration = true;
 
         // SEの再生
-        int seNum = 0;
-        audioSources[seNum].volume = 1;
-        PlaySE(seNum, true);
-
-        float time = 0f;
+        SoundManager.Instance.PlaySE(SEName.BooingSE, false);
 
         // 振動開始
         GamePadControl.Instance.SetVibration(id, vibration);
 
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            audioSources[seNum].volume = 1.0f - (time / duration);
-            yield return null;
-        }
+        // SEと振動の停止
+        SoundManager.Instance.FadeOutSE(duration, () => { GamePadControl.Instance.StopVibration(id); isRunningVibration = false; });
 
-        // 振動停止
-        GamePadControl.Instance.StopVibration(id);
-
-        // SEの停止
-        StopSE(seNum);
-
-        isRunningVibration = false;
     }
 
     /// <summary>
@@ -183,8 +109,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         isRunningShake = true;
 
         // SEの再生
-        int seNum = 1;
-        PlaySE(seNum, true);
+        SoundManager.Instance.PlaySE(SEName.ShakeSE, true);
 
         // MainCameraを取得
         if (mainCamera == null) { mainCamera = Camera.main.gameObject; }
@@ -204,9 +129,6 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         }
         
         mainCamera.transform.localPosition = mainCameraPos;
-
-        // SEの停止
-        StopSE(seNum);
 
         isRunningShake = false;
     }
@@ -236,6 +158,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         isRunningParticle = true;
         int colorType = Random.Range(0, 3);
         Color particleColor;
+        int index;
 
         // パーティクルの色(RawImageの色)を設定
         switch(colorType)
@@ -261,14 +184,13 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
             // 時間の初期化
             deltaTime = 0f;
 
-            int index = Random.Range(0, particle.GetParticleIndex);
+            index = Random.Range(0, particle.GetParticleIndex);
 
             // パーティクルの再生
             particle.ParticlePlay(index, particleSize);
 
             // SEの再生
-            int seNum = 2;
-            PlaySE(seNum, true);
+            SoundManager.Instance.PlaySE(SEName.InkSE, true);
 
             // 待機
             while(deltaTime < span)
@@ -343,7 +265,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
 
         if(isRunningVibration == true)
         {
-            StopCoroutine(vibrationCoroutine);
+            SoundManager.Instance.StopFadeCoroutine(false);
             GamePadControl.Instance.StopVibration(_ = booingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
             isRunningVibration = false;
         }

@@ -58,12 +58,7 @@ public class NotesView : NotesModel
     public float MaxGood { private set; get; } = 0;
     public float MinBad { private set; get; } = 0;
 
-    // Imageの透明度を変更できるようにしておく
-    private float mainSpriteAlpha = 1.0f;
-
     public Coroutine NotesCoroutine { private set; get; } = null;
-
-    public bool NotesClickFlag { set; get; } = true;    // クリックの有効フラグ
 
     [SerializeField, Header("ノーツの判定結果"), Tooltip("判定結果アイコン")] private Sprite[] notesResultSprites = null;
     [SerializeField, Tooltip("判定オブジェクト")] private SpriteRenderer notesResultObj = null;
@@ -82,7 +77,7 @@ public class NotesView : NotesModel
         var time = 0f;
 
         // 判定に向かう移動
-        while(NotesRate < 1.0f && mainSpriteAlpha > 0)
+        while(NotesRate <= MaxGood)
         {
             // 進行率を算出
             NotesRate = time / (moveDuration * 2);
@@ -98,41 +93,8 @@ public class NotesView : NotesModel
             }
 
             time += Time.deltaTime;
-
-            if(NotesRate > MaxGood && NotesClickFlag == true)
-            {
-                NotesClickFlag = false;
-            }
-
-            if(NotesClickFlag == false)
-            {
-                // 判定ノーツを非表示にする
-                if (Mode == NotesMode.Single)
-                {
-                    if(singleNotes.EndObject.activeSelf == true) { singleNotes.EndObject.SetActive(false); }
-                }
-                else if (Mode == NotesMode.Double)
-                {
-                    if (doubleNotes.EndObject.activeSelf == true) { doubleNotes.EndObject.SetActive(false); }
-                }
-
-                // 透明度を下げる
-                mainSpriteAlpha -= 0.15f;
-                if (Mode == NotesMode.Single)
-                {
-                    singleNotes.MoveSprite.color = new Color(1, 1, 1, mainSpriteAlpha);
-                }
-                else if (Mode == NotesMode.Double)
-                {
-                    doubleNotes.MoveSprite1.color = new Color(1, 1, 1, mainSpriteAlpha);
-                    doubleNotes.MoveSprite2.color = new Color(1, 1, 1, mainSpriteAlpha);
-                }
-            }
-
             yield return null;
         }
-
-        ResultNotes(0);
 
         /*
         // 第2移動の目的地を設定する
@@ -471,11 +433,6 @@ public class NotesView : NotesModel
     {
         moveDuration = duration;
 
-        if (endObj.activeSelf == false)
-        {
-            endObj.SetActive(true);
-        }
-
         MinPerfect = 0.5f - perfect;
         MaxPerfect = 0.5f + perfect;
         MinGood = MinPerfect - good;
@@ -489,8 +446,6 @@ public class NotesView : NotesModel
         endObj.transform.position = endPos;
 
         NotesRate = 0;
-        NotesClickFlag = true;
-        mainSpriteAlpha = 1.0f;
 
         notesObj.SetActive(true);
         NotesCoroutine = StartCoroutine(DoNotesMove());

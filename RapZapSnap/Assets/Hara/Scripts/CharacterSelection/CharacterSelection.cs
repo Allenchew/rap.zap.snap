@@ -46,6 +46,8 @@ public class CharacterSelection : MonoBehaviour
     private readonly string selectedText_P1 = "1P SELECTED!!";
     private readonly string selectedText_P2 = "2P SELECTED!!";
 
+    [SerializeField, Header("シーン遷移番号")] private int nextSceneID = 0;
+
     private enum CharacterID
     {
         Tokiwa,
@@ -92,6 +94,8 @@ public class CharacterSelection : MonoBehaviour
         // キャラ情報の設定
         GameData.Instance.SetCharacterData(selectPlayer, id == CharacterID.Tokiwa ? Character.Tokiwa : id == CharacterID.Hajime ? Character.Hajime : Character.Mari);
         _ = selectPlayer == ControllerNum.P1 ? selectedID_P1 = id : selectedID_P2 = id;
+
+        SoundManager.Instance.PlaySE(SEName.InputSE, true);
 
         StartCoroutine(DoSelectePlayerChange());
     }
@@ -349,8 +353,8 @@ public class CharacterSelection : MonoBehaviour
             yield return null;
         }
 
-        // シーン切り替え
-        SceneControl.Instance.LoadScene(2);
+        // BGMを止めてシーン切り替え
+        SoundManager.Instance.FadeOutBGM(0.3f, () => { SceneControl.Instance.LoadScene(nextSceneID); });
     }
 
     /// <summary>
