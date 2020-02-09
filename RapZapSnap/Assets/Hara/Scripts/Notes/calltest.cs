@@ -62,7 +62,7 @@ public class calltest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Delete))
         {
-            NotesControl.Instance.StopNotes();
+            NotesControl.Instance.StopAllNotes();
         }
     }
 

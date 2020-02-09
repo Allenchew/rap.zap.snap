@@ -170,19 +170,19 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
     /// <summary>
     /// 全てのノーツの再生を止める
     /// </summary>
-    public void StopNotes()
+    public void StopAllNotes()
     {
         for (int i = 0; i < maxNotes; i++)
         {
             if (dataBase1.NotesObjects[i].NotesCoroutine != null)
             {
-                dataBase1.NotesObjects[i].ResultNotes(-1);
+                dataBase1.NotesObjects[i].StopNotes();
             }
             dataBase1.NotesObjects[i].NotesResultObj.gameObject.SetActive(false);
 
             if (dataBase2.NotesObjects[i].NotesCoroutine != null)
             {
-                dataBase2.NotesObjects[i].ResultNotes(-1);
+                dataBase2.NotesObjects[i].StopNotes();
             }
             dataBase2.NotesObjects[i].NotesResultObj.gameObject.SetActive(false);
         }
@@ -252,7 +252,7 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
                 return;
             }
         }
-        else if (nowNotes.Mode == NotesMode.Double)    // 　ノーツがダブルモードの時の入力
+        else
         {
             if ((GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Circle) == true && GamePadControl.Instance.GetDS4Key(id, DS4AllKeyType.Cross) == true) && (id == ControllerNum.P1 ? (clickFlag1 == true) : (clickFlag2 == true)))
             {
@@ -373,18 +373,11 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
                 return;
             }
         }
-        else
-        {
 
-        }
-
-        if (nowNotes.Mode != NotesMode.Long)
+        if ((nextNotes.NotesCoroutine != null && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)) || nowNotes.NotesRate > nowNotes.MaxGood)
         {
-            if ((nextNotes.NotesCoroutine != null && Mathf.Abs(0.5f - nowNotes.NotesRate) > Mathf.Abs(0.5f - nextNotes.NotesRate)) || nowNotes.NotesRate > nowNotes.MaxGood)
-            {
-                NotesResultFailed(nowNotes, id);
-                return;
-            }
+            NotesResult(0, 0, id);
+            return;
         }
     }
 
@@ -428,22 +421,10 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         }
 
         // ノーツを非表示
-        view.ResultNotes(result);
+        view.InputNotes(result);
 
         // 結果を算出
         NotesResult(result, score, id);
-    }
-
-    /// <summary>
-    /// ノーツのリザルトが失敗のとき実行
-    /// </summary>
-    /// <param name="view">対象ノーツ</param>
-    /// <param name="id">プレイヤー番号</param>
-    private void NotesResultFailed(NotesView view, ControllerNum id)
-    {
-        int result = 0;
-        view.ResultNotes(result);
-        NotesResult(result, 0, id);
     }
 
     /// <summary>

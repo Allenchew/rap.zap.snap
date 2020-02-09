@@ -6,7 +6,6 @@ public enum NotesMode
 {
     Single,    // シングル
     Double,    // ダブル
-    Long       // 連打
 }
 
 public class NotesView : NotesModel
@@ -40,9 +39,6 @@ public class NotesView : NotesModel
     // ノーツのモード
     public NotesMode Mode { set; get; } = NotesMode.Single;
 
-    // ノーツが判定位置へ移動する所要時間
-    private float moveDuration = 0.5f;
-
     private Vector3 moveStartPos;
     private Vector3 moveEndPos;
 
@@ -72,160 +68,109 @@ public class NotesView : NotesModel
     /// ノーツの移動コルーチン
     /// </summary>
     /// <returns></returns>
-    private IEnumerator DoNotesMove()
+    private IEnumerator DoNotesMove(float moveTime)
     {
-        var time = 0f;
+        float deltaTime = 0;
+
+        float spriteAlpha = 1.0f;
+        float endTime = 0;
+        float duration = 0.2f;
+        bool checkFlag = true;
+        Color spriteColor;
 
         // 判定に向かう移動
-        while(NotesRate <= MaxGood)
+        while(spriteAlpha > 0)
         {
             // 進行率を算出
-            NotesRate = time / (moveDuration * 2);
+            NotesRate = deltaTime / (moveTime * 2);
 
             // ノーツを移動する処理
             if(Mode == NotesMode.Single)
             {
                 singleNotes.MoveObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
             }
-            else if(Mode == NotesMode.Double)
+            else
             {
                 doubleNotes.MoveObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
             }
 
-            time += Time.deltaTime;
+            // ノーツが判定域を超えたら
+            if(NotesRate > MaxGood)
+            {
+                // 一度だけ実行する処理
+                if (checkFlag == true)
+                {
+                    // 判定ノーツを非表示
+                    if(Mode == NotesMode.Single)
+                    {
+                        singleNotes.EndObject.SetActive(false);
+                    }
+                    else
+                    {
+                        doubleNotes.EndObject.SetActive(false);
+                    }
+
+                    // SNAPを表示
+                    ResultNotes(0);
+
+                    checkFlag = false;
+                }
+
+                // ノーツをゆっくり透明にしていく
+                spriteAlpha = 1.0f - (endTime / duration);
+                spriteColor = new Color(1, 1, 1, spriteAlpha);
+                if(Mode == NotesMode.Single)
+                {
+                    singleNotes.MoveSprite.color = spriteColor;
+                }
+                else
+                {
+                    doubleNotes.MoveSprite1.color = spriteColor;
+                }
+                endTime += Time.deltaTime;
+            }
+
+            deltaTime += Time.deltaTime;
             yield return null;
         }
 
-        /*
-        // 第2移動の目的地を設定する
-        var radius = Vector3.Distance(startPos, endPos);
-        int direction = 8;    // 方向数
-        float angleDiff = 360.0f / direction;    // 方向転換する角度の間隔
-        var xPosDistance = Mathf.Abs(startPos.x - endPos.x);
-        var yPosDistance = Mathf.Abs(startPos.y - endPos.y);
-        int directionNum = 0;
-        int rnd = Random.Range(0, 3);
+        // ノーツを非表示にする
+        StopNotes();
+    }
 
-        if ((startPos.x - endPos.x) > 0 && xPosDistance >= yPosDistance)
+    /// <summary>
+    /// ノーツのコルーチン処理を停止
+    /// </summary>
+    public void StopNotes()
+    {
+        // ノーツを非表示
+        StopCoroutine(NotesCoroutine);
+        NotesCoroutine = null;
+        if (Mode == NotesMode.Single)
         {
-            // ノーツの移動方向が右→左のとき
-            switch (rnd)
-            {
-                case 0:
-                    directionNum = 5;
-                    break;
-                case 1:
-                    directionNum = 6;
-                    break;
-                case 2:
-                    directionNum = 7;
-                    break;
-            }
-        }
-        else if ((startPos.x - endPos.x) < 0 && xPosDistance >= yPosDistance)
-        {
-            // ノーツの移動方向が左→右のとき
-            switch (rnd)
-            {
-                case 0:
-                    directionNum = 1;
-                    break;
-                case 1:
-                    directionNum = 2;
-                    break;
-                case 2:
-                    directionNum = 3;
-                    break;
-            }
-        }
-        else if ((startPos.y - endPos.y) > 0 && xPosDistance <= yPosDistance)
-        {
-            // ノーツの移動方向が上→下のとき
-            switch (rnd)
-            {
-                case 0:
-                    directionNum = 3;
-                    break;
-                case 1:
-                    directionNum = 4;
-                    break;
-                case 2:
-                    directionNum = 5;
-                    break;
-            }
+            singleNotes.NotesObject.SetActive(false);
         }
         else
         {
-            // ノーツの移動方向が下→上のとき
-            switch (rnd)
-            {
-                case 0:
-                    directionNum = 7;
-                    break;
-                case 1:
-                    directionNum = 8;
-                    break;
-                case 2:
-                    directionNum = 1;
-                    break;
-            }
+            doubleNotes.NotesObject.SetActive(false);
         }
+    }
 
-        float angle = (90 - angleDiff * directionNum) * Mathf.Deg2Rad;
-        Vector3 newEndPos = MoveNotesObj.transform.position;
-        newEndPos.x += radius * Mathf.Cos(angle);
-        newEndPos.y += radius * Mathf.Sin(angle);
-
-        // 座標データを更新
-        moveStartPos = MoveNotesObj.transform.position;
-        moveEndPos = newEndPos;
-
-        time = 0;
-
-        // 判定後の移動
-        while(mainSpriteAlpha > 0)
-        {
-            // 透明度を下げる
-            mainSpriteAlpha -= 0.05f;
-            if(Mode == NotesMode.Single)
-            {
-                SingleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, mainSpriteAlpha);
-            }
-            else if(Mode == NotesMode.Double)
-            {
-                DoubleNotes.MoveNotesSprite1.color = new Color(1, 1, 1, mainSpriteAlpha);
-                DoubleNotes.MoveNotesSprite2.color = new Color(1, 1, 1, mainSpriteAlpha);
-            }
-
-            // 進行率を算出
-            NotesRate = time / moveDuration;
-
-            // ノーツを移動する処理
-            MoveNotesObj.gameObject.transform.position = Vector3.Lerp(moveStartPos, moveEndPos, NotesRate);
-
-            time += Time.deltaTime;
-
-            yield return null;
-        }*/
+    /// <summary>
+    /// ノーツの入力を検知した時に実行する処理
+    /// </summary>
+    /// <param name="result">リザルト番号</param>
+    public void InputNotes(int result)
+    {
+        StopNotes();
+        ResultNotes(result);
     }
 
     /// <summary>
     /// ノーツのリザルトを表示
     /// </summary>
-    public void ResultNotes(int result)
+    private void ResultNotes(int result)
     {
-        // ノーツを非表示
-        StopCoroutine(NotesCoroutine);
-        NotesCoroutine = null;
-        if(Mode == NotesMode.Single)
-        {
-            singleNotes.NotesObject.SetActive(false);
-        }
-        else if (Mode == NotesMode.Double)
-        {
-            doubleNotes.NotesObject.SetActive(false);
-        }
-
         // ノーツの判定を表示
         switch (result)
         {
@@ -251,7 +196,7 @@ public class NotesView : NotesModel
         {
             notesResultObj.gameObject.transform.position = singleNotes.EndObject.transform.position;
         }
-        else if (Mode == NotesMode.Double)
+        else
         {
             notesResultObj.gameObject.transform.position = doubleNotes.EndObject.transform.position;
         }
@@ -286,7 +231,7 @@ public class NotesView : NotesModel
         {
             notesParticles[particleIndex].gameObject.transform.position = singleNotes.EndObject.transform.position;
         }
-        else if(Mode == NotesMode.Double)
+        else
         {
             notesParticles[particleIndex].gameObject.transform.position = doubleNotes.EndObject.transform.position;
         }
@@ -346,9 +291,6 @@ public class NotesView : NotesModel
     {
         // durationが0秒以下、移動開始座標と判定座標が同じまたはノーツタイプが同じならreturnする
         if (duration <= 0 || start == end || (type1 == type2)) { return; }
-
-        // ノーツのデータを初期化
-        moveDuration = duration;
 
         // 判定IDの設定
         if((type1 == NotesType.CircleKey && type2 == NotesType.CrossKey) || (type1 == NotesType.CrossKey && type2 == NotesType.CircleKey))
@@ -431,8 +373,6 @@ public class NotesView : NotesModel
     /// </summary>
     private void CommonInit(Vector3 startPos, Vector3 endPos, float duration, float perfect, float good, float bad, Vector3 scale, GameObject notesObj, GameObject moveObj, GameObject endObj)
     {
-        moveDuration = duration;
-
         MinPerfect = 0.5f - perfect;
         MaxPerfect = 0.5f + perfect;
         MinGood = MinPerfect - good;
@@ -445,9 +385,14 @@ public class NotesView : NotesModel
         moveObj.transform.position = startPos;
         endObj.transform.position = endPos;
 
+        if(endObj.activeSelf == false)
+        {
+            endObj.SetActive(true);
+        }
+
         NotesRate = 0;
 
         notesObj.SetActive(true);
-        NotesCoroutine = StartCoroutine(DoNotesMove());
+        NotesCoroutine = StartCoroutine(DoNotesMove(duration));
     }
 }

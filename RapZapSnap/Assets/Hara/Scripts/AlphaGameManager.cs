@@ -10,7 +10,7 @@ public class AlphaGameManager : SingletonMonoBehaviour<AlphaGameManager>
         if(Input.GetKeyDown(KeyCode.R) == true)
         {
             SceneControl.Instance.LoadScene(0);
-            NotesControl.Instance.StopNotes();
+            NotesControl.Instance.StopAllNotes();
             BooingControl.Instance.BooingSystemOff();
         }
     }

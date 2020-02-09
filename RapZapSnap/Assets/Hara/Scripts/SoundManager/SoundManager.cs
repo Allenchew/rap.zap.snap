@@ -170,11 +170,13 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         {
             StopCoroutine(bgmCoroutine);
             bgmCoroutine = null;
+            StopAudio(true);
         }
         else
         {
             StopCoroutine(seCoroutine);
             seCoroutine = null;
+            StopAudio(false);
         }
     }
 
