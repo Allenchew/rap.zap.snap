@@ -55,6 +55,7 @@ public class NotesView : NotesModel
     public float MinBad { private set; get; } = 0;
 
     public Coroutine NotesCoroutine { private set; get; } = null;
+    private Coroutine notesResultCoroutine = null;
 
     [SerializeField, Header("ノーツの判定結果"), Tooltip("判定結果アイコン")] private Sprite[] notesResultSprites = null;
     [SerializeField, Tooltip("判定オブジェクト")] private SpriteRenderer notesResultObj = null;
@@ -111,7 +112,7 @@ public class NotesView : NotesModel
                     }
 
                     // SNAPを表示
-                    ResultNotes(0);
+                    NotesResult(0);
 
                     checkFlag = false;
                 }
@@ -141,8 +142,10 @@ public class NotesView : NotesModel
     /// <summary>
     /// ノーツのコルーチン処理を停止
     /// </summary>
-    public void StopNotes()
+    private void StopNotes()
     {
+        if(NotesCoroutine == null) { return; }
+
         // ノーツを非表示
         StopCoroutine(NotesCoroutine);
         NotesCoroutine = null;
@@ -163,13 +166,22 @@ public class NotesView : NotesModel
     public void InputNotes(int result)
     {
         StopNotes();
-        ResultNotes(result);
+        NotesResult(result);
+    }
+
+    /// <summary>
+    /// ノーツ再生を強制的に停止させる
+    /// </summary>
+    public void NotesEmergencyStop()
+    {
+        StopNotes();
+        StopNotesRsult();
     }
 
     /// <summary>
     /// ノーツのリザルトを表示
     /// </summary>
-    private void ResultNotes(int result)
+    private void NotesResult(int result)
     {
         // ノーツの判定を表示
         switch (result)
@@ -201,9 +213,13 @@ public class NotesView : NotesModel
             notesResultObj.gameObject.transform.position = doubleNotes.EndObject.transform.position;
         }
         
-        StartCoroutine(DoResultAnime());
+        notesResultCoroutine = StartCoroutine(DoResultAnime());
     }
 
+    /// <summary>
+    /// ノーツのリザルト表示コルーチン
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator DoResultAnime()
     {
         // 判定アイコンの表示
@@ -214,6 +230,18 @@ public class NotesView : NotesModel
             yield return null;
         }
 
+        notesResultObj.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// ノーツのリザルト表示コルーチンを止める
+    /// </summary>
+    private void StopNotesRsult()
+    {
+        if(notesResultCoroutine == null) { return; }
+
+        StopCoroutine(notesResultCoroutine);
+        notesResultCoroutine = null;
         notesResultObj.gameObject.SetActive(false);
     }
 
