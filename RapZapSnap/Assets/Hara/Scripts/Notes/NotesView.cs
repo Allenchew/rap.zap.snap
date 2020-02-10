@@ -136,18 +136,18 @@ public class NotesView : NotesModel
         }
 
         // ノーツを非表示にする
-        StopNotes();
+        StopNotes(false);
     }
 
     /// <summary>
     /// ノーツのコルーチン処理を停止
     /// </summary>
-    private void StopNotes()
+    private void StopNotes(bool flag)
     {
         if(NotesCoroutine == null) { return; }
 
         // ノーツを非表示
-        StopCoroutine(NotesCoroutine);
+        if(flag == true) { StopCoroutine(NotesCoroutine); }
         NotesCoroutine = null;
         if (Mode == NotesMode.Single)
         {
@@ -165,7 +165,7 @@ public class NotesView : NotesModel
     /// <param name="result">リザルト番号</param>
     public void InputNotes(int result)
     {
-        StopNotes();
+        StopNotes(true);
         NotesResult(result);
     }
 
@@ -174,8 +174,8 @@ public class NotesView : NotesModel
     /// </summary>
     public void NotesEmergencyStop()
     {
-        StopNotes();
-        StopNotesRsult();
+        StopNotes(true);
+        StopNotesRsult(true);
     }
 
     /// <summary>
@@ -230,19 +230,19 @@ public class NotesView : NotesModel
             yield return null;
         }
 
-        notesResultObj.gameObject.SetActive(false);
+        StopNotesRsult(false);
     }
 
     /// <summary>
     /// ノーツのリザルト表示コルーチンを止める
     /// </summary>
-    private void StopNotesRsult()
+    private void StopNotesRsult(bool flag)
     {
         if(notesResultCoroutine == null) { return; }
 
-        StopCoroutine(notesResultCoroutine);
-        notesResultCoroutine = null;
+        if(flag == true) { StopCoroutine(notesResultCoroutine); }
         notesResultObj.gameObject.SetActive(false);
+        notesResultCoroutine = null;
     }
 
     /// <summary>

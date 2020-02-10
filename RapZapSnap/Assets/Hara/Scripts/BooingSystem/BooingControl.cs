@@ -22,7 +22,6 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     private float shakeDuration = 1.0f;
     private GameObject mainCamera = null;
     private Vector3 mainCameraPos;
-    private bool isRunningShake = false;
     private Coroutine shakeCoroutine = null;
 
     [SerializeField, Tooltip("パーティクル用のカメラ"), Header("画面を汚すお邪魔システム")]
@@ -31,7 +30,6 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     [SerializeField, Tooltip("再生間隔"), Range(0f, 2.0f)] private float particleCallSpan = 1.0f;
     [SerializeField, Tooltip("パーティクルのサイズ"), Range(0f, 3.0f)] private float particleSize = 1.0f;
     private ParticleControl particle = null;
-    private bool isRunningParticle = false;
     private Coroutine particleCoroutine = null;
 
     private int booingPlayCount = 3;
@@ -61,6 +59,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
             var particleCamera = Instantiate(particleCameraObject, gameObject.transform, false);
             particleCamera.transform.position = Camera.main.transform.position + Vector3.back * 10;
             particle = particleCamera.GetComponent<ParticleControl>();
+            particle.ThrowObjectActive(false);
         }
     }
 
@@ -70,7 +69,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// <param name="id">コントローラ番号</param>
     /// <param name="vibration">振動値</param>
     /// <param name="duration">振動時間</param>
-    private void StartVibration(ControllerNum id, byte vibration, float duration)
+    private void VibrationAction(ControllerNum id, byte vibration, float duration)
     {
         if (isRunningVibration == true) { return; }
 
@@ -83,8 +82,24 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         GamePadControl.Instance.SetVibration(id, vibration);
 
         // SEと振動の停止
-        SoundManager.Instance.FadeOutSE(duration, () => { GamePadControl.Instance.StopVibration(id); isRunningVibration = false; });
+        SoundManager.Instance.FadeOutSE(duration, () => StopVibrationAction(id, false));
 
+    }
+
+    /// <summary>
+    /// コントローラー振動のお邪魔システムを停止
+    /// </summary>
+    private void StopVibrationAction(ControllerNum id, bool flag)
+    {
+        if(isRunningVibration == false) { return; }
+
+        if(flag == true)
+        {
+            SoundManager.Instance.StopFadeCoroutine(false);
+        }
+
+        GamePadControl.Instance.StopVibration(id);
+        isRunningVibration = false;
     }
 
     /// <summary>
@@ -94,7 +109,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// <param name="magnitude">揺れの強さ</param>
     private void ShakeAction(float duration, float magnitude)
     {
-        if(duration <= 0f || magnitude <= 0f || isRunningShake == true) { return; }
+        if(duration <= 0f || magnitude <= 0f || shakeCoroutine != null) { return; }
         shakeCoroutine = StartCoroutine(DoShake(duration, magnitude));
     }
 
@@ -106,8 +121,6 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// <returns></returns>
     private IEnumerator DoShake(float duration, float magnitude)
     {
-        isRunningShake = true;
-
         // SEの再生
         SoundManager.Instance.PlaySE(SEName.ShakeSE, true);
 
@@ -130,20 +143,34 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         
         mainCamera.transform.localPosition = mainCameraPos;
 
-        isRunningShake = false;
+        StopShakeAction(false);
     }
 
     /// <summary>
-    /// パーティクル再生
+    /// カメラを揺らす（画面を揺らす）処理を停止
+    /// </summary>
+    private void StopShakeAction(bool flag)
+    {
+        if(shakeCoroutine == null) { return; }
+
+        if(flag == true)
+        {
+            StopCoroutine(shakeCoroutine);
+            mainCamera.transform.localPosition = mainCameraPos;
+        }
+        shakeCoroutine = null;
+    }
+
+    /// <summary>
+    /// 画面に物を投げるお邪魔システム
     /// </summary>
     /// <param name="time">再生回数</param>
     /// <param name="span">再生間隔</param>
-    /// <param name="id">プレイヤー番号</param>
-    private void PlayParticle(int time, float span, ControllerNum id)
+    private void ThrowToScreenAction(int time, float span)
     {
-        if(isRunningParticle == true || particle == null) { return; }
+        if(particleCoroutine != null || particle == null) { return; }
 
-        particleCoroutine = StartCoroutine(DoParticle(time, span, id));
+        particleCoroutine = StartCoroutine(DoThrow(time, span));
     }
 
     /// <summary>
@@ -151,56 +178,61 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// </summary>
     /// <param name="time">再生回数</param>
     /// <param name="span">再生間隔</param>
-    /// /// <param name="id">プレイヤー番号</param>
     /// <returns></returns>
-    private IEnumerator DoParticle(int time, float span, ControllerNum id)
+    private IEnumerator DoThrow(int time, float span)
     {
-        isRunningParticle = true;
-        int colorType = Random.Range(0, 3);
+        int itemIndex = Random.Range(0, 3);
         Color particleColor;
-        int index;
+        int particleIndex;
 
         // パーティクルの色(RawImageの色)を設定
-        switch(colorType)
+        switch(itemIndex)
         {
             case 0:
-                particleColor = new Color(96f / 255f, 14f / 255f, 18f / 255f, 1);    // 常盤カラー
+                particleColor = new Color(96f / 255f, 14f / 255f, 18f / 255f, 1);    // トマト
                 break;
             case 1:
-                particleColor = new Color(10f / 255f, 25f / 255f, 50f / 255f, 1);    // 創カラー
+                particleColor = new Color(10f / 255f, 25f / 255f, 50f / 255f, 1);    // ボトル
                 break;
             case 2:
-                particleColor = new Color(234f / 255f, 162f / 255f, 23f / 255f, 1);    // 茉莉カラー
+                particleColor = new Color(234f / 255f, 162f / 255f, 23f / 255f, 1);    // たまご
                 break;
             default:
                 yield break;
         }
-        particle.SetColor(particleColor);
 
-        float deltaTime;
+        particle.SetColor(particleColor);
 
         for (int i = 0; i < time; i++)
         {
-            // 時間の初期化
-            deltaTime = 0f;
-
-            index = Random.Range(0, particle.GetParticleIndex);
+            particleIndex = Random.Range(0, particle.GetParticleIndex);
 
             // パーティクルの再生
-            particle.ParticlePlay(index, particleSize);
-
-            // SEの再生
-            SoundManager.Instance.PlaySE(SEName.InkSE, true);
+            particle.StartThrowItem(span, itemIndex, particleIndex, particleSize, () => SoundManager.Instance.PlaySE(SEName.InkSE, true));
 
             // 待機
-            while(deltaTime < span)
+            while(particle.GetDoingThrowCoroutine() == true)
             {
-                deltaTime += Time.deltaTime;
                 yield return null;
             }
         }
 
-        isRunningParticle = false;
+        StopThrowToScreenAction(false);
+    }
+
+    /// <summary>
+    /// 画面を汚すお邪魔システムを停止
+    /// </summary>
+    private void StopThrowToScreenAction(bool flag)
+    {
+        if(particleCoroutine == null) { return; }
+
+        if(flag == true)
+        {
+            StopCoroutine(particleCoroutine);
+            particle.StopThrowItem(true);
+        }
+        particleCoroutine = null;
     }
 
     /// <summary>
@@ -216,7 +248,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         if (booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Circle == true : GamePadControl.Instance.GetKeyDown_2.Circle == true)
         {
             if(playVibration == false) { return; }
-            StartVibration(target, vibrationPower, vibDuration);
+            VibrationAction(target, vibrationPower, vibDuration);
             booingPlayCount--;
             playVibration = false;
         }
@@ -234,7 +266,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         if (booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Square == true : GamePadControl.Instance.GetKeyDown_2.Square == true)
         {
             if(playPaint == false) { return; }
-            PlayParticle(particleCallTime, particleCallSpan, booingPlayer);
+            ThrowToScreenAction(particleCallTime, particleCallSpan);
             booingPlayCount--;
             playPaint = false;
         }
@@ -263,28 +295,11 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     {
         if (booingFlag == false) { return; }
 
-        if(isRunningVibration == true)
-        {
-            SoundManager.Instance.StopFadeCoroutine(false);
-            GamePadControl.Instance.StopVibration(_ = booingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
-            isRunningVibration = false;
-        }
+        StopVibrationAction(_ = booingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1, true);
 
-        if(isRunningShake == true)
-        {
-            StopCoroutine(shakeCoroutine);
-            mainCamera.transform.localPosition = mainCameraPos;
-            isRunningShake = false;
-        }
+        StopShakeAction(true);
 
-        if(isRunningParticle == true && particle != null)
-        {
-            StopCoroutine(particleCoroutine);
-
-            particle.StopParticle();
-
-            isRunningParticle = false;
-        }
+        StopThrowToScreenAction(true);
 
         booingFlag = false;
     }
