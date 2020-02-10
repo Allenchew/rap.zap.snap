@@ -15,7 +15,9 @@ public enum SEName
     WinSE,
     BooingSE,
     InkSE,
-    ShakeSE
+    ShakeSE,
+    SelectChange,
+    TurnChange
 }
 
 public class SoundManager : SingletonMonoBehaviour<SoundManager>
@@ -57,7 +59,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
             Debug.LogError("指定したBGMは存在しません!　検出したID => " + index);
             return;
         }
-
+        audioSources[sourceID].volume = 1;
         audioSources[sourceID].clip = bgmClips[index];
         audioSources[sourceID].Play();
     }

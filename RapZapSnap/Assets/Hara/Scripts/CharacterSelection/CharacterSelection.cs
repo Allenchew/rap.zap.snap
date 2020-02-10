@@ -136,6 +136,7 @@ public class CharacterSelection : MonoBehaviour
     private void ChangeCharacter(bool direction)
     {
         StartCoroutine(DoChange(direction));
+        SoundManager.Instance.PlaySE(SEName.SelectChange, true);
     }
 
     /// <summary>
@@ -316,6 +317,8 @@ public class CharacterSelection : MonoBehaviour
             time += Time.deltaTime;
             yield return null;
         }
+        player1.VsCharacterNameImage.transform.localPosition = new Vector3(0, 0, 0);
+        player2.VsCharacterNameImage.transform.localPosition = new Vector3(0, 0, 0);
 
         // VS用のキャラクター名イメージを揺らす
         time = 0;
@@ -336,13 +339,15 @@ public class CharacterSelection : MonoBehaviour
         // ぶっかませを表示
         time = 0;
         duration = 1.0f;
-        while(time < duration)
+        SoundManager.Instance.PlaySE(SEName.TurnChange, true);
+        while (time < duration)
         {
             diff = time / duration;
             battleStartObj.transform.localPosition = Vector3.Lerp(backImageObject.transform.localPosition, new Vector3(0, 0, 0), diff);
             time += Time.deltaTime;
             yield return null;
         }
+        battleStartObj.transform.localPosition = new Vector3(0, 0, 0);
 
         // 遅延処理
         time = 0;

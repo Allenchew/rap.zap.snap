@@ -46,10 +46,10 @@ MonoBehaviour:
   dontDestroy: 1
   booingFlag: 0
   booingPlayer: 1
-  vibrationPower: 255
-  vibDuration: 2.5
-  shakeMagnitude: 0.5
-  shakeDuration: 0.8
+  vibrationPower: 150
+  vibDuration: 2
+  shakeMagnitude: 0.3
+  shakeDuration: 2
   particleCameraObject: {fileID: 5692923855610798694, guid: 20867f9afa0ebf34987a87078868f4bc,
     type: 3}
   particleCallTime: 3
