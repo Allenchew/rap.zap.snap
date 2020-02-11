@@ -23,7 +23,6 @@ public enum SEName
 public class SoundManager : SingletonMonoBehaviour<SoundManager>
 {
     private AudioSource[] audioSources = null;
-    private int sourceID = 0;
 
     [SerializeField, Header("BGMのリスト")] private AudioClip[] bgmClips = null;
     [SerializeField, Header("SEのリスト")] private AudioClip[] seClips = null;
@@ -52,7 +51,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     public void PlayBGM(BGMName name)
     {
         int index = (int)name;
-        sourceID = 0;
+        int sourceID = 0;
 
         if(index < 0 || index >= bgmClips.Length)
         {
@@ -72,6 +71,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     public void PlaySE(SEName name, bool oneShot)
     {
         int index = (int)name;
+        int sourceID;
 
         if (index < 0 || index >= seClips.Length)
         {
@@ -99,7 +99,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     /// <param name="isBGM">true → BGMを停止 / false → SEを停止</param>
     public void StopAudio(bool isBGM)
     {
-        sourceID = isBGM == true ? 0 : 1;
+        int sourceID = isBGM == true ? 0 : 1;
 
         if (audioSources[sourceID].isPlaying == true)
         {
@@ -188,7 +188,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     /// <returns></returns>
     public bool IsPlayingBGM()
     {
-        sourceID = 0;
+        int sourceID = 0;
         return audioSources[sourceID].isPlaying;
     }
 
@@ -199,7 +199,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     /// <returns></returns>
     public bool IsPlayingSE(bool oneShot)
     {
-        sourceID = oneShot == true ? 2 : 1;
+        int sourceID = oneShot == true ? 2 : 1;
         return audioSources[sourceID].isPlaying;
     }
 }
