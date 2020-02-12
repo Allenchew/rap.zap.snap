@@ -95,24 +95,27 @@ public class CharacterSelection : MonoBehaviour
         GameData.Instance.SetCharacterData(selectPlayer, id == CharacterID.Tokiwa ? Character.Tokiwa : id == CharacterID.Hajime ? Character.Hajime : Character.Mari);
         _ = selectPlayer == ControllerNum.P1 ? selectedID_P1 = id : selectedID_P2 = id;
 
+        // 決定SE再生
         SoundManager.Instance.PlaySE(SEName.InputSE, true);
 
+        // ボイスの再生
         StartCoroutine(DoSelectePlayerChange());
     }
 
     private IEnumerator DoSelectePlayerChange()
     {
         inputFlag = false;
-        float time = 0;
-        float duration = 0.75f;
 
         nowCharacterImageObj.color = selectedColor;
         nowCharacterImageText.text = selectPlayer == ControllerNum.P1 ? selectedText_P1 : selectedText_P2;
         nowCharacterImageText.color = selectPlayer == ControllerNum.P1 ? player1.SelectedColor : player2.SelectedColor;
 
-        while(time < duration)
+        // ボイスの再生
+        VoiceName voice = id == CharacterID.Tokiwa ? VoiceName.Select_TOKIWA : id == CharacterID.Hajime ? VoiceName.Select_HAJIME : VoiceName.Select_MARI;
+        SoundManager.Instance.PlayVoice(voice);
+
+        while(SoundManager.Instance.IsPlayingAudio(SourceType.Voice) == true)
         {
-            time += Time.deltaTime;
             yield return null;
         }
 
@@ -296,6 +299,26 @@ public class CharacterSelection : MonoBehaviour
         player1.VsCharacterImage.transform.localPosition = new Vector3(0, 0, 0);
         player2.VsCharacterImage.transform.localPosition = new Vector3(0, 0, 0);
         vsIcon.enabled = true;
+
+        // VSボイス再生
+        for(int i = 0; i < System.Enum.GetValues(typeof(ControllerNum)).Length; i++)
+        {
+            Character character = GameData.Instance.GetCharacterData((ControllerNum)i);
+            VoiceName voice;
+            if(character == Character.Tokiwa)
+            {
+                voice = VoiceName.Vs_TOKIWA;
+            }
+            else if(character == Character.Hajime)
+            {
+                voice = VoiceName.Vs_HAJIME;
+            }
+            else
+            {
+                voice = VoiceName.Vs_MARI;
+            }
+            SoundManager.Instance.PlayVoice(voice);
+        }
 
         // 遅延処理
         time = 0;

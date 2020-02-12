@@ -261,6 +261,23 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     {
         if (duration < 0 || isRunningVibration == true || playVibration == false || booingUICoroutine != null) { return; }
 
+        // ボイス再生
+        Character character = GameData.Instance.GetCharacterData(booingPlayer);
+        VoiceName voice;
+        if (character == Character.Tokiwa)
+        {
+            voice = VoiceName.Vibration_TOKIWA;
+        }
+        else if (character == Character.Hajime)
+        {
+            voice = VoiceName.Vibration_HAJIME;
+        }
+        else
+        {
+            voice = VoiceName.Vibration_MARI;
+        }
+        SoundManager.Instance.PlayVoice(voice);
+
         playVibration = false;
 
         isRunningVibration = true;
@@ -288,7 +305,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
 
         if(flag == true)
         {
-            SoundManager.Instance.StopFadeCoroutine(false);
+            SoundManager.Instance.StopSEFade(true);
         }
 
         GamePadControl.Instance.StopVibration(id);
@@ -303,6 +320,24 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     private void ShakeAction(float duration, float magnitude)
     {
         if(duration <= 0f || magnitude <= 0f || shakeCoroutine != null || playShake == false || booingUICoroutine != null) { return; }
+
+        // ボイス再生
+        Character character = GameData.Instance.GetCharacterData(booingPlayer);
+        VoiceName voice;
+        if (character == Character.Tokiwa)
+        {
+            voice = VoiceName.Shake_TOKIWA;
+        }
+        else if (character == Character.Hajime)
+        {
+            voice = VoiceName.Shake_HAJIME;
+        }
+        else
+        {
+            voice = VoiceName.Shake_MARI;
+        }
+        SoundManager.Instance.PlayVoice(voice);
+
         shakeCoroutine = StartCoroutine(DoShake(duration, magnitude));
         StartBooingUI(duration, booingPlayer, booingUIType);
         playShake = false;
@@ -364,6 +399,24 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     private void ThrowToScreenAction(int time, float duration)
     {
         if(time < 0 || duration < 0 || throwCoroutine != null || playThrow == false || booingUICoroutine != null) { return; }
+
+        // ボイス再生
+        Character character = GameData.Instance.GetCharacterData(booingPlayer);
+        VoiceName voice;
+        if(character == Character.Tokiwa)
+        {
+            voice = VoiceName.Paint_TOKIWA;
+        }
+        else if(character == Character.Hajime)
+        {
+            voice = VoiceName.Paint_HAJIME;
+        }
+        else
+        {
+            voice = VoiceName.Paint_MARI;
+        }
+        SoundManager.Instance.PlayVoice(voice);
+
         throwCoroutine = StartCoroutine(DoThrow(time, duration));
         StartBooingUI(duration, booingPlayer, booingUIType);
         playThrow = false;
@@ -569,6 +622,8 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         StopThrowToScreenAction(true);
 
         StopBooingUI(true);
+
+        SoundManager.Instance.StopAudio(SourceType.Voice);
 
         booingFlag = false;
     }

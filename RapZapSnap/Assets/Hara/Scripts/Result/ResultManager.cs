@@ -76,6 +76,7 @@ public class ResultManager : MonoBehaviour
     private int step = 0;
     private bool stepEndFlag = false;
     private bool actionFlag = false;
+    private bool exitFlag = false;
     [SerializeField, Tooltip("シーン番号"), Header("タイトルシーン")] private int sceneNum = 0;
 
     // Start is called before the first frame update
@@ -190,14 +191,13 @@ public class ResultManager : MonoBehaviour
                 time += Time.deltaTime;
                 if (time >= span)
                 {
-                    winImageObj.sprite = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? player1.WinSprite : player2.WinSprite;
-                    winImageObj.gameObject.SetActive(true);
-                    SoundManager.Instance.PlaySE(SEName.WinSE, true);
+                    LastAction();
                     stepEndFlag = true;
                 }
                 break;
             default:
-                if(SoundManager.Instance.IsPlayingSE(true) == true) { return; }
+                if(exitFlag == false) { return; }
+
                 if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || GamePadControl.Instance.GetKeyDown_2.Circle == true) && actionFlag == true)
                 {
                     step = 0;
@@ -225,9 +225,7 @@ public class ResultManager : MonoBehaviour
             player1.OutResult(objectMove_1.EndPos, GameData.Instance.GetRapScore(ControllerNum.P1), GameData.Instance.GetZapScore(ControllerNum.P1), GameData.Instance.GetSnapScore(ControllerNum.P1), GameData.Instance.GetTotalScore(ControllerNum.P1));
             player2.OutResult(objectMove_2.EndPos, GameData.Instance.GetRapScore(ControllerNum.P2), GameData.Instance.GetZapScore(ControllerNum.P2), GameData.Instance.GetSnapScore(ControllerNum.P2), GameData.Instance.GetTotalScore(ControllerNum.P2));
             scoreBoardObject.transform.localPosition = scoreBoardMove.EndPos;
-            winImageObj.sprite = GameData.Instance.GetWinnerPlayer() == ControllerNum.P1 ? player1.WinSprite : player2.WinSprite;
-            winImageObj.gameObject.SetActive(true);
-            SoundManager.Instance.PlaySE(SEName.WinSE, true);
+            LastAction();
         }
     }
 
@@ -270,5 +268,61 @@ public class ResultManager : MonoBehaviour
             p2.text = score2.ToString();
             stepEndFlag = true;
         }
+    }
+
+    /// <summary>
+    /// リザルトシーンの最後の処理
+    /// </summary>
+    private void LastAction()
+    {
+        ControllerNum winPlayer = GameData.Instance.GetWinnerPlayer();
+        Character winCharacter = GameData.Instance.GetCharacterData(winPlayer);
+        Character loseCharacter = GameData.Instance.GetCharacterData(winPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
+        VoiceName winVoice;
+        VoiceName loseVoice;
+
+        if (winCharacter == Character.Tokiwa)
+        {
+            winVoice = VoiceName.Win_TOKIWA;
+        }
+        else if (winCharacter == Character.Hajime)
+        {
+            winVoice = VoiceName.Win_HAJIME;
+        }
+        else
+        {
+            winVoice = VoiceName.Win_MARI;
+        }
+
+        if (winCharacter == Character.Tokiwa && loseCharacter == Character.Hajime)
+        {
+            loseVoice = VoiceName.Lose_HAJIME_Win_TOKIWA;
+        }
+        else if (winCharacter == Character.Tokiwa && loseCharacter == Character.Mari)
+        {
+            loseVoice = VoiceName.Lose_MARI_Win_TOKIWA;
+        }
+        else if (winCharacter == Character.Hajime && loseCharacter == Character.Tokiwa)
+        {
+            loseVoice = VoiceName.Lose_TOKIWA_Win_HAJIME;
+        }
+        else if (winCharacter == Character.Hajime && loseCharacter == Character.Mari)
+        {
+            loseVoice = VoiceName.Lose_MARI_Win_HAJIME;
+        }
+        else if (winCharacter == Character.Mari && loseCharacter == Character.Tokiwa)
+        {
+            loseVoice = VoiceName.Lose_TOKIWA_Win_MARI;
+        }
+        else
+        {
+            loseVoice = VoiceName.Lose_HAJIME_Win_MARI;
+        }
+
+        winImageObj.sprite = winPlayer == ControllerNum.P1 ? player1.WinSprite : player2.WinSprite;
+        winImageObj.gameObject.SetActive(true);
+
+        // SEとボイスの再生
+        SoundManager.Instance.PlaySEAndAction(SEName.WinSE, () => SoundManager.Instance.PlayVoiceAndAction(winVoice, () => SoundManager.Instance.PlayVoiceAndAction(loseVoice, () => { exitFlag = true; })));
     }
 }
