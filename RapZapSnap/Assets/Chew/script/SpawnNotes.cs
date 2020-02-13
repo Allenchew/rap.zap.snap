@@ -75,8 +75,6 @@ public class SpawnNotes : MonoBehaviour
               yield return new WaitForSeconds(tmpdata.delaytime);
               NotesControl.Instance.PlayNotesOneShot(tmpdata.ntype,tmpstart, tmpend, currentplayer,tmpdata.speed);
           }
-       
-        
         runningnotes = false;
     }
     public MstNotesEntity GetDatabyId(int id)
