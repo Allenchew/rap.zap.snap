@@ -46,6 +46,8 @@ public class CharacterSelection : MonoBehaviour
     private readonly string selectedText_P1 = "1P SELECTED!!";
     private readonly string selectedText_P2 = "2P SELECTED!!";
 
+    [SerializeField, Header("シーン遷移番号")] private int nextSceneID = 0;
+
     private enum CharacterID
     {
         Tokiwa,
@@ -93,22 +95,27 @@ public class CharacterSelection : MonoBehaviour
         GameData.Instance.SetCharacterData(selectPlayer, id == CharacterID.Tokiwa ? Character.Tokiwa : id == CharacterID.Hajime ? Character.Hajime : Character.Mari);
         _ = selectPlayer == ControllerNum.P1 ? selectedID_P1 = id : selectedID_P2 = id;
 
+        // 決定SE再生
+        SoundManager.Instance.PlaySE(SEName.InputSE, true);
+
+        // ボイスの再生
         StartCoroutine(DoSelectePlayerChange());
     }
 
     private IEnumerator DoSelectePlayerChange()
     {
         inputFlag = false;
-        float time = 0;
-        float duration = 0.75f;
 
         nowCharacterImageObj.color = selectedColor;
         nowCharacterImageText.text = selectPlayer == ControllerNum.P1 ? selectedText_P1 : selectedText_P2;
         nowCharacterImageText.color = selectPlayer == ControllerNum.P1 ? player1.SelectedColor : player2.SelectedColor;
 
-        while(time < duration)
+        // ボイスの再生
+        VoiceName voice = id == CharacterID.Tokiwa ? VoiceName.Select_TOKIWA : id == CharacterID.Hajime ? VoiceName.Select_HAJIME : VoiceName.Select_MARI;
+        SoundManager.Instance.PlayVoice(voice);
+
+        while(SoundManager.Instance.IsPlayingAudio(SourceType.Voice) == true)
         {
-            time += Time.deltaTime;
             yield return null;
         }
 
@@ -132,6 +139,7 @@ public class CharacterSelection : MonoBehaviour
     private void ChangeCharacter(bool direction)
     {
         StartCoroutine(DoChange(direction));
+        SoundManager.Instance.PlaySE(SEName.SelectChange, true);
     }
 
     /// <summary>
@@ -292,6 +300,26 @@ public class CharacterSelection : MonoBehaviour
         player2.VsCharacterImage.transform.localPosition = new Vector3(0, 0, 0);
         vsIcon.enabled = true;
 
+        // VSボイス再生
+        for(int i = 0; i < System.Enum.GetValues(typeof(ControllerNum)).Length; i++)
+        {
+            Character character = GameData.Instance.GetCharacterData((ControllerNum)i);
+            VoiceName voice;
+            if(character == Character.Tokiwa)
+            {
+                voice = VoiceName.Vs_TOKIWA;
+            }
+            else if(character == Character.Hajime)
+            {
+                voice = VoiceName.Vs_HAJIME;
+            }
+            else
+            {
+                voice = VoiceName.Vs_MARI;
+            }
+            SoundManager.Instance.PlayVoice(voice);
+        }
+
         // 遅延処理
         time = 0;
         duration = 0.5f;
@@ -312,6 +340,8 @@ public class CharacterSelection : MonoBehaviour
             time += Time.deltaTime;
             yield return null;
         }
+        player1.VsCharacterNameImage.transform.localPosition = new Vector3(0, 0, 0);
+        player2.VsCharacterNameImage.transform.localPosition = new Vector3(0, 0, 0);
 
         // VS用のキャラクター名イメージを揺らす
         time = 0;
@@ -332,13 +362,15 @@ public class CharacterSelection : MonoBehaviour
         // ぶっかませを表示
         time = 0;
         duration = 1.0f;
-        while(time < duration)
+        SoundManager.Instance.PlaySE(SEName.TurnChange, true);
+        while (time < duration)
         {
             diff = time / duration;
             battleStartObj.transform.localPosition = Vector3.Lerp(backImageObject.transform.localPosition, new Vector3(0, 0, 0), diff);
             time += Time.deltaTime;
             yield return null;
         }
+        battleStartObj.transform.localPosition = new Vector3(0, 0, 0);
 
         // 遅延処理
         time = 0;
@@ -349,8 +381,8 @@ public class CharacterSelection : MonoBehaviour
             yield return null;
         }
 
-        // シーン切り替え
-        SceneControl.Instance.LoadScene(2);
+        // BGMを止めてシーン切り替え
+        SoundManager.Instance.FadeOutBGM(0.3f, () => { SceneControl.Instance.LoadScene(nextSceneID); });
     }
 
     /// <summary>

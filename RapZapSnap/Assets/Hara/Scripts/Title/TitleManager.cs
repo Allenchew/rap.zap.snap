@@ -15,9 +15,6 @@ public class TitleManager : MonoBehaviour
     [SerializeField, Tooltip("NowLoading用のSlider"), Header("ロード画面用のオブジェクト")] private Slider nowLoadingSlider = null;
     [SerializeField, Tooltip("NowLoadingのText")] private Text nowLoadingText = null;
 
-    [SerializeField, Header("決定キー入力時のSE")] private AudioClip titleSE = null;
-    private AudioSource titleAudio = null;
-
     // コントローラの入力チェックフラグ
     private bool radyController1 = false;
     private bool radyController2 = false;
@@ -85,8 +82,6 @@ public class TitleManager : MonoBehaviour
         nowLoadingSlider.gameObject.SetActive(false);
         nowLoadingText.gameObject.SetActive(false);
 
-        titleAudio = GetComponent<AudioSource>();
-
         // 座標の初期化
         objP1.Start = titleImage_P1.transform.localPosition;
         objP2.Start = titleImage_P2.transform.localPosition;
@@ -96,6 +91,8 @@ public class TitleManager : MonoBehaviour
         // スコアの初期化
         GameData.Instance.ResetScore(ControllerNum.P1);
         GameData.Instance.ResetScore(ControllerNum.P2);
+
+        SoundManager.Instance.PlayBGM(BGMName.MainBGM);
 
         actionFlag = true;
     }
@@ -111,16 +108,16 @@ public class TitleManager : MonoBehaviour
         {
             case 0:
                 // コントローラの入力を待機
-                if ((GamePadControl.Instance.GetKeyDown_1.Circle == true || Input.GetKeyDown(KeyCode.A) == true) && radyController1 == false)
+                if (GamePadControl.Instance.GetKeyDown_1.Circle == true && radyController1 == false)
                 {
                     radyController1 = true;
-                    titleAudio.PlayOneShot(titleSE);
+                    SoundManager.Instance.PlaySE(SEName.InputSE, true);
                     radyText_P1.SetActive(true);
                 }
-                if ((GamePadControl.Instance.GetKeyDown_2.Circle == true || Input.GetKeyDown(KeyCode.J) == true) && radyController2 == false)
+                if (GamePadControl.Instance.GetKeyDown_2.Circle == true && radyController2 == false)
                 {
                     radyController2 = true;
-                    titleAudio.PlayOneShot(titleSE);
+                    SoundManager.Instance.PlaySE(SEName.InputSE, true);
                     radyText_P2.SetActive(true);
                 }
                 if(radyController1 == true && radyController2 == true)
