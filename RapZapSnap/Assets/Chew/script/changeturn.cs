@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class changeturn : MonoBehaviour
 {
+    public GameObject SEPlayer;
     public GameObject BackLayer;
     public GameObject TurnBack;
     public GameObject TurnCharacter;
@@ -14,11 +15,6 @@ public class changeturn : MonoBehaviour
     private Vector3 leftpos = new Vector3(-1920, 0, 0);
     private Vector3 centerpoint = new Vector3(0, 0, 0);
     private Vector3 rightpos = new Vector3(1920, 0, 0);
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
 
     public void StartMove(int characterindex,int turnindex)
     {
@@ -38,6 +34,7 @@ public class changeturn : MonoBehaviour
             BackLayer.GetComponent<Image>().color = Color.Lerp(Color.clear,Color.black,i);
             yield return new WaitForSeconds(0.01f);
         }
+        SEPlayer.GetComponent<SEContainer>().SetThisSe(1);
         for (float i = 0; i < 1.01f; i += 0.1f)
         {
             backtarget.transform.localPosition = Vector3.Lerp(orgpos,centerpoint,i);
@@ -51,6 +48,7 @@ public class changeturn : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         }
         yield return new WaitForSeconds(2.0f);
+        SEPlayer.GetComponent<SEContainer>().SetThisSe(1);
         for (float i = 0; i < 1.01f; i += 0.1f)
         {
             backtarget.transform.localPosition = Vector3.Lerp(centerpoint, destpos, i);

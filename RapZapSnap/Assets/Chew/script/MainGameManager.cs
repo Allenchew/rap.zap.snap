@@ -10,7 +10,9 @@ public class MainGameManager : MonoBehaviour
     public static MainGameManager instance;
 
     public ControllerNum currentplayer;
+    public GameObject SEplayer;
     public GameObject ShowTurn;
+    public GameObject TutorialPic;
     public GameObject VideoPlayertokiwa;
     public GameObject VideoPlayerhajime;
     public GameObject VideoPlayermari;
@@ -34,7 +36,7 @@ public class MainGameManager : MonoBehaviour
         PvVideoPlayer = new GameObject[3] { VideoPlayertokiwa, VideoPlayerhajime, VideoPlayermari };
         character_sequal[0] = 0;
         character_sequal[1] = 0;
-        StartCoroutine(Startup());
+        StartCoroutine(ShowTurorial());
     }
 
     public void EndRun()
@@ -83,5 +85,22 @@ public class MainGameManager : MonoBehaviour
         PvVideoPlayer[tmpindex].SetActive(true);
         SpawnNotes.Instance.CallSpawnNotes();
         PvVideoPlayer[tmpindex].GetComponent<PvStorage>().SetThisVideo(character_sequal[tmpindex]);
+    }
+    IEnumerator ShowTurorial()
+    {
+        SEplayer.GetComponent<SEContainer>().SetThisSe(0);
+        for(float i = 0; i<1.01f;i+= 0.05f)
+        {
+            TutorialPic.transform.localPosition = Vector3.Lerp(new Vector3(0, 1080, 0), new Vector3(0, 0, 0), i);
+            yield return new WaitForSeconds(0.01f);
+        }
+        yield return new WaitUntil(() => Input.anyKey);
+        SEplayer.GetComponent<SEContainer>().SetThisSe(0);
+        for (float i = 0; i < 1.01f; i += 0.05f)
+        {
+            TutorialPic.transform.localPosition = Vector3.Lerp(new Vector3(0, 0, 0), new Vector3(0, -1080, 0), i);
+            yield return new WaitForSeconds(0.01f);
+        }
+        StartCoroutine(Startup());
     }
 }
