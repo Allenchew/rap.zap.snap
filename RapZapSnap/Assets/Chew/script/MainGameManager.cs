@@ -39,26 +39,45 @@ public class MainGameManager : MonoBehaviour
         StartCoroutine(ShowTurorial());
     }
 
-    public void EndRun()
+    private IEnumerator DoEndCoroutine()
     {
+        // ノーツの再生が完了するまで待つ
+        while(NotesControl.Instance.NotesIsPlaying(currentplayer) == true)
+        {
+            yield return null;
+        }
 
         roundCounter++;
 
+        // お邪魔の再生を止める
+        BooingControl.Instance.BooingSystemOff();
+
+        // ノーツの再生を止める
+        NotesControl.Instance.StopAllNotes();
+
         MainGameManager.instance.character_sequal[(int)currentplayer]++;
-        currentplayer = 1 - currentplayer;
+        //currentplayer = 1 - currentplayer;
+        currentplayer = currentplayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1;
         if (roundCounter > 5)
         {
-            BooingControl.Instance.BooingSystemOff();
             SceneManager.LoadScene(3);
-            return;
+            yield break;
         }
+
         StartCoroutine(SwitchPlayer());
     }
+
+    /// <summary>
+    /// ターン終了時に実行
+    /// </summary>
+    public void EndAction()
+    {
+        StartCoroutine(DoEndCoroutine());
+    }
+
     IEnumerator SwitchPlayer()
     {
-        NotesControl.Instance.StopAllNotes();
         int tmpindex = (int)GameData.Instance.GetCharacterData(currentplayer);
-        BooingControl.Instance.SetBooingPlayer(BooingControl.Instance.BooingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
         f_ShowingTurn = true;
         Debug.Log(tmpindex);
         ShowTurn.GetComponent<changeturn>().StartMove(tmpindex, character_sequal[(int)currentplayer]);
@@ -75,7 +94,6 @@ public class MainGameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1.0f);
         int tmpindex = (int)GameData.Instance.GetCharacterData(currentplayer);
-        BooingControl.Instance.SetBooingPlayer(ControllerNum.P2);
         f_ShowingTurn = true;
         Debug.Log(tmpindex);
         ShowTurn.GetComponent<changeturn>().StartMove(tmpindex,character_sequal[(int)currentplayer]);

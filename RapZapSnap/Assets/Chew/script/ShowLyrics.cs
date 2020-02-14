@@ -92,8 +92,8 @@ public class ShowLyrics : MonoBehaviour
          if(!(showindex < gameObject.transform.childCount))
          {
              yield return new WaitForSeconds(2.0f);
-            BgmManager.Instance.StopPlay();
-            MainGameManager.instance.EndRun();
+             BgmManager.Instance.StopPlay();
+             MainGameManager.instance.EndAction();
              Destroy(transform.parent.gameObject);
          }
         target.SetActive(false);

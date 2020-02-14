@@ -453,27 +453,14 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
     /// <returns></returns>
     public bool NotesIsPlaying(ControllerNum id)
     {
-        if(id == ControllerNum.P1)
+        NotesDataBase data = id == ControllerNum.P1 ? dataBase1 : dataBase2;
+        for(int i = 0; i < data.NotesObjects.Length; i++)
         {
-            if(dataBase1.NotesObjects[dataBase1.NotesCheckCount].NotesCoroutine != null)
+            if(data.NotesObjects[i].NotesCoroutine != null)
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
         }
-        else
-        {
-            if (dataBase2.NotesObjects[dataBase2.NotesCheckCount].NotesCoroutine != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        return false;
     }
 }

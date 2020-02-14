@@ -58,6 +58,10 @@ public class SpawnNotes : MonoBehaviour
             BgmManager.Instance.StartPlay(tmpbgmIndex+MainGameManager.instance.character_sequal[(int)currentplayer]);
             
             Instantiate(LyricsPrefabs[tmpbgmIndex + MainGameManager.instance.character_sequal[(int)currentplayer]]);
+
+            // お邪魔のシステムを起動
+            BooingControl.Instance.SetBooingPlayer(currentplayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
+
             StartCoroutine(spawnout());
         }
     }
@@ -65,14 +69,15 @@ public class SpawnNotes : MonoBehaviour
     {
         localsequal = MainGameManager.instance.character_sequal;
         for (int i = 0;i< 18; i++)
-          {
+        {
               MstNotesEntity tmpdata;
               tmpdata = GetDatabyId(i+1);
               Vector3 tmpstart = new Vector3(11, 4, 0);
               Vector3 tmpend = new Vector3(tmpdata.endposX, 4, 0);
               yield return new WaitForSeconds(tmpdata.delaytime);
               NotesControl.Instance.PlayNotesOneShot(tmpdata.ntype,tmpstart, tmpend, currentplayer,tmpdata.speed);
-          }
+        }
+
         runningnotes = false;
     }
     public MstNotesEntity GetDatabyId(int id)
