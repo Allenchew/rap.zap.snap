@@ -56,7 +56,7 @@ public class MainGameManager : MonoBehaviour
     }
     IEnumerator SwitchPlayer()
     {
-       
+        NotesControl.Instance.StopAllNotes();
         int tmpindex = (int)GameData.Instance.GetCharacterData(currentplayer)-1;
         BooingControl.Instance.SetBooingPlayer(BooingControl.Instance.BooingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
         f_ShowingTurn = true;
