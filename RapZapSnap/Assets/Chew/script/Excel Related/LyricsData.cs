@@ -12,5 +12,7 @@ public class LyricsData : ScriptableObject
     public List<LyricsEntity> hajime1;
     public List<LyricsEntity> hajime2;
     public List<LyricsEntity> hajime3;
-
+    public List<LyricsEntity> mari1;
+    public List<LyricsEntity> mari2;
+    public List<LyricsEntity> mari3;
 }

@@ -155,6 +155,20 @@ public class ShowLyrics : MonoBehaviour
                     return null;
             }
         }
+        else if (currentcharacter == Character.Mari)
+        {
+            switch (localsequal[(int)PlayerControl])
+            {
+                case 0:
+                    return LyricsExcel.mari1.Find(entity => entity.id == id);
+                case 1:
+                    return LyricsExcel.mari2.Find(entity => entity.id == id);
+                case 2:
+                    return LyricsExcel.mari3.Find(entity => entity.id == id);
+                default:
+                    return null;
+            }
+        }
         else
         {
             return null;

@@ -12,4 +12,7 @@ public class NotesData : ScriptableObject
     public List<MstNotesEntity> hajime1;
     public List<MstNotesEntity> hajime2;
     public List<MstNotesEntity> hajime3;
+    public List<MstNotesEntity> mari1;
+    public List<MstNotesEntity> mari2;
+    public List<MstNotesEntity> mari3;
 }

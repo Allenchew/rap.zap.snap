@@ -107,6 +107,20 @@ public class SpawnNotes : MonoBehaviour
                     return null;
             }
         }
+        else if (currentcharacter == Character.Mari)
+        {
+            switch (localsequal[(int)currentplayer])
+            {
+                case 0:
+                    return notesdata.mari1.Find(entity => entity.id == id);
+                case 1:
+                    return notesdata.mari2.Find(entity => entity.id == id);
+                case 2:
+                    return notesdata.mari3.Find(entity => entity.id == id);
+                default:
+                    return null;
+            }
+        }
         else
         {
             return null;
