@@ -543,9 +543,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentImages:
+  - {fileID: 21300000, guid: 8ae38986b5e140f4cabb3e2973880742, type: 3}
   - {fileID: 21300000, guid: 201e77d7839ee12479cf14f0fa378429, type: 3}
   - {fileID: 21300000, guid: 4623c907b748ebf449b4abcd9b93fc7e, type: 3}
-  - {fileID: 21300000, guid: 8ae38986b5e140f4cabb3e2973880742, type: 3}
 --- !u!1 &829512307
 GameObject:
   m_ObjectHideFlags: 0
@@ -687,6 +687,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BgmClip:
+  - {fileID: 8300000, guid: 2f93129e62f0f8948ad95f9f8cd42040, type: 3}
+  - {fileID: 8300000, guid: 367384f33182dd147a66d75352cffcf4, type: 3}
+  - {fileID: 8300000, guid: d12ff1fa0ed462a41a0f3a4a75e8dd83, type: 3}
   - {fileID: 8300000, guid: 891f620b44b328d4089c7e82e2487175, type: 3}
   - {fileID: 8300000, guid: 77e9f39d5aa9ea34a8ecc83749f73c39, type: 3}
   - {fileID: 8300000, guid: 32285cea85b82b54d87cac01a4428b31, type: 3}
@@ -1296,6 +1299,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3029406474872757766, guid: 20660e901e1374a4dbb2889b1d739fb2,
+        type: 3}
+      propertyPath: data_P1.SelectCharacter
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20660e901e1374a4dbb2889b1d739fb2, type: 3}
 --- !u!1 &1436466731
@@ -1465,6 +1473,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LyricsPrefabs:
+  - {fileID: 3744047371046026486, guid: 5097923e8ca6fff4ab28247f20eadd17, type: 3}
+  - {fileID: 169983112195888757, guid: 1feece7e3aa44e0468164ec9a243c48c, type: 3}
+  - {fileID: 939962014123860328, guid: d94bcfa857aee6842a8fbdd27c7006c7, type: 3}
   - {fileID: 345793411316664673, guid: d4161e207e7b8c14d97f50a6874c9861, type: 3}
   - {fileID: 2542691537338106560, guid: 6d8f2109d7be7114799920dd9efa9705, type: 3}
   - {fileID: 7681147850896917379, guid: 6c47c53a78a6d8148b3c304f0bbc2a61, type: 3}
@@ -1560,9 +1571,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentImages:
+  - {fileID: 21300000, guid: cbf5098a94e819d4393b0fd47180a340, type: 3}
   - {fileID: 21300000, guid: 2273085a2c0cadf44b5fc9b83c6dd6da, type: 3}
   - {fileID: 21300000, guid: 43dbcf389e3e8db459f52bafe64be5bf, type: 3}
-  - {fileID: 21300000, guid: cbf5098a94e819d4393b0fd47180a340, type: 3}
 --- !u!1 &1613380644
 GameObject:
   m_ObjectHideFlags: 0
@@ -1878,9 +1889,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentImages:
+  - {fileID: 21300000, guid: 89de74b4ebd7b6e458312d92b05bb6b0, type: 3}
   - {fileID: 21300000, guid: 5989dd5913905f646905558886049243, type: 3}
   - {fileID: 21300000, guid: 06fcc7f319e8af942bf51131f004a0f2, type: 3}
-  - {fileID: 21300000, guid: 89de74b4ebd7b6e458312d92b05bb6b0, type: 3}
 --- !u!1001 &1933689716
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2038,6 +2049,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentImages:
+  - {fileID: 21300000, guid: b06326295e4e26c4b9446a3174f3c1cb, type: 3}
   - {fileID: 21300000, guid: b7d217bbc81a13941a0176eb1c4278b0, type: 3}
   - {fileID: 21300000, guid: 19d7a22499767a440ab74a1dff23c765, type: 3}
-  - {fileID: 21300000, guid: b06326295e4e26c4b9446a3174f3c1cb, type: 3}

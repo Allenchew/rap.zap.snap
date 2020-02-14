@@ -54,7 +54,7 @@ public class SpawnNotes : MonoBehaviour
             runningnotes = true;
             currentplayer = MainGameManager.instance.currentplayer;
             currentcharacter = GameData.Instance.GetCharacterData(currentplayer);
-            int tmpbgmIndex = ((int)(GameData.Instance.GetCharacterData(currentplayer))-1)*3;
+            int tmpbgmIndex = ((int)(GameData.Instance.GetCharacterData(currentplayer)))*3;
             Debug.Log(tmpbgmIndex);
             Debug.Log(tmpbgmIndex + MainGameManager.instance.character_sequal[(int)currentplayer]);
             BgmManager.Instance.StartPlay(tmpbgmIndex+MainGameManager.instance.character_sequal[(int)currentplayer]);
