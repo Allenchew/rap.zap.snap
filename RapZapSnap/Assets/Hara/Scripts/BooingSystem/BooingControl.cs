@@ -45,9 +45,12 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     [SerializeField, Tooltip("パーティクルのサイズ"), Range(0f, 3.0f)] private float particleSize = 1.0f;
     private Coroutine throwCoroutine = null;
 
-    private bool playVibration = true;
-    private bool playShake = true;
-    private bool playThrow = true;
+    [SerializeField, Header("振動の制限回数"), Range(0, 5)] private int vibrationLimit = 0;
+    [SerializeField, Header("画面揺れの制限回数"), Range(0, 5)] private int shakeLimit = 0;
+    [SerializeField, Header("投げつけの制限回数"), Range(0, 5)] private int paintLimit = 0;
+    private int vlimit = 0;
+    private int slimit = 0;
+    private int plimit = 0;
 
     protected override void Awake()
     {
@@ -259,7 +262,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// <param name="duration">振動時間</param>
     private void VibrationAction(ControllerNum id, byte vibration, float duration)
     {
-        if (duration < 0 || isRunningVibration == true || playVibration == false || booingUICoroutine != null) { return; }
+        if (duration < 0 || isRunningVibration == true || vlimit <= 0 || booingUICoroutine != null) { return; }
 
         // ボイス再生
         Character character = GameData.Instance.GetCharacterData(booingPlayer);
@@ -278,7 +281,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         }
         SoundManager.Instance.PlayVoice(voice);
 
-        playVibration = false;
+        vlimit--;
 
         isRunningVibration = true;
 
@@ -319,7 +322,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// <param name="magnitude">揺れの強さ</param>
     private void ShakeAction(float duration, float magnitude)
     {
-        if(duration <= 0f || magnitude <= 0f || shakeCoroutine != null || playShake == false || booingUICoroutine != null) { return; }
+        if(duration <= 0f || magnitude <= 0f || shakeCoroutine != null || slimit <= 0 || booingUICoroutine != null) { return; }
 
         // ボイス再生
         Character character = GameData.Instance.GetCharacterData(booingPlayer);
@@ -340,7 +343,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
 
         shakeCoroutine = StartCoroutine(DoShake(duration, magnitude));
         StartBooingUI(duration, booingPlayer, booingUIType);
-        playShake = false;
+        slimit--;
     }
 
     /// <summary>
@@ -398,7 +401,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// <param name="duration">実行時間</param>
     private void ThrowToScreenAction(int time, float duration)
     {
-        if(time < 0 || duration < 0 || throwCoroutine != null || playThrow == false || booingUICoroutine != null) { return; }
+        if(time < 0 || duration < 0 || throwCoroutine != null || plimit <= 0 || booingUICoroutine != null) { return; }
 
         // ボイス再生
         Character character = GameData.Instance.GetCharacterData(booingPlayer);
@@ -419,7 +422,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
 
         throwCoroutine = StartCoroutine(DoThrow(time, duration));
         StartBooingUI(duration, booingPlayer, booingUIType);
-        playThrow = false;
+        plimit--;
     }
 
     /// <summary>
@@ -449,13 +452,13 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         switch (itemIndex)
         {
             case 0:
-                particleColor = new Color(96f / 255f, 14f / 255f, 18f / 255f, 1);    // トマト
+                particleColor = new Color(160f / 255f, 20f / 255f, 15f / 255f, 1);    // トマト
                 break;
             case 1:
-                particleColor = new Color(10f / 255f, 25f / 255f, 50f / 255f, 1);    // ボトル
+                particleColor = new Color(30f / 255f, 45f / 255f, 150f / 255f, 1);    // ボトル
                 break;
             case 2:
-                particleColor = new Color(234f / 255f, 162f / 255f, 23f / 255f, 1);    // たまご
+                particleColor = new Color(235f / 255f, 160f / 255f, 25f / 255f, 1);    // たまご
                 break;
             default:
                 yield break;
@@ -573,7 +576,7 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         // 〇ボタンでSE再生とバイブレーションを実行
         if (booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Circle == true : GamePadControl.Instance.GetKeyDown_2.Circle == true)
         {
-            VibrationAction(target, vibrationPower, booingDuration);
+            ThrowToScreenAction(particleCallTime, booingDuration);
         }
 
         // △ボタンでSE再生と画面の揺れを実行
@@ -585,10 +588,10 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
         // □ボタンで画面の邪魔を表示
         if (booingPlayer == ControllerNum.P1 ? GamePadControl.Instance.GetKeyDown_1.Square == true : GamePadControl.Instance.GetKeyDown_2.Square == true)
         {
-            ThrowToScreenAction(particleCallTime, booingDuration);
+            VibrationAction(target, vibrationPower, booingDuration);
         }
 
-        if(playVibration == false && playShake == false && playThrow == false) { booingFlag = false; }
+        if(vlimit <= 0 && slimit <= 0 && plimit <= 0) { booingFlag = false; }
     }
 
     /// <summary>
@@ -597,14 +600,11 @@ public class BooingControl : SingletonMonoBehaviour<BooingControl>
     /// <param name="player">ブーイングシステムを使うプレイヤー</param>
     public void SetBooingPlayer(ControllerNum player)
     {
-        // 再生中のお邪魔システムを停止
-        BooingSystemOff();
-
         // フラグを初期化
         booingPlayer = player;
-        playVibration = true;
-        playShake = true;
-        playThrow = true;
+        vlimit = vibrationLimit;
+        slimit = shakeLimit;
+        plimit = paintLimit;
         booingFlag = true;
     }
 
