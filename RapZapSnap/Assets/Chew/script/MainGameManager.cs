@@ -60,7 +60,8 @@ public class MainGameManager : MonoBehaviour
         int tmpindex = (int)GameData.Instance.GetCharacterData(currentplayer);
         BooingControl.Instance.SetBooingPlayer(BooingControl.Instance.BooingPlayer == ControllerNum.P1 ? ControllerNum.P2 : ControllerNum.P1);
         f_ShowingTurn = true;
-        ShowTurn.GetComponent<changeturn>().StartMove(tmpindex, character_sequal[tmpindex]);
+        Debug.Log(tmpindex);
+        ShowTurn.GetComponent<changeturn>().StartMove(tmpindex, character_sequal[(int)currentplayer]);
         yield return new WaitUntil(() => f_ShowingTurn == false);
         SpawnNotes.Instance.CallSpawnNotes();
         foreach(GameObject Child in PvVideoPlayer)
@@ -68,7 +69,7 @@ public class MainGameManager : MonoBehaviour
             Child.SetActive(false);
         }
         PvVideoPlayer[tmpindex].SetActive(true);
-        PvVideoPlayer[tmpindex].GetComponent<PvStorage>().SetThisVideo(character_sequal[tmpindex]);
+        PvVideoPlayer[tmpindex].GetComponent<PvStorage>().SetThisVideo(character_sequal[(int)currentplayer]);
     }
     IEnumerator Startup()
     {
@@ -77,7 +78,7 @@ public class MainGameManager : MonoBehaviour
         BooingControl.Instance.SetBooingPlayer(ControllerNum.P2);
         f_ShowingTurn = true;
         Debug.Log(tmpindex);
-        ShowTurn.GetComponent<changeturn>().StartMove(tmpindex,character_sequal[tmpindex]);
+        ShowTurn.GetComponent<changeturn>().StartMove(tmpindex,character_sequal[(int)currentplayer]);
         yield return new WaitUntil(() => f_ShowingTurn == false);
         foreach (GameObject Child in PvVideoPlayer)
         {
@@ -85,7 +86,7 @@ public class MainGameManager : MonoBehaviour
         }
         PvVideoPlayer[tmpindex].SetActive(true);
         SpawnNotes.Instance.CallSpawnNotes();
-        PvVideoPlayer[tmpindex].GetComponent<PvStorage>().SetThisVideo(character_sequal[tmpindex]);
+        PvVideoPlayer[tmpindex].GetComponent<PvStorage>().SetThisVideo(character_sequal[(int)currentplayer]);
     }
     IEnumerator ShowTurorial()
     {

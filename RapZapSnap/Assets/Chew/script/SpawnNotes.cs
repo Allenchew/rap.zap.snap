@@ -55,8 +55,6 @@ public class SpawnNotes : MonoBehaviour
             currentplayer = MainGameManager.instance.currentplayer;
             currentcharacter = GameData.Instance.GetCharacterData(currentplayer);
             int tmpbgmIndex = ((int)(GameData.Instance.GetCharacterData(currentplayer)))*3;
-            Debug.Log(tmpbgmIndex);
-            Debug.Log(tmpbgmIndex + MainGameManager.instance.character_sequal[(int)currentplayer]);
             BgmManager.Instance.StartPlay(tmpbgmIndex+MainGameManager.instance.character_sequal[(int)currentplayer]);
             
             Instantiate(LyricsPrefabs[tmpbgmIndex + MainGameManager.instance.character_sequal[(int)currentplayer]]);
