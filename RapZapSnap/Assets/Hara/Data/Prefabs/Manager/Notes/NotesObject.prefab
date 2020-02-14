@@ -62,7 +62,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d3db20e01b36dac4baa495a2256cdcf9, type: 3}
   - {fileID: 21300000, guid: 21ce6ea08e7db1743b560a6c6a046619, type: 3}
   notesSize: 0.35
-  notesSpriteAlpha: 0.25
+  notesSpriteAlpha: 0.5
   perfectLength: 0.015
   goodLength: 0.03
   badLength: 0.03

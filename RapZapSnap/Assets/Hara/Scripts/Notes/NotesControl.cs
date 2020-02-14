@@ -445,4 +445,35 @@ public class NotesControl : SingletonMonoBehaviour<NotesControl>
         
         GameData.Instance.PlusTotalScore(id, score);
     }
+
+    /// <summary>
+    /// ノーツが再生中ならtrue, 停止中ならfalse
+    /// </summary>
+    /// <param name="id">チェック対象のプレイヤー番号</param>
+    /// <returns></returns>
+    public bool NotesIsPlaying(ControllerNum id)
+    {
+        if(id == ControllerNum.P1)
+        {
+            if(dataBase1.NotesObjects[dataBase1.NotesCheckCount].NotesCoroutine != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (dataBase2.NotesObjects[dataBase2.NotesCheckCount].NotesCoroutine != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }
