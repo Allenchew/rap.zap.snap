@@ -1371,12 +1371,12 @@ PrefabInstance:
     - target: {fileID: 3029406474872757766, guid: 20660e901e1374a4dbb2889b1d739fb2,
         type: 3}
       propertyPath: data_P1.SelectCharacter
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3029406474872757766, guid: 20660e901e1374a4dbb2889b1d739fb2,
         type: 3}
       propertyPath: data_P2.SelectCharacter
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20660e901e1374a4dbb2889b1d739fb2, type: 3}

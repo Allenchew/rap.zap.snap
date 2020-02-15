@@ -1706,7 +1706,7 @@ MonoBehaviour:
     delaytime: 0.083333336
     wholedelay: 0
   - id: 5
-    delaytime: 0.083333336
+    delaytime: 0.083333
     wholedelay: 0
   - id: 6
     delaytime: 0.083333336
@@ -1724,7 +1724,7 @@ MonoBehaviour:
     delaytime: 0.14285715
     wholedelay: 0
   - id: 11
-    delaytime: 0.14285715
+    delaytime: 0.142857
     wholedelay: 0
   - id: 12
     delaytime: 0.14285715

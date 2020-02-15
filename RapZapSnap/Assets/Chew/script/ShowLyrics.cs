@@ -69,13 +69,14 @@ public class ShowLyrics : MonoBehaviour
          for (int i = 0; i < thisMaskdata.RunCount; i++)
          {
             LyricsEntity tmplyrics;
-            tmplyrics = GetDatabyId(i+1);
+            tmplyrics = GetDatabyId(totalruncount+i);
             target.transform.GetChild(i).gameObject.SetActive(true);
              if (thisMaskdata.StartEffect)
              {
                  ShowSpecifyEffect(thisMaskdata.EffectIndex);
              }
-             yield return new WaitForSeconds(tmplyrics.delaytime);
+            yield return new WaitForSeconds(tmplyrics.delaytime);
+            
              if(thisMaskdata.EndEffect && i == thisMaskdata.RunCount - 1)
              {
                  ShowSpecifyEffect(thisMaskdata.EffectIndex);
