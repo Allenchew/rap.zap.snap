@@ -59,8 +59,8 @@ public class ShowLyrics : MonoBehaviour
     IEnumerator shuftShow(GameObject target)
     {
         MaskData thisMaskdata = target.GetComponent<MaskMovement>().ThisMaskData;
-        
 
+        Debug.Log(currentcharacter);
         if (thisMaskdata.OnceEffect)
          {
              ShowSpecifyEffect(thisMaskdata.EffectIndex);
@@ -75,6 +75,7 @@ public class ShowLyrics : MonoBehaviour
              {
                  ShowSpecifyEffect(thisMaskdata.EffectIndex);
              }
+            Debug.Log(tmplyrics.delaytime);
             yield return new WaitForSeconds(tmplyrics.delaytime);
             
              if(thisMaskdata.EndEffect && i == thisMaskdata.RunCount - 1)

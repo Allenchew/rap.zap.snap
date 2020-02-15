@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -68,7 +68,9 @@ public class SpawnNotes : MonoBehaviour
     IEnumerator spawnout()
     {
         localsequal = MainGameManager.instance.character_sequal;
-        for (int i = 0;i< 18; i++)
+        int ulfaindex;
+        ulfaindex = currentplayer == Character.Mari? 2:0;
+        for (int i = 0;i< 18+ulfaindex; i++)
         {
               MstNotesEntity tmpdata;
               tmpdata = GetDatabyId(i+1);
