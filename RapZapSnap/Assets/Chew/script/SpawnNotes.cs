@@ -68,9 +68,7 @@ public class SpawnNotes : MonoBehaviour
     IEnumerator spawnout()
     {
         localsequal = MainGameManager.instance.character_sequal;
-        int ulfaindex;
-        ulfaindex = currentcharacter == Character.Mari? 2:0;
-        for (int i = 0;i< 18+ulfaindex; i++)
+        for (int i = 0;i< 20; i++)
         {
               MstNotesEntity tmpdata;
               tmpdata = GetDatabyId(i+1);
