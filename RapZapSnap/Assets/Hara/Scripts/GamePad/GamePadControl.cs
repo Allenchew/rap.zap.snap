@@ -324,22 +324,22 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
             {
                 case DS4AllKeyType.Circle:
                     buttonName = DS4ButtonType.Circle;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha1 : KeyCode.Keypad1;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha1 : KeyCode.Z;
                     secondInput = false;
                     break;
                 case DS4AllKeyType.Cross:
                     buttonName = DS4ButtonType.Cross;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha2 : KeyCode.Keypad2;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha2 : KeyCode.X;
                     secondInput = false;
                     break;
                 case DS4AllKeyType.Triangle:
                     buttonName = DS4ButtonType.Triangle;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha3 : KeyCode.Keypad3;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha3 : KeyCode.C;
                     secondInput = false;
                     break;
                 case DS4AllKeyType.Square:
                     buttonName = DS4ButtonType.Square;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha4 : KeyCode.Keypad4;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha4 : KeyCode.V;
                     secondInput = false;
                     break;
                 case DS4AllKeyType.Up:
@@ -364,32 +364,32 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
                     break;
                 case DS4AllKeyType.L1:
                     buttonName = DS4ButtonType.L1;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha5 : KeyCode.Keypad5;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha5 : KeyCode.B;
                     secondInput = false;
                     break;
                 case DS4AllKeyType.L3:
                     buttonName = DS4ButtonType.L3;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha5 : KeyCode.Keypad5;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha5 : KeyCode.B;
                     secondInput = true;
                     break;
                 case DS4AllKeyType.R1:
                     buttonName = DS4ButtonType.R1;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha6 : KeyCode.Keypad6;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha6 : KeyCode.N;
                     secondInput = false;
                     break;
                 case DS4AllKeyType.R3:
                     buttonName = DS4ButtonType.R3;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha6 : KeyCode.Keypad6;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha6 : KeyCode.N;
                     secondInput = true;
                     break;
                 case DS4AllKeyType.OPTION:
                     buttonName = DS4ButtonType.OPTION;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha7 : KeyCode.Keypad7;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha7 : KeyCode.M;
                     secondInput = false;
                     break;
                 case DS4AllKeyType.SHARE:
                     buttonName = DS4ButtonType.SHARE;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha8 : KeyCode.Keypad8;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha8 : KeyCode.L;
                     secondInput = false;
                     break;
                 default:
@@ -453,7 +453,7 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
                 case DS4AllKeyType.L2:
                     axisName = DS4AxisType.L2;
                     isPositive = true;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha5 : KeyCode.Keypad5;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha5 : KeyCode.B;
                     secondInput = false;
                     break;
                 case DS4AllKeyType.RightStick_Up:
@@ -483,7 +483,7 @@ public class GamePadControl : SingletonMonoBehaviour<GamePadControl>
                 case DS4AllKeyType.R2:
                     axisName = DS4AxisType.R2;
                     isPositive = true;
-                    key = id == ControllerNum.P1 ? KeyCode.Alpha6 : KeyCode.Keypad6;
+                    key = id == ControllerNum.P1 ? KeyCode.Alpha6 : KeyCode.N;
                     secondInput = false;
                     break;
                 default:
