@@ -69,7 +69,7 @@ public class SpawnNotes : MonoBehaviour
     {
         localsequal = MainGameManager.instance.character_sequal;
         int ulfaindex;
-        ulfaindex = currentplayer == Character.Mari? 2:0;
+        ulfaindex = currentcharacter == Character.Mari? 2:0;
         for (int i = 0;i< 18+ulfaindex; i++)
         {
               MstNotesEntity tmpdata;
